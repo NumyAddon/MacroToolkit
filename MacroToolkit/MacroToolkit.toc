@@ -1,0 +1,32 @@
+## Interface: 90001
+## Title: Macro Toolkit
+## Notes: Enhanced macro frame with additional tools
+## Notes-zhTW: 增強巨集UI，方便編寫巨集並加強功能
+## Notes-esES: Marco de macros mejorado con herramientas adicionales
+## Author: Deepac
+## Version: v7.3.0.2.1_90001_v2
+## SavedVariables: MacroToolkitDB
+## OptionalDeps: ElvUI, Ace3
+## X-Category: Action Bars
+## X-Website: http://wow.curse.com/downloads/wow-addons/details/Macro-Toolkit.aspx
+## X-Donate: https://www.paypal.com/cgi-bin/webscr?return=http%3A%2F%2Fwow.curseforge.com%2Faddons%2FMacro-Toolkit%2F&cn=Add+special+instructions+to+the+addon+author%28s%29&business=agoakley%40googlemail.com&bn=PP-DonationsBF%3Abtn_donateCC_LG.gif%3ANonHosted&cancel_return=http%3A%2F%2Fwow.curseforge.com%2Faddons%2FMacro-Toolkit%2F&lc=US&item_name=Macro-Toolkit+%28from+CurseForge.com%29&cmd=_donations&rm=1&no_shipping=1&currency_code=USD
+## X-Localizations: enUS, deDE, frFR, zhTW, zhCN, koKR, ruRU, esES, esMX, itIT, ptBR
+## X-Compatible-With: 90001
+## X-Curse-Packaged-Version: v7.3.0.2.1_90001_v2
+## X-Curse-Project-Name: Macro-Toolkit
+## X-Curse-Project-ID: Macro-Toolkit
+## X-Curse-Repository-ID: wow/macro-toolkit/mainline
+## X-OriginalVersion: v7.3.0.2.1
+## X-Fixed-By: Marcio Wesley Borges (marciowb)
+## X-Fixed-Date: 2020/10/17
+
+#@no-lib-strip@
+# Libraries
+embeds.xml
+#@end-no-lib-strip@
+
+libs\LibAdvancedIconSelector-MTK\LibAdvancedIconSelector-MTK.xml
+locales\locales.xml
+modules\modules.xml
+MacroToolkit.xml
+MacroToolkit.lua

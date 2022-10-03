@@ -1,0 +1,13 @@
+## Interface: 90001
+## Author: Deepac
+## Title: MacroToolkit Icon Data
+## Version: 7.2.0.0
+## Notes: Load on demand data for MacroToolkit
+## LoadOnDemand: 1
+## RequiredDeps: MacroToolkit
+## X-Curse-Packaged-Version: v7.3.0.2
+## X-Curse-Project-Name: Macro-Toolkit
+## X-Curse-Project-ID: Macro-Toolkit
+## X-Curse-Repository-ID: wow/macro-toolkit/mainline
+
+..\MacroToolkit\modules\textures.lua

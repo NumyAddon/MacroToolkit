@@ -1,0 +1,14 @@
+## Title: Lib: AdvancedIconSelector-MTK
+## Notes: Provides a searchable icon selection GUI to addons, no longer supported by the original author. Local copy for Macro Toolkit, maintained by Deepac
+## Version: 7.0.0.0
+## Author: Darthyl of Bronzebeard-US, Deepac
+## Interface: 90001
+## OptionalDeps: Ace3, LibDebug
+
+## LoadOnDemand: 1
+
+### Localization
+Locales\enUS.lua
+
+### Main file
+LibAdvancedIconSelector-MTK.lua

@@ -1,0 +1,31 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<CheckButton name="MacroToolkitButtonTemplate" inherits="PopupButtonTemplate" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentUnbound" file="Interface\COMMON\VOICECHAT-MUTED">
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x ="2" y="-3"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("LeftButton")
+			</OnLoad>
+		</Scripts>
+	</CheckButton>
+	
+	<Script file="modules\macrobroker.lua"/>
+	<EditBox name="MacroToolkit_EditBoxTemplate" inherits="ChatFrameEditBoxTemplate" hidden="true" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.chatFrame = DEFAULT_CHAT_FRAME;
+				ChatEdit_OnLoad(self);
+				self.chatFrame = MacroToolkit:fauxChatFrame()
+			</OnLoad>
+		</Scripts>
+	</EditBox>
+</Ui>

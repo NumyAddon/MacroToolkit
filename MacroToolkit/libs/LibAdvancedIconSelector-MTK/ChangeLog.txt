@@ -1,0 +1,39 @@
+vMTK
+- Hijacked for Macro Toolkit as it appears to have been abandoned by the original author
+
+v1.0.9 (March 12, 2013)
+- Updated for WoW version 5.2
+
+v1.0.8 (September 24, 2012)
+- Added "BeforeSearchStarted" script
+- Added GetSearchParameter() method
+
+v1.0.7 (August 29, 2012)
+- Added Mists of Pandaria compatibility.
+
+v1.0.6 (March 29, 2012)
+- Added a SearchObject:ReplaceSection() method that was missing.
+
+v1.0.5 (March 23, 2012)
+- Fixed accidental incompatibility with ActionSwap 2 that was introduced in v1.0.4.
+
+v1.0.4 (March 21, 2012)
+- Added a new search API which doesn't require the creation of an icon selector frame.
+- Revised the way the keyword library is loaded; instead of loading it manually, set keywordAddonName (see Readme.txt)
+- Updated the documentation.
+
+v1.0.3 (February 5, 2012)
+- Entering a new search parameter now properly scrolls to the top.
+
+v1.0.2 (December 2, 2011)
+- Fixed an error that was occurring when creating a new macro (please report such errors when you encounter them!  I can't fix them if I don't realize they are happening!)
+- Fixed an issue where the (dynamic) text was being displayed where it shouldn't have been.
+- The search text is now cleared upon opening icon windows.
+
+v1.0.1 (November 29, 2011)
+- Added support for WoW version 4.3
+- The number of icons that can be used for macros and equipment sets has been significantly increased by Blizzard (though most of the new icons currently lack keyword data).  It is now possible to add a fishing pole icon to your fishing equipment set!  Yay!
+- Also thanks to Blizzard, spell icons for your class are now gathered at the very top of the macro icon selector to make them easier to find.
+
+v1.0.0 (September 17, 2011)
+- Initial release of LibAdvancedIconSelector-1.0
