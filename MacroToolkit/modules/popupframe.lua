@@ -57,31 +57,31 @@ function MT:CreateMTPopup()
 	mtpftr:SetTexture("Interface\\MacroFrame\\MacroPopup-TopRight")
 	mtpftr:SetSize(64, 368)
 	mtpftr:SetPoint("TOPLEFT", 256, 0)
-	
+
 	local mtpfbl = mtpf:CreateTexture("BACKGROUND")
 	mtpfbl:SetTexture("Interface\\MacroFrame\\MacroPopup-BotLeft")
 	mtpfbl:SetSize(256, 64)
 	mtpfbl:SetPoint("TOPLEFT", 0, -368)
-	
+
 	local mtpfbr = mtpf:CreateTexture("BACKGROUND")
 	mtpfbr:SetTexture("Interface\\MacroFrame\\MacroPopup-BotRight")
 	mtpfbr:SetSize(64, 64)
 	mtpfbr:SetPoint("TOPLEFT", 256, -368)
-	
+
 	local mtpfml = mtpf:CreateTexture("BACKGROUND")
 	mtpfml:SetTexture("Interface\\MacroFrame\\MacroPopup-TopLeft")
 	mtpfml:SetTexCoord(0, 1, 0.3, 1)
 	mtpfml:SetSize(405, 207)
 	mtpfml:SetPoint("TOPLEFT", mtpftl, "BOTTOMLEFT")
 	mtpfml:Hide()
-	
+
 	local mtpfmr = mtpf:CreateTexture("BACKGROUND")
 	mtpfmr:SetTexture("Interface\\MacroFrame\\MacroPopup-TopRight")
 	mtpfmr:SetTexCoord(0, 1, 0.3, 1)
 	mtpfmr:SetSize(64, 207)
 	mtpfmr:SetPoint("TOPLEFT", mtpftr, "BOTTOMLEFT")
 	mtpfmr:Hide()
-	
+
 	local mtpftitle = mtpf:CreateFontString(nil, "BACKGROUND", "GameFontHighlightSmall")
 	mtpftitle:SetText(_G.MACRO_POPUP_TEXT)
 	mtpftitle:SetPoint("TOPLEFT", 24, -21)
@@ -89,7 +89,7 @@ function MT:CreateMTPopup()
 	local mtpfcicon = mtpf:CreateFontString(nil, "BACKGROUND", "GameFontHighlightSmall")
 	mtpfcicon:SetText(_G.MACRO_POPUP_CHOOSE_ICON)
 	mtpfcicon:SetPoint("TOPLEFT", 24, -69)
-	
+
 	local mtpfavailable = mtpf:CreateFontString("MacroToolkitPopupAvailable", "BACKGROUND", "GameFontHighlightSmall")
 	mtpfavailable:SetPoint("LEFT", mtpfcicon, "RIGHT", 20, 0)
 
@@ -98,7 +98,7 @@ function MT:CreateMTPopup()
 	mtpfedit:SetSize(182, 20)
 	mtpfedit:SetPoint("TOPLEFT", 29, -35)
 	mtpfedit:SetFontObject("ChatFontNormal")
-	
+
 	local mtpfeditl = mtpfedit:CreateTexture("MacroToolkitFramePopupL", "BACKGROUND")
 	mtpfeditl:SetTexture("Interface\\ClassTrainerFrame\\UI-ClassTrainer-FilterBorder")
 	mtpfeditl:SetSize(12, 29)
@@ -123,7 +123,7 @@ function MT:CreateMTPopup()
 			MT:PopupOkayUpdate()
 			MacroToolkitSelMacroName:SetText(text)
 		end)
-	
+
 	mtpfedit:SetScript("OnEscapePressed", function() MT:CancelEdit() end)
 	mtpfedit:SetScript("OnEnterPressed", function() if MacroToolkitPopupOk:IsEnabled() then MT:PopupOkayButtonOnClick() end end)
 
@@ -164,17 +164,17 @@ function MT:CreateMTPopup()
 			aisframe:SetSearchParameter(searchtext)
 		end
 	end
-	
+
 	local searchBox = CreateFrame("EditBox", "MacroToolkitSearchBox", mtpf, "BackdropTemplate,InputBoxTemplate")
 	searchBox:SetAutoFocus(false)
 	searchBox:SetSize(150, 22)
 	searchBox:SetPoint("LEFT", searchLabel, "RIGHT", 10, 0)
 	searchBox:SetScript("OnTextChanged", searchtextchanged)
-	
+
 	local spellsearch = CreateFrame("CheckButton", "MacroToolkitSpellCheck", mtpf, "BackdropTemplate,UICheckButtonTemplate")
 	spellsearch:SetSize(32, 32)
 	spellsearch:SetPoint("LEFT", searchBox, "RIGHT", 10, 0)
-	
+
 	function showchecktip()
 		GameTooltip:SetOwner(MacroToolkitSpellCheck, "ANCHOR_TOPRIGHT")
 		GameTooltip:ClearLines()
@@ -183,7 +183,7 @@ function MT:CreateMTPopup()
 		--GameTooltip:AddLine(L["(experimental)"], 1, 1, 1)
 		GameTooltip:Show()
 	end
-	
+
 	spellsearch:SetScript("OnEnter", showchecktip)
 	spellsearch:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	spellsearch:SetScript("OnClick", function(this, button) MT.SpellCheck = this:GetChecked() searchtextchanged(MacroToolkitSearchBox, true) end)
@@ -197,12 +197,12 @@ function MT:CreateMTPopup()
 	sb:ClearAllPoints()
 	sb:SetPoint("TOPLEFT", mtpfscroll, "TOPRIGHT", 6, -22)
 	sb:SetPoint("BOTTOMLEFT", mtpfscroll, "BOTTOMRIGHT", 6, 22)
-	
+
 	MacroToolkitPopupScrollScrollBarScrollUpButton:ClearAllPoints()
 	MacroToolkitPopupScrollScrollBarScrollUpButton:SetPoint("BOTTOM", sb, "TOP", 0, 5)
 	MacroToolkitPopupScrollScrollBarScrollDownButton:ClearAllPoints()
 	MacroToolkitPopupScrollScrollBarScrollDownButton:SetPoint("TOP", sb, "BOTTOM", 0, -5)
-	
+
 	local sbt = mtpfscroll:CreateTexture("MacroToolkitFramePopupSBT", "BACKGROUND")
 	sbt:SetTexture("Interface\\ClassTrainerFrame\\UI-ClassTrainer-ScrollBar")
 	sbt:SetSize(30, 140)
@@ -241,7 +241,7 @@ function MT:CreateMTPopup()
 	mtpfok:SetPoint("RIGHT", mtpfcancel, "LEFT", -2, 0)
 	mtpfok:SetScript("OnClick", function() MT:PopupOkayButtonOnClick() end)
 
-	mtpf:SetScript("OnShow", 
+	mtpf:SetScript("OnShow",
 		function(this)
 			mtpfedit:SetFocus()
 			--PlaySound("igCharacterInfoOpen")
@@ -253,7 +253,7 @@ function MT:CreateMTPopup()
 				MacroToolkitText:Hide()
 				MacroToolkitFauxText:Hide()
 				MT:SelectTexture(1)
-				mtpfedit:SetText("")		
+				mtpfedit:SetText("")
 			elseif this.mode == "edit" then
 				if PanelTemplates_GetSelectedTab(MacroToolkitFrame) == 3 then
 					mtpfedit:SetText(MT.db.global.extra[tostring(MacroToolkitFrame.selectedMacro)].name)
@@ -288,7 +288,7 @@ function MT:CreateMTPopup()
 			MT:Skin(mtpf)
 		end)
 
-	mtpf:SetScript("OnHide", 
+	mtpf:SetScript("OnHide",
 		function(this)
 			if this.mode == "new" then
 				MacroToolkitText:Show()
@@ -320,7 +320,7 @@ function MT:CreateMTPopup()
 		end)
 
 	local mtpfgl = CreateFrame("Button", "MacroToolkitPopupGoLarge", mtpf, "BackdropTemplate,UIPanelButtonTemplate")
-	
+
 	MT.golarge =
 		function()
 			mtpf:SetSize(446, 617)
@@ -340,7 +340,7 @@ function MT:CreateMTPopup()
 			--PlaySound("igCharacterInfoOpen")
 			PlaySound(839)
 		end
-	
+
 	MT.gosmall =
 		function()
 			mtpf:SetSize(297, 411)
@@ -360,7 +360,7 @@ function MT:CreateMTPopup()
 			--PlaySound("igCharacterInfoClose")
 			PlaySound(840)
 		end
-	
+
 	mtpfgl:SetText(L["Go Large"])
 	mtpfgl:SetSize(78, 22)
 	mtpfgl:SetPoint("TOPRIGHT", -13, -62)
@@ -372,16 +372,16 @@ function MT:CreateMTPopup()
 				MT.golarge()
 			end
 		end)
-		
+
 	return mtpf
 end
 
 function MT:RefreshPlayerSpellIconInfo()
 	--if MT.MACRO_ICON_FILENAMES then return end
-	
+
 	-- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
 	local activeIcons = {}
-	
+
 	for i = 1, GetNumSpellTabs() do
 		local tab, tabTex, offset, numSpells, _ = GetSpellTabInfo(i)
 		offset = offset + 1
@@ -398,7 +398,7 @@ function MT:RefreshPlayerSpellIconInfo()
 			if (spellType == "FLYOUT") then
 				local _, _, numSlots, isKnown = GetFlyoutInfo(ID)
 				if (isKnown and numSlots > 0) then
-					for k = 1, numSlots do 
+					for k = 1, numSlots do
 						local spellID, overrideSpellID, isKnown = GetFlyoutSlotInfo(ID, k)
 						if (isKnown) then
 							local fileID = GetSpellTexture(spellID)
@@ -460,9 +460,9 @@ function MT:SelectTexture(selectedIcon)
 	mtpf.selectedIconTexture = nil
 	local texture = MT:GetSpellorMacroIconInfo(mtpf.selectedIcon)
 	if type(texture) == "number" then
-		MacroToolkitSelMacroButtonIcon:SetTexture(texture)
+		MacroToolkitSelMacroButton.Icon:SetTexture(texture)
 	else
-		MacroToolkitSelMacroButtonIcon:SetTexture(format("INTERFACE\\ICONS\\%s", texture))
+		MacroToolkitSelMacroButton.Icon:SetTexture(format("INTERFACE\\ICONS\\%s", texture))
 	end
 	MT:PopupOkayUpdate()
 	local mode = mtpf.mode
@@ -482,7 +482,7 @@ function MT:PopupUpdate(this)
 	local macroPopupIcon, macroPopupButton
 	local macroPopupOffset = FauxScrollFrame_GetOffset(MacroToolkitPopupScroll)
 	local index
-	
+
 	if this.mode == "new" then MacroToolkitPopupEdit:SetText("")
 	elseif this.mode == "edit" then
 		local name, _, body = GetMacroInfo(MacroToolkitFrame.selectedMacro)
@@ -522,7 +522,7 @@ function MT:PopupOkayButtonOnClick()
 		MacroToolkitPopup:Hide()
 	else
 		local index = 1
-		local iconTexture = MT:GetSpellorMacroIconInfo(MacroToolkitPopup.selectedIcon)		
+		local iconTexture = MT:GetSpellorMacroIconInfo(MacroToolkitPopup.selectedIcon)
 		local text = MacroToolkitPopupEdit:GetText()
 		text = string.gsub(text, "\"", "")
 		if MacroToolkitPopup.mode == "new" then
@@ -547,7 +547,7 @@ function MT:PopupOkayButtonOnClick()
 		PlaySound(798)
 	end
 end
-		
+
 function MT:UpdateIconCount()
 	local icframe = MacroToolkitPopupIcons
 	local dy = icframe:GetSectionVisibility("DynamicIcon")

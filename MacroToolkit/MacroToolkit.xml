@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-	<CheckButton name="MacroToolkitButtonTemplate" inherits="PopupButtonTemplate" virtual="true">
+	<CheckButton name="MacroToolkitButtonTemplate" inherits="SelectorButtonTemplate" virtual="true">
 		<Layers>
 			<Layer level="OVERLAY">
 				<Texture name="$parentUnbound" file="Interface\COMMON\VOICECHAT-MUTED">
@@ -10,6 +10,13 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentName" inherits="GameFontHighlightSmall" parentKey="Name">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="5"/>
+					</Anchors>
+				</FontString>
+			</Layer>
 		</Layers>
 		<Scripts>
 			<OnLoad>
@@ -17,7 +24,7 @@
 			</OnLoad>
 		</Scripts>
 	</CheckButton>
-	
+
 	<Script file="modules\macrobroker.lua"/>
 	<EditBox name="MacroToolkit_EditBoxTemplate" inherits="ChatFrameEditBoxTemplate" hidden="true" virtual="true">
 		<Scripts>
