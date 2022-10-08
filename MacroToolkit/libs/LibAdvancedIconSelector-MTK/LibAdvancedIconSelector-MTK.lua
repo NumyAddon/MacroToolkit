@@ -871,7 +871,6 @@ end
 
 -- Refreshes the icon display.
 function IconSelectorFrame:private_UpdateIcons()
-	ViragDevTool_AddData(self, "IconSelectorFrame:private_UpdateIcons, self")
 	if self:IsShown() then
 		local firstIcon = 1 + self.scrollOffset * self.iconsX - self.fauxResults
 		local last = self.iconsX * self.iconsY

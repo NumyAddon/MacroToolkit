@@ -40,7 +40,7 @@ local function doicongroups()
 end
 
 function MT:CreateMTPopup()
-	mtpf = CreateFrame("Frame", "MacroToolkitPopup", UIParent, "BackdropTemplate")
+	mtpf = CreateFrame("Frame", "MacroToolkitPopup", MacroToolkitFrame, "BackdropTemplate")
 	mtpf:SetMovable(true)
 	mtpf:EnableMouse(true)
 	if MT.db.profile.scale then mtpf:SetScale(MT.db.profile.scale) end
