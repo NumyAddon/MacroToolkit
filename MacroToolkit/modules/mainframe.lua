@@ -960,6 +960,7 @@ function MT:CreateSecureFrames()
 		frame:SetAttribute("type", "macro")
 		frame:SetAttribute("macrotext", "")
 		frame:SetAttribute("dynamic", false)
+		frame:RegisterForClicks("AnyUp", "AnyDown")
 		--registerStateHandler(frame)
 	end
 
@@ -970,5 +971,6 @@ function MT:CreateSecureFrames()
 		frame:SetID(b)
 		frame:SetAttribute("type", "macro")
 		frame:SetAttribute("macrotext", "")
+		frame:RegisterForClicks("AnyUp", "AnyDown")
 	end
 end
