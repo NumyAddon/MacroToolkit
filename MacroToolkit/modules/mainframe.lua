@@ -954,23 +954,36 @@ end
 
 function MT:CreateSecureFrames()
 	for b = 1, _G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS do
-		local frame = CreateFrame("Button", format("MTSB%d", b), nil, "SecureActionButtonTemplate, SecureHandlerBaseTemplate")
-		_G[format("MTSB%d", b)] = _G[format("MTSB%d", b)]
-		frame:SetID(b)
-		frame:SetAttribute("type", "macro")
-		frame:SetAttribute("macrotext", "")
-		frame:SetAttribute("dynamic", false)
-		frame:RegisterForClicks("AnyUp", "AnyDown")
-		--registerStateHandler(frame)
+		self:CreateSecureActionButton(b)
 	end
 
 	--extra macros
 	for b = 1001, 1000 + _G.MAX_ACCOUNT_MACROS do
-		local frame = CreateFrame("Button", format("MTSB%d", b), nil, "SecureActionButtonTemplate, SecureHandlerBaseTemplate")
-		_G[format("MTSB%d", b)] = _G[format("MTSB%d", b)]
-		frame:SetID(b)
-		frame:SetAttribute("type", "macro")
-		frame:SetAttribute("macrotext", "")
-		frame:RegisterForClicks("AnyUp", "AnyDown")
+		self:CreateSecureActionButton(b)
 	end
+end
+
+function MT:CreateSecureActionButton(index)
+	local frame = CreateFrame("Button", format("MTSB%d", index), nil, "SecureActionButtonTemplate, SecureHandlerBaseTemplate")
+	_G[format("MTSB%d", index)] = _G[format("MTSB%d", index)]
+	frame:SetID(index)
+	frame:SetAttribute("type", "macro")
+	frame:SetAttribute("macrotext", "")
+	frame:SetAttribute("dynamic", false)
+	frame:RegisterForClicks("AnyUp", "AnyDown")
+
+	local proxy = CreateFrame("Button", format("MTSBP%d", index), nil, "SecureActionButtonTemplate")
+	proxy:SetAttribute("type", "click")
+	proxy:SetAttribute("clickbutton", frame)
+
+	-- lots of thanks to Mitälie#3150 for this magic :)
+	-- Configure the proxy to record mousebutton on downclick and override on upclick
+	SecureHandlerUnwrapScript(proxy, "OnClick")
+	SecureHandlerWrapScript(proxy, "OnClick", proxy, [[
+	  if down then
+		self:SetAttribute("origbutton", button)
+	  else
+		return self:GetAttribute("origbutton")
+	  end
+	]])
 end
