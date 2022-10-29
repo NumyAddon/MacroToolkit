@@ -3,11 +3,11 @@
 ## Notes: Enhanced macro frame with additional tools
 ## Notes-zhTW: 增強巨集UI，方便編寫巨集並加強功能
 ## Notes-esES: Marco de macros mejorado con herramientas adicionales
-## Author: Deepac, patched by Numy
-## Version: @project-version@-unofficial
+## Author: Deepac, marciowb, The_Junksterr, Numy
+## Version: @project-version@
 ## SavedVariables: MacroToolkitDB
 ## OptionalDeps: ElvUI, Ace3
-## X-OriginalVersion: v7.3.0.2.1
+## X-Curse-Project-ID: 47117
 
 #@no-lib-strip@
 # Libraries
