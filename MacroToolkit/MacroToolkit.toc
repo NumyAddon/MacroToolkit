@@ -1,10 +1,10 @@
-## Interface: 100000
+## Interface: @toc-version-retail@
 ## Title: Macro Toolkit
 ## Notes: Enhanced macro frame with additional tools
 ## Notes-zhTW: 增強巨集UI，方便編寫巨集並加強功能
 ## Notes-esES: Marco de macros mejorado con herramientas adicionales
 ## Author: Deepac, patched by Numy
-## Version: v10.0.0-unofficial
+## Version: @project-version@-unofficial
 ## SavedVariables: MacroToolkitDB
 ## OptionalDeps: ElvUI, Ace3
 ## X-OriginalVersion: v7.3.0.2.1

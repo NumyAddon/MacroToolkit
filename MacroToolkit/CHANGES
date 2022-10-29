@@ -1,0 +1,7 @@
+updated toc version
+updated addon version
+removed most X-## toc metadata
+changed some used templates to use Dragonflight ones
+various minor changes needed to improve Dragonflight support
+
+for full changes from the official release, check https://github.com/Numynum/MacroToolkit/compare/872c065b0c1608ee95024e3cfb8a1129f777e949...master?w=1

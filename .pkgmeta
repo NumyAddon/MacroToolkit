@@ -1,0 +1,19 @@
+package-as: MacroToolkit
+
+move-folders:
+    MacroToolkit/MacroToolkit: MacroToolkit
+    MacroToolkit/MacroToolkitIcons: MacroToolkitIcons
+
+externals:
+    MacroToolkit/libs/AceComm-3.0: https://repos.wowace.com/wow/ace3/trunk/AceComm-3.0
+    MacroToolkit/libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
+    MacroToolkit/libs/AceDB-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDB-3.0
+    MacroToolkit/libs/AceDBOptions-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
+    MacroToolkit/libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
+    MacroToolkit/libs/AceGUI-3.0-SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
+    MacroToolkit/libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
+    MacroToolkit/libs/AceTimer-3.0: https://repos.wowace.com/wow/ace3/trunk/AceTimer-3.0
+    MacroToolkit/libs/CallbackHandler-1.0: https://repos.wowace.com/wow/ace3/trunk/CallbackHandler-1.0
+    MacroToolkit/libs/LibDataBroker-1.1: https://github.com/tekkub/libdatabroker-1-1
+    MacroToolkit/libs/LibSharedMedia-3.0: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
+    MacroToolkit/libs/LibStub: https://repos.wowace.com/wow/ace3/trunk/LibStub

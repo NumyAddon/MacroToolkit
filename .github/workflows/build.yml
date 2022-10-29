@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Replace toc-versions
+        uses: Numynum/ToCVersions@master
+
+      - name: Create Retail Package
+        uses: BigWigsMods/packager@master
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}

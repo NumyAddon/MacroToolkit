@@ -11,7 +11,9 @@ local BreakUpLargeNumbers, DeleteCursorItem, GetContainerNumSlots, UnitAura, Get
 local UseContainerItem, SetCVar, SetRaidTarget, PlaySound, HideUIPanel = UseContainerItem, SetCVar, SetRaidTarget, PlaySound, HideUIPanel
 local PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlot = PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlot
 local CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor = CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor
-local exFormat = "%s%s%s [btn:1]%s LeftButton;[btn:2]%s RightButton;[btn:3]%s MiddleButton;[btn:4]%s Button4;[btn:5]%s Button5"
+local exFormat = "%s%s%s %s"
+-- temporarily disabled the button specific clicks until some fix from Blizzard happens :(
+-- local exFormat = "%s%s%s [btn:1]%s LeftButton;[btn:2]%s RightButton;[btn:3]%s MiddleButton;[btn:4]%s Button4;[btn:5]%s Button5"
 
 -- GLOBALS: ChatEdit_InsertLink StaticPopupDialogs SpellBookFrame MacroToolkitText MacroToolkitEnterText MacroToolkitFauxText MacroToolkitSelMacroName MacroToolkitSelBg MacroToolkitDelete
 -- GLOBALS: MacroToolkitExtend MacroToolkitShorten MacroToolkitSelMacroButton MacroToolkitLimit MacroToolkitEdit MacroToolkitCopy GameTooltip MacroToolkitBind MacroToolkitConditions
@@ -211,6 +213,7 @@ function MT:eventHandler(this, event, arg1, ...)
 		--if #MT.db.global.extended > 0 then
 		if countTables(MT.db.global.extended) > 0 then
 			for i, e in pairs(MT.db.global.extended) do
+				print(format("MTSB%d", i), e.body)
 				_G[format("MTSB%d", i)]:SetAttribute("macrotext", e.body)
 				_G[format("MTSB%d", i)]:SetAttribute("dynamic", MT:IsDynamic(i))
 				MT:UpdateIcon(_G[format("MTSB%d", i)])
@@ -219,6 +222,7 @@ function MT:eventHandler(this, event, arg1, ...)
 		--if #MT.db.char.extended > 0 then
 		if countTables(MT.db.char.extended) > 0 then
 			for i, e in pairs(MT.db.char.extended) do
+				print(format("MTSB%d", i), e.body)
 				_G[format("MTSB%d", i)]:SetAttribute("macrotext", e.body)
 				_G[format("MTSB%d", i)]:SetAttribute("dynamic", MT:IsDynamic(i))
 				MT:UpdateIcon(_G[format("MTSB%d", i)])
@@ -248,7 +252,11 @@ function MT:eventHandler(this, event, arg1, ...)
 		end
 		--if #MT.db.global.extra > 0 then
 		if countTables(MT.db.global.extra) > 0 then
-			for i, e in pairs(MT.db.global.extra) do _G[format("MTSB%d", i)]:SetAttribute("macrotext", e.body) end
+			for i, e in pairs(MT.db.global.extra) do
+
+				print(format("MTSB%d", i), e.body)
+				_G[format("MTSB%d", i)]:SetAttribute("macrotext", e.body)
+			end
 		end
 		if not MT.db.profile.usecolours then MacroToolkitFauxScrollFrame:Hide() end
 		if not MT.db.profile.viserrors then
@@ -568,7 +576,7 @@ function MT:ExtendMacro(save, macrobody, idx, exists)
 	--modified 15/12/13 - need to ensure button info is passed to the secure frame
 	--local newbody = format("%s%s%s %s", showtooltip, show, MT.click, securebutton:GetName())
 	local n = format("MTSB%d", exists and idx or index)
-	local newbody = format(exFormat, showtooltip, show, MT.click, n, n, n, n, n)
+	local newbody = format(exFormat, showtooltip, show, MT.click, n)--, n, n, n, n)
 	if not idx then
 		MacroToolkitText.extended = true
 		_G[format("MacroToolkitButton%d", (MTF.selectedMacro - MTF.macroBase))].extended = true
@@ -600,7 +608,7 @@ function MT:CorrectExtendedMacros()
 				local show = select(3, string.find(body, "(#show .-)\n"))
 				if showtooltip then showtooltip = format("%s\n", showtooltip) else showtooltip = "" end
 				if show then show = format("%s\n", show) else show = "" end
-				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b)
+				local newbody = format(exFormat, showtooltip, show, MT.click, b)--, b, b, b, b)
 				EditMacro(m, nil, nil, newbody)
 			end
 		end
