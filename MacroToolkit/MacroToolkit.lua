@@ -634,7 +634,7 @@ end
 
 local function unextend(body)
 	local mbody = select(3, GetMacroInfo(MTF.selectedMacro))
-	local mindex = select(3, string.find(mbody, "MTSB(%d+)"))
+	local mindex = select(3, string.find(mbody, "MTSBP(%d+)"))
 	local securebutton = _G[format("MTSB%d", mindex)]
 	MT:DeleteExtended(mindex)
 	securebutton:SetAttribute("macrotext", "")
