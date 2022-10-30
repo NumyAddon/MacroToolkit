@@ -606,7 +606,8 @@ function MT:CorrectExtendedMacros()
 				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, b)
 				EditMacro(m, nil, nil, newbody)
 			end
-			if string.find(body, format("%s MTSB%%d+", MT.click)) then
+			-- upgrade for the 10.0.0 /click workaround
+			if string.find(body, format("%s %sMTSB%%d+", MT.click, '%[btn:1%]')) then
 				local b = format("MTSBP%d", string.match(body, "MTSB(%d+)"))
 				local showtooltip = select(3, string.find(body, "(#showtooltip.-)\n"))
 				local show = select(3, string.find(body, "(#show .-)\n"))
@@ -794,7 +795,9 @@ function MT:MacroFrameUpdate()
 					macroButton:SetChecked(true)
 					if tab < 4 then MacroToolkitSelMacroName:SetText(name)
 					else MacroToolkitCSelMacroName:SetText(name) end
-					local s, e, index = string.find(body, "MTSB(%d+)")
+					local _, _, index = string.find(body, "MTSB(%d+)")
+					local _, _, proxyIndex = string.find(body, "MTSBP(%d+)")
+					index = index or proxyIndex
 					if index then
 						body = MT:GetExtendedBody(index, tab)
 						MacroToolkitText.extended = true
