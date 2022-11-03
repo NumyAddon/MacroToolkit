@@ -976,14 +976,17 @@ function MT:CreateSecureActionButton(index)
 	proxy:SetAttribute("type", "click")
 	proxy:SetAttribute("clickbutton", frame)
 
-	-- lots of thanks to Mitälie#3150 for this magic :)
-	-- Configure the proxy to record mousebutton on downclick and override on upclick
-	SecureHandlerUnwrapScript(proxy, "OnClick")
+	-- Configure the button to record mousebutton on downclick
+	SecureHandlerWrapScript(frame, "OnClick", proxy, [[
+		if down then
+			owner:SetAttribute("origbutton", button)
+		end
+	]])
+
+	-- Configure the proxy to override mousebutton on upclick
 	SecureHandlerWrapScript(proxy, "OnClick", proxy, [[
-	  if down then
-		self:SetAttribute("origbutton", button)
-	  else
-		return self:GetAttribute("origbutton")
-	  end
+		if not down then
+			return self:GetAttribute("origbutton")
+		end
 	]])
 end

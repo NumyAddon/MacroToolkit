@@ -570,8 +570,9 @@ function MT:ExtendMacro(save, macrobody, idx, exists)
 	end
 	--modified 15/12/13 - need to ensure button info is passed to the secure frame
 	--local newbody = format("%s%s%s %s", showtooltip, show, MT.click, securebutton:GetName())
-	local n = format("MTSBP%d", exists and idx or index)
-	local newbody = format(exFormat, showtooltip, show, MT.click, n, n, n, n, n, MT.click, n)
+	local n = format("MTSB%d", exists and idx or index)
+	local np = format("MTSBP%d", exists and idx or index)
+	local newbody = format(exFormat, showtooltip, show, MT.click, n, n, n, n, n, MT.click, np)
 	if not idx then
 		MacroToolkitText.extended = true
 		_G[format("MacroToolkitButton%d", (MTF.selectedMacro - MTF.macroBase))].extended = true
@@ -598,22 +599,24 @@ function MT:CorrectExtendedMacros()
 		local body = select(3, GetMacroInfo(m))
 		if body then
 			if string.find(body, format("%s MacroToolkitSecureButton%%d+", MT.click)) then
-				local b = format("MTSBP%d", string.match(body, "MacroToolkitSecureButton(%d+)"))
+				local b = format("MTSB%d", string.match(body, "MacroToolkitSecureButton(%d+)"))
+				local bp = format("MTSBP%d", string.match(body, "MacroToolkitSecureButton(%d+)"))
 				local showtooltip = select(3, string.find(body, "(#showtooltip.-)\n"))
 				local show = select(3, string.find(body, "(#show .-)\n"))
 				if showtooltip then showtooltip = format("%s\n", showtooltip) else showtooltip = "" end
 				if show then show = format("%s\n", show) else show = "" end
-				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, b)
+				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, bp)
 				EditMacro(m, nil, nil, newbody)
 			end
 			-- upgrade for the 10.0.0 /click workaround
-			if string.find(body, format("%s %sMTSB%%d+", MT.click, '%[btn:1%]')) then
-				local b = format("MTSBP%d", string.match(body, "MTSB(%d+)"))
+			if string.find(body, format("%s %sMTSBP?%%d+", MT.click, '%[btn:1%]')) then
+				local b = format("MTSB%d", string.match(body, "MTSBP?(%d+)"))
+				local bp = format("MTSBP%d", string.match(body, "MTSBP?(%d+)"))
 				local showtooltip = select(3, string.find(body, "(#showtooltip.-)\n"))
 				local show = select(3, string.find(body, "(#show .-)\n"))
 				if showtooltip then showtooltip = format("%s\n", showtooltip) else showtooltip = "" end
 				if show then show = format("%s\n", show) else show = "" end
-				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, b)
+				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, bp)
 				EditMacro(m, nil, nil, newbody)
 			end
 		end
