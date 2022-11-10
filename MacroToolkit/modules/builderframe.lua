@@ -41,11 +41,11 @@ function MT:CreateBuilderFrame()
 		end)
 	]]--
 	mtbf:Hide()
-	
+
 	local mtstitle = mtbf:CreateFontString(nil, "BORDER", "GameFontNormal")
 	mtstitle:SetText(L["Condition Builder"])
 	mtstitle:SetPoint("TOP", 0, -5)
-	
+
 	local mtbfportrait = mtbf:CreateTexture(nil, "OVERLAY", nil, -1)
 	mtbfportrait:SetTexture("Interface\\TUTORIALFRAME\\UI-HELP-PORTRAIT")
 	mtbfportrait:SetSize(60, 60)
@@ -74,7 +74,7 @@ function MT:CreateBuilderFrame()
 	mtbftarget:SetList(ddtargets, ddtorder)
 	mtbftarget:SetWidth(200)
 	mtbftarget:SetLabel(format("%s:", _G.TARGET))
-	mtbftarget:SetCallback("OnValueChanged", 
+	mtbftarget:SetCallback("OnValueChanged",
 		function(info, name, key)
 			if key == "other" then mtbfother.frame:Show()
 			else mtbfother.frame:Hide() end
@@ -82,20 +82,20 @@ function MT:CreateBuilderFrame()
 			updatepreview()
 		end)
 	mtbftarget:SetPoint("TOPLEFT", 15, -65)
-	
+
 	mtbfother = AceGUI:Create("EditBox")
 	mtbfother.frame:SetParent(mtbf)
 	mtbfother.label:SetTextColor(1, 1, 1, 1)
 	mtbfother:SetWidth(200)
 	mtbfother:SetLabel(format("%s:", L["Enter target"]))
-	mtbfother:SetCallback("OnEnterPressed", 
+	mtbfother:SetCallback("OnEnterPressed",
 		function(info, target)
 			MT.builder.othertarget = target
 			updatepreview()
 		end)
 	mtbfother:SetPoint("LEFT", mtbftarget.frame, "RIGHT", 10, 0)
 	mtbfother.frame:Hide()
-	
+
 	local ddtoptions = {
 		["zero"] = "",
 		["dead"] = L["dead"], ["nodead"] = L["nodead"],
@@ -108,7 +108,7 @@ function MT:CreateBuilderFrame()
 		MT.builder[format("targetoption%d", index)] = (key == "zero") and "" or key
 		updatepreview()
 	end
-	
+
 	local mtbftopts1 = AceGUI:Create("Dropdown")
 	mtbftopts1.frame:SetParent(mtbf)
 	mtbftopts1:SetList(ddtoptions, ddoorder)
@@ -117,28 +117,28 @@ function MT:CreateBuilderFrame()
 	mtbftopts1.label:SetTextColor(1, 1, 1, 1)
 	mtbftopts1:SetCallback("OnValueChanged", function(info, name, key) tovaluechanged(key, 1) end)
 	mtbftopts1:SetPoint("TOPLEFT", mtbftarget.frame, "BOTTOMLEFT", 0, -5)
-	
+
 	local mtbftopts2 = AceGUI:Create("Dropdown")
 	mtbftopts2.frame:SetParent(mtbf)
 	mtbftopts2:SetList(ddtoptions, ddoorder)
 	mtbftopts2:SetWidth(150)
 	mtbftopts2:SetCallback("OnValueChanged", function(info, name, key) tovaluechanged(key, 2) end)
 	mtbftopts2:SetPoint("LEFT", mtbftopts1.frame, "RIGHT", 3, -9)
-	
+
 	local mtbftopts3 = AceGUI:Create("Dropdown")
 	mtbftopts3.frame:SetParent(mtbf)
 	mtbftopts3:SetList(ddtoptions, ddoorder)
 	mtbftopts3:SetWidth(150)
 	mtbftopts3:SetCallback("OnValueChanged", function(info, name, key) tovaluechanged(key, 3) end)
 	mtbftopts3:SetPoint("LEFT", mtbftopts2.frame, "RIGHT", 3, 0)
-	
+
 	local mtbftopts4 = AceGUI:Create("Dropdown")
 	mtbftopts4.frame:SetParent(mtbf)
 	mtbftopts4:SetList(ddtoptions, ddoorder)
 	mtbftopts4:SetWidth(150)
 	mtbftopts4:SetCallback("OnValueChanged", function(info, name, key) tovaluechanged(key, 4) end)
 	mtbftopts4:SetPoint("LEFT", mtbftopts3.frame, "RIGHT", 3, 0)
-	
+
 	local ddotherorder = {"zero",
 		"bar", "bonusbar", "btn", "channeling", "nochanneling", "combat", "nocombat", "cursor",
 		"extrabar", "flyable", "noflyable", "flying", "noflying", "form", "indoors",
@@ -218,14 +218,14 @@ function MT:CreateBuilderFrame()
 		MT.builder[format("addp%d", row)] = (value == "zero") and "" or value
 		updatepreview()
 	end
-	
+
 	local function addsvaluechanged(value, row)
 		if MT.builder[format("addp%d", row)] or "" ~= "" then
 			MT.builder[format("adds%d", row)] = (value == "zero") and "" or (format("/%s", value))
 			updatepreview()
 		end
 	end
-	
+
 	local mtbfaddp1 = AceGUI:Create("Dropdown")
 	local mtbfadde1 = AceGUI:Create("EditBox")
 	local mtbfadds1 = AceGUI:Create("Dropdown")
@@ -249,7 +249,7 @@ function MT:CreateBuilderFrame()
 	mtbfadd1.label:SetTextColor(1, 1, 1, 1)
 	mtbfadd1:SetCallback("OnValueChanged", function(info, name, key) addvaluechanged(key, 1, mtbfaddp1, mtbfadde1, mtbfadds1) end)
 	mtbfadd1:SetPoint("TOPLEFT", mtbftopts1.frame, "BOTTOMLEFT", 0, -5)
-	
+
 	mtbfaddp1.frame:SetParent(mtbf)
 	mtbfaddp1:SetWidth(150)
 	mtbfaddp1:SetCallback("OnValueChanged", function(info, name, key) addpvaluechanged(key, 1) end)
@@ -261,20 +261,20 @@ function MT:CreateBuilderFrame()
 	mtbfadde1:SetCallback("OnEnterPressed", function(info, name, value) addpvaluechanged(value, 1) end)
 	mtbfadde1:SetPoint("LEFT", mtbfadd1.frame, "RIGHT", 3, -9)
 	mtbfadde1.frame:Hide()
-	
+
 	mtbfadds1.frame:SetParent(mtbf)
 	mtbfadds1:SetWidth(150)
 	mtbfadds1:SetCallback("OnValueChanged", function(info, name, key) addsvaluechanged(key, 1) end)
 	mtbfadds1:SetPoint("LEFT", mtbfadde1.frame, "RIGHT", 3, 0)
 	mtbfadds1.frame:Hide()
-	
+
 	local mtbfadd2 = AceGUI:Create("Dropdown")
 	mtbfadd2.frame:SetParent(mtbf)
 	mtbfadd2:SetList(ddother, ddotherorder)
 	mtbfadd2:SetWidth(200)
 	mtbfadd2:SetCallback("OnValueChanged", function(info, name, key) addvaluechanged(key, 2, mtbfaddp2, mtbfadde2, mtbfadds2) end)
 	mtbfadd2:SetPoint("TOPLEFT", mtbfadd1.frame, "BOTTOMLEFT", 0, -10)
-	
+
 	mtbfaddp2.frame:SetParent(mtbf)
 	mtbfaddp2:SetWidth(150)
 	mtbfaddp2:SetCallback("OnValueChanged", function(info, name, key) addpvaluechanged(key, 2) end)
@@ -286,20 +286,20 @@ function MT:CreateBuilderFrame()
 	mtbfadde2:SetCallback("OnEnterPressed", function(info, name, value) addpvaluechanged(value, 2) end)
 	mtbfadde2:SetPoint("LEFT", mtbfadd2.frame, "RIGHT", 3, 0)
 	mtbfadde2.frame:Hide()
-	
+
 	mtbfadds2.frame:SetParent(mtbf)
 	mtbfadds2:SetWidth(150)
 	mtbfadds2:SetCallback("OnValueChanged", function(info, name, key) addsvaluechanged(key, 2) end)
 	mtbfadds2:SetPoint("LEFT", mtbfadde2.frame, "RIGHT", 3, 0)
 	mtbfadds2.frame:Hide()
-	
+
 	local mtbfadd3 = AceGUI:Create("Dropdown")
 	mtbfadd3.frame:SetParent(mtbf)
 	mtbfadd3:SetList(ddother, ddotherorder)
 	mtbfadd3:SetWidth(200)
 	mtbfadd3:SetCallback("OnValueChanged", function(info, name, key) addvaluechanged(key, 3, mtbfaddp3, mtbfadde3, mtbfadds3) end)
 	mtbfadd3:SetPoint("TOPLEFT", mtbfadd2.frame, "BOTTOMLEFT", 0, -10)
-	
+
 	mtbfaddp3.frame:SetParent(mtbf)
 	mtbfaddp3:SetWidth(150)
 	mtbfaddp3:SetCallback("OnValueChanged", function(info, name, key) addpvaluechanged(key, 3) end)
@@ -311,20 +311,20 @@ function MT:CreateBuilderFrame()
 	mtbfadde3:SetCallback("OnEnterPressed", function(info, name, value) addpvaluechanged(value, 3) end)
 	mtbfadde3:SetPoint("LEFT", mtbfadd2.frame, "RIGHT", 3, 0)
 	mtbfadde3.frame:Hide()
-	
+
 	mtbfadds3.frame:SetParent(mtbf)
 	mtbfadds3:SetWidth(150)
 	mtbfadds3:SetCallback("OnValueChanged", function(info, name, key) addsvaluechanged(key, 3) end)
 	mtbfadds3:SetPoint("LEFT", mtbfadde3.frame, "RIGHT", 3, 0)
 	mtbfadds3.frame:Hide()
-	
+
 	local mtbfadd4 = AceGUI:Create("Dropdown")
 	mtbfadd4.frame:SetParent(mtbf)
 	mtbfadd4:SetList(ddother, ddotherorder)
 	mtbfadd4:SetWidth(200)
 	mtbfadd4:SetCallback("OnValueChanged", function(info, name, key) addvaluechanged(key, 4, mtbfaddp4, mtbfadde4, mtbfadds4) end)
 	mtbfadd4:SetPoint("TOPLEFT", mtbfadd3.frame, "BOTTOMLEFT", 0, -10)
-	
+
 	mtbfaddp4.frame:SetParent(mtbf)
 	mtbfaddp4:SetWidth(150)
 	mtbfaddp4:SetCallback("OnValueChanged", function(info, name, key) addpvaluechanged(key, 4) end)
@@ -336,20 +336,20 @@ function MT:CreateBuilderFrame()
 	mtbfadde4:SetCallback("OnEnterPressed", function(info, name, value) addpvaluechanged(value, 4) end)
 	mtbfadde4:SetPoint("LEFT", mtbfadd4.frame, "RIGHT", 3, 0)
 	mtbfadde4.frame:Hide()
-	
+
 	mtbfadds4.frame:SetParent(mtbf)
 	mtbfadds4:SetWidth(150)
 	mtbfadds4:SetCallback("OnValueChanged", function(info, name, key) addsvaluechanged(key, 4) end)
 	mtbfadds4:SetPoint("LEFT", mtbfadde4.frame, "RIGHT", 3,0)
 	mtbfadds4.frame:Hide()
-	
+
 	local mtbfadd5 = AceGUI:Create("Dropdown")
 	mtbfadd5.frame:SetParent(mtbf)
 	mtbfadd5:SetList(ddother, ddotherorder)
 	mtbfadd5:SetWidth(200)
 	mtbfadd5:SetCallback("OnValueChanged", function(info, name, key) addvaluechanged(key, 5, mtbfaddp5, mtbfadde5, mtbfadds5) end)
 	mtbfadd5:SetPoint("TOPLEFT", mtbfadd4.frame, "BOTTOMLEFT", 0, -10)
-	
+
 	mtbfaddp5.frame:SetParent(mtbf)
 	mtbfaddp5:SetWidth(150)
 	mtbfaddp5:SetCallback("OnValueChanged", function(info, name, key) addpvaluechanged(key, 5) end)
@@ -361,13 +361,13 @@ function MT:CreateBuilderFrame()
 	mtbfadde5:SetCallback("OnEnterPressed", function(info, name, value) addpvaluechanged(value, 5) end)
 	mtbfadde5:SetPoint("LEFT", mtbfadd5.frame, "RIGHT", 3, 0)
 	mtbfadde5.frame:Hide()
-	
+
 	mtbfadds5.frame:SetParent(mtbf)
 	mtbfadds5:SetWidth(150)
 	mtbfadds5:SetCallback("OnValueChanged", function(info, name, key) addsvaluechanged(key, 5) end)
 	mtbfadds5:SetPoint("LEFT", mtbfadde5.frame, "RIGHT", 3, 0)
 	mtbfadds5.frame:Hide()
-	
+
 	local mtbpreview = mtbf:CreateFontString("MacroToolkitPreview", "ARTWORK", "GameFontHighlightSmall")
 	mtbpreview:SetTextColor(1, 1, 1, 0.7)
 	mtbpreview:SetPoint("TOPLEFT", mtbfadd5.frame, "BOTTOMLEFT", 5, -20)
@@ -399,7 +399,7 @@ function MT:CreateBuilderFrame()
 			mtbpreview:SetText("")
 			MT:Skin(mtbf)
 		end)
-	
+
 	mtbf:SetScript("OnHide", function() MacroToolkitFrame:Show() end)
 	return mtbf
 end
@@ -436,7 +436,7 @@ function MT:BuildConditions()
 	local clen = string.len(conditions)
 	if string.sub(conditions, clen, clen) == "," then conditions = string.sub(conditions, 1, clen - 1) end
 	conditions = format("[%s]", conditions)
-	
+
 	return conditions
 end
 

@@ -132,7 +132,7 @@ local function validateCommandVerb(commandtext, parameters)
 	local c, cc = format("|c%s", MT.db.profile.defaultcolour), format("|c%s", MT.db.profile.commandcolour)
 	local p = false
 	local prefix = MT.slash
-	
+
 	commandtext = trim(commandtext)
 	if commandtext == string.sub(_G.SLASH_SHOWTOOLTIP1, 2) or commandtext == string.sub(_G.SLASH_SHOW1, 2) then prefix = "#" end
 	local msg = format("%s: %s%s%s", L["Invalid command"], prefix, cc, commandtext)
@@ -143,11 +143,11 @@ local function validateCommandVerb(commandtext, parameters)
 		for k, v in pairs(MT.commands) do
 			if k == commandtext then
 				if v[3] then cc = format("|c%s", MT.db.profile.emotecolour) end
-				if v[2] == 5 then 
+				if v[2] == 5 then
 					msg = format("%s: %s%s%s", L["Command removed"], MT.slash, cc, commandtext)
 					p = true
 				elseif v[2] == 1 then
-					if not param then 
+					if not param then
 						msg = format("%s: %s%s%s", L["Required parameter missing"], MT.slash, cc, commandtext)
 						p = true
 					else msg = nil end
@@ -203,7 +203,7 @@ local function isAlphaNumeric(args)
 		alpha = (s == 1 and e == string.len(a))
 		if not alpha then
 			arg1 = a
-			break 
+			break
 		end
 	end
 	return alpha, arg1
@@ -213,8 +213,12 @@ local function isValid(args, opt)
 	local valid, arg1
 	for _, a in ipairs(args) do
 		valid = nil
+		if opt == 5 then -- strip out colons and spaces for mod combinations
+			a = string.gsub(a, ":", "")
+			a = string.gsub(a, " ", "")
+		end
 		for _, o in ipairs(MT.optargs[opt]) do
-			if type(a) == "string" then a = string.lower(a) end -- ticket 139
+			if type(a) == "string" then a = string.lower(a) end
 			if o == trim(a) then
 				valid = true
 				break
@@ -291,11 +295,11 @@ local function parseSequence(parameters)
 			end
 		end
 	else cs = parameters end
-	
+
 	--0 is no longer accepted as a valid slot as of 6.0.2
 	s, e, rw = string.find(cs, "0%s*,")
 	if s then err2 = format("%s: |c%s0|r", L["Invalid argument"], MT.db.profile.stringcolour) end
-	
+
 	if not err then c = format("|c%s", MT.db.profile.seqcolour) end
 	return err, reset, cs, c, rwhole, err2
 end
@@ -325,7 +329,7 @@ local function validateCondition(condition, optionarguments)
 		for k, v in pairs(MT.conditions) do
 			if k == condition then
 				if v > 0 and k ~= "group" and k ~= "mod" and k ~= "modifier" and k~= "pet" and (not no) then
-					if #optionarguments == 0 then 
+					if #optionarguments == 0 then
 						msg = format("%s: %s%s", L["Argument not optional"], cc, condition)
 						noa = true
 						cond = false
@@ -386,13 +390,13 @@ local function replace(original, replacetext, replacewith, start)
 	local s, e = string.find(replacewith, "target%s-=")
 	start = start - 1
 	if s then e = s + 5 end
-	if s and not string.find(replacewith, format("|c%s", MT.db.profile.defaultcolour)) then 
+	if s and not string.find(replacewith, format("|c%s", MT.db.profile.defaultcolour)) then
 		local rw = format("%starget|r", string.sub(replacewith, 1, s - 1))
 		local s2, e2 = string.find(replacewith, "%s?=%s*", s)
 		replacewith = format("%s%s|c%s%s|r", rw, string.sub(replacewith, s2, e2), MT.db.profile.targetcolour, string.sub(replacewith, e2 + 1))
 	end
 	s, e = string.find(replacewith, "@")
-	if s and not string.find(replacewith, format("|c%s", MT.db.profile.defaultcolour)) then 
+	if s and not string.find(replacewith, format("|c%s", MT.db.profile.defaultcolour)) then
 		replacewith = format("%s|c%s%s|r", string.sub(replacewith, 1, s), MT.db.profile.targetcolour, string.sub(replacewith, e + 1))
 	end
 	s, e = string.find(original, escape(replacetext), start)
@@ -579,19 +583,25 @@ function MT:ShortenMacro(macrotext)
 				l = string.gsub(l, format("%s Sound_EnableSFX 1", scon), format("%smtso", MT.slash))
 				l = string.gsub(l, format("%s VehicleExit%%(%%)", srun), format("%smtev", MT.slash))
 			end
-			--*** ticket 89 
-			l = string.gsub(l, "mod:ctrl,mod:shift,mod:alt", "mod:ctrlshiftalt")
-			l = string.gsub(l, "mod:ctrl,mod:alt,mod:shift", "mod:ctrlshiftalt")
-			l = string.gsub(l, "mod:shift,mod:ctrl,mod:alt", "mod:ctrlshiftalt")
-			l = string.gsub(l, "mod:shift,mod:alt,mod:ctrl", "mod:ctrlshiftalt")
-			l = string.gsub(l, "mod:alt,mod:shift,mod:ctrl", "mod:ctrlshiftalt")
-			l = string.gsub(l, "mod:alt,mod:ctrl,mod:shift", "mod:ctrlshiftalt")
-			l = string.gsub(l, "mod:ctrl,mod:alt", "mod:ctrlalt")
-			l = string.gsub(l, "mod:alt,mod:ctrl", "mod:ctrlalt")
-			l = string.gsub(l, "mod:ctrl,mod:shift", "mod:ctrlshift")
-			l = string.gsub(l, "mod:shift,mod:ctrl", "mod:ctrlshift")
-			l = string.gsub(l, "mod:alt,mod:shift", "mod:altshift")
-			l = string.gsub(l, "mod:shift,mod:alt", "mod:altshift")
+			--*** ticket 89
+			l = string.gsub(l, "(mod:ctrl),mod:(.-),mod(.-)", "%1%2%3")
+			l = string.gsub(l, "(mod:shift),mod:(.-),mod:(.-)", "%1%2%3")
+			l = string.gsub(l, "(mod:alt),mod:(.-),mod:(.-)", "%1%2%3")
+			l = string.gsub(l, "(mod:ctrl),mod:(.-)", "%1%2")
+			l = string.gsub(l, "(mod:shift),mod:(.-)", "%1%2")
+			l = string.gsub(l, "(mod:alt),mod:(.-)", "%1%2")
+			l = string.gsub(l, "mod:ctrl:shift:alt", "mod:ctrlshiftalt")
+			l = string.gsub(l, "mod:ctrl:alt:shift", "mod:ctrlshiftalt")
+			l = string.gsub(l, "mod:shift:ctrl:alt", "mod:ctrlshiftalt")
+			l = string.gsub(l, "mod:shift:alt:ctrl", "mod:ctrlshiftalt")
+			l = string.gsub(l, "mod:alt:shift:ctrl", "mod:ctrlshiftalt")
+			l = string.gsub(l, "mod:alt:ctrl:shift", "mod:ctrlshiftalt")
+			l = string.gsub(l, "mod:ctrl:alt", "mod:ctrlalt")
+			l = string.gsub(l, "mod:alt:ctrl", "mod:ctrlalt")
+			l = string.gsub(l, "mod:ctrl:shift", "mod:ctrlshift")
+			l = string.gsub(l, "mod:shift:ctrl", "mod:ctrlshift")
+			l = string.gsub(l, "mod:alt:shift", "mod:altshift")
+			l = string.gsub(l, "mod:shift:alt", "mod:altshift")
 			--***
 			table.insert(mout, l)
 		end
@@ -619,7 +629,7 @@ function MT:ParseMacro(macrotext)
 	local option_arguments, parsed_text, errors = {}, {}, {}
 	local parameters, option_word, option_argument, target, pp
 	local spos, schar, ss, se, pt, err, col, pos, mout, vv, epos, lpos
-	
+
 	-- ticket 139 - handle comments at the start of a line
 	if string.sub(macrotext, 1, 2) == format("%s%s", MT.slash, MT.slash) then
 		comment = string.sub(macrotext, 3)
@@ -748,4 +758,4 @@ function MT:ParseMacro(macrotext)
 	end
 	return mout, errors, command_verb, pp
 end
-		
+
