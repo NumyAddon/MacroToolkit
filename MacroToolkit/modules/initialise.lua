@@ -58,7 +58,7 @@ MT.slots = {
 	[18]=_G.INVTYPE_RANGED,
 	[19]=_G.INVTYPE_TABARD,
 }
---0=none,1=numeric,2=textual,3=alphanumeric,4=party/raid,5=mod keys,6=mouse buttons,7=numeric with /
+--0=none,1=numeric,2=textual,3=alphanumeric,4=party/raid,5=mod keys,6=mouse buttons,7=numeric with /,8=alphanumeric with spaces
 MT.conditions={
 	["actionbar"]=1,
 	["bar"]=1,
@@ -81,6 +81,7 @@ MT.conditions={
 	["harm"]=0,
 	["help"]=0,
 	["indoors"]=0,
+	["known"]=8,
 	["mod"]=5,
 	["modifier"]=5,
 	["mounted"]=0,

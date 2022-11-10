@@ -142,7 +142,7 @@ function MT:CreateBuilderFrame()
 	local ddotherorder = {"zero",
 		"bar", "bonusbar", "btn", "channeling", "nochanneling", "combat", "nocombat", "cursor",
 		"extrabar", "flyable", "noflyable", "flying", "noflying", "form", "indoors",
-		"outdoors", "mod", "nomod", "mounted", "nomounted", "overridebar", "party", "raid",
+		"outdoors", "mod", "nomod", "known", "noknown", "mounted", "nomounted", "overridebar", "party", "raid",
 		"pet", "nopet", "petbattle", "possessbar", "spec", "stealth", "nostealth",
 		"swimming", "noswimming", "pvptalent", "talent", "vehicleui", "novehicleui", "worn",
 	}
@@ -169,7 +169,7 @@ function MT:CreateBuilderFrame()
 			pdd.frame:Show()
 			eb.frame:Hide()
 			ed.frame:Hide()
-		elseif ctype == 2 or ctype == 3 then
+		elseif ctype == 2 or ctype == 3 or ctype == 8 then
 			pdd.frame:Hide()
 			eb.frame:Show()
 			ed.frame:Hide()
@@ -386,6 +386,7 @@ function MT:CreateBuilderFrame()
 
 	mtbf:SetScript("OnShow",
 		function()
+			mtbf:ClearAllPoints()
 			mtbf:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
 			MT.builder = {}
 			local ddobjs1 = {mtbftarget, mtbftopts1, mtbftopts2, mtbftopts3, mtbftopts4, mtbfadd1, mtbfadd2, mtbfadd3, mtbfadd4, mtbfadd5}
