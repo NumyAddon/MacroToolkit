@@ -776,7 +776,8 @@ function MT:MacroFrameUpdate()
 					local em = exmacros[i]
 					if em then
 						if em.texture then	-- ticket 76
-							name, texture, body = em.name, format("Interface\\Icons\\%s", em.texture), em.body
+							texture = tonumber(em.texture) or format("Interface\\Icons\\%s", em.texture)
+							name, body = em.name, em.body
 							local commandName = format("CLICK MTSB%d:LeftButton", em.index)
 							k1, k2 = GetBindingKey(commandName)
 							if not (k1 or k2) then macroUnbound:Show() end
@@ -785,7 +786,8 @@ function MT:MacroFrameUpdate()
 					end
 				elseif tab == 4 then
 					local em = exmacros[i]
-					name, texture, body = em.name, format("Interface\\Icons\\%s", em.texture), em.body
+					texture = tonumber(em.texture) or format("Interface\\Icons\\%s", em.texture)
+					name, body = em.name, em.body
 				else name, texture, body = GetMacroInfo(MTF.macroBase + i) end
 				macroIcon:SetTexture(texture)
 				macroName:SetText(name)

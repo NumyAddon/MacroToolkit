@@ -121,7 +121,7 @@ function MT:CreateCopyFrame()
 	mtmcscrollchild:SetScript("OnEscapePressed", EditBox_ClearFocus)
 	font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.edfont)
 	mtmcscrollchild:SetFont(font, MT.db.profile.fonts.edsize, '')
-	mtmcscroll:SetScrollChild(mtmscrollchild)
+	mtmcscroll:SetScrollChild(mtmcscrollchild)
 
 	local mtmcfscroll = CreateFrame("ScrollFrame", "MacroToolkitCFauxScrollFrame", mtctextbg, "BackdropTemplate,UIPanelScrollFrameTemplate")
 	mtmcfscroll:SetPoint("TOPLEFT", 10, -6)
@@ -203,24 +203,25 @@ function MT:CreateCopyFrame()
 	mtccopy:Disable()
 	mtccopy:SetScript("OnClick",
 		function()
-			local button = format("MacroToolkitCButton%d", mtcframe.selectedMacro)
-			local name = _G[format("%sName", button)]:GetText()
-			local icon = string.gsub(string.upper(_G[format("%sIcon", button)]:GetTexture()), "INTERFACE\\ICONS\\", "")
+			local buttonName = format("MacroToolkitCButton%d", mtcframe.selectedMacro)
+			local button = _G[buttonName]
+			local name = _G[format("%sName", buttonName)]:GetText()
+			local icon = string.gsub(string.upper(button.Icon:GetTexture()), "INTERFACE\\ICONS\\", "")
 			local body = mtmcscrollchild:GetText()
 			MacroToolkitText:SetText(body)
 			MacroToolkitFrame.macroBase = _G.MAX_ACCOUNT_MACROS
-			if _G[button].extended then
+			if button.extended then
 				MacroToolkitFrame.selectedMacro = CreateMacro(name, icon, "MT", true)
 				MT:ExtendMacro(true)
-			else MacroToolkitFrame.selectedMacro = CreateMacro(name, icon, body, true) end
+			else
+				MacroToolkitFrame.selectedMacro = CreateMacro(name, icon, body, true)
+			end
 			MacroToolkitFrameTab2:GetScript("OnClick")(MacroToolkitFrameTab2)
 			updateslots(mtcslottext)
 			if MacroToolkitFrame.selectedMacro then
 				mtcnotice:SetFormattedText("%s: |cffffffff%s", L["Macro copied"], name)
-				--PlaySoundFile("Sound/Character/footsteps/mFootHugeDirtA.ogg")
 			else
 				mtcnotice:SetFormattedText("|cffff0000%s", _G.SPELL_FAILED_ERROR)
-				--PlaySoundFile("Sound/INTERFACE/igQuestFailed.ogg")
 			end
 		end)
 
