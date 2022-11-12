@@ -26,11 +26,11 @@ function MT:CreateCopyFrame()
 	mtcfportrait:SetTexture("Interface\\FriendsFrame\\FriendsFrameScrollIcon")
 	mtcfportrait:SetSize(60, 60)
 	mtcfportrait:SetPoint("TOPLEFT", -5, 5)
-	
+
 	local mtctitle = mtcframe:CreateFontString(nil, "BORDER", "GameFontNormal")
 	mtctitle:SetText(L["Copy Macro"])
 	mtctitle:SetPoint("TOP", 0, -5)
-	
+
 	local mtchbleft = mtcframe:CreateTexture(nil, "ARTWORK")
 	mtchbleft:SetTexture("Interface\\ClassTrainerFrame\\UI-ClassTrainer-HorizontalBar")
 	mtchbleft:SetSize(556, 16)
@@ -54,7 +54,7 @@ function MT:CreateCopyFrame()
 	mtcselname:SetPoint("TOPLEFT", mtcselbg, "TOPRIGHT", -4, -10)
 	local LSM = MT.LS("LibSharedMedia-3.0")
 	local font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.mfont)
-	mtcselname:SetFont(font, 16)
+	mtcselname:SetFont(font, 16, '')
 
 	local mtcselbutton = CreateFrame("CheckButton", "MacroToolkitCSelMacroButton", mtcframe, "BackdropTemplate,MacroToolkitButtonTemplate")
 	mtcselbutton:SetID(0)
@@ -73,11 +73,11 @@ function MT:CreateCopyFrame()
 	mtctextbg:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16, tileSize = 16, tile = true, insets = {left = 5, right = 5, top = 5, bottom = 5}})
 	mtctextbg:SetBackdropBorderColor(_G.TOOLTIP_DEFAULT_COLOR.r, _G.TOOLTIP_DEFAULT_COLOR.g, _G.TOOLTIP_DEFAULT_COLOR.b)
 	mtctextbg:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
-	
+
 	local mtmcscroll = CreateFrame("ScrollFrame", "MacroToolkitCScrollFrame", mtctextbg, "BackdropTemplate,UIPanelScrollFrameTemplate")
 	mtmcscroll:SetPoint("TOPLEFT", 10, -6)
 	mtmcscroll:SetPoint("BOTTOMRIGHT", -26, 4)
-	
+
 	local function onverticalscroll(this, offset)
 		local scrollbar1 = MacroToolkitCScrollFrameScrollBar
 		local scrollbar2 = MacroToolkitCFauxScrollFrameScrollBar
@@ -120,13 +120,13 @@ function MT:CreateCopyFrame()
 		end)
 	mtmcscrollchild:SetScript("OnEscapePressed", EditBox_ClearFocus)
 	font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.edfont)
-	mtmcscrollchild:SetFont(font, MT.db.profile.fonts.edsize)
+	mtmcscrollchild:SetFont(font, MT.db.profile.fonts.edsize, '')
 	mtmcscroll:SetScrollChild(mtmscrollchild)
 
 	local mtmcfscroll = CreateFrame("ScrollFrame", "MacroToolkitCFauxScrollFrame", mtctextbg, "BackdropTemplate,UIPanelScrollFrameTemplate")
 	mtmcfscroll:SetPoint("TOPLEFT", 10, -6)
 	mtmcfscroll:SetPoint("BOTTOMRIGHT", -26, 4)
-	
+
 	local mtmcfscrollchild = CreateFrame("EditBox", "MacroToolkitCFauxText", mtmcfscroll, "BackdropTemplate")
 	mtmcfscrollchild:SetMultiLine(true)
 	mtmcfscrollchild:SetAutoFocus(false)
@@ -135,7 +135,7 @@ function MT:CreateCopyFrame()
 	mtmcfscrollchild:SetScript("OnUpdate", nil)
 	mtmcfscrollchild:SetScript("OnTextChanged", nil)
 	font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.edfont)
-	mtmcfscrollchild:SetFont(font, MT.db.profile.fonts.edsize)
+	mtmcfscrollchild:SetFont(font, MT.db.profile.fonts.edsize, '')
 	mtmcfscroll:SetScrollChild(mtmcfscrollchild)
 
 	local mtcexit = CreateFrame("Button", "MacroToolkitCExit", mtcframe, "BackdropTemplate,UIPanelButtonTemplate")
@@ -160,13 +160,13 @@ function MT:CreateCopyFrame()
 							end
 						end
 					end
-					if chd.macros then chars[ch] = ch end						
+					if chd.macros then chars[ch] = ch end
 				end
 			end
 		end
 		dd:SetList(chars)
 	end
-	
+
 	local mtcchars = AceGUI:Create("Dropdown")
 	mtcchars.frame:SetParent(mtaddscript)
 	mtcchars.frame:SetParent(mtcframe)
@@ -181,7 +181,7 @@ function MT:CreateCopyFrame()
 		end)
 	mtcchars:SetPoint("TOPLEFT", 330, -66)
 	updatechars(mtcchars)
-	
+
 	local function updateslots(s)
 		local _, macros = GetNumMacros()
 		macros = _G.MAX_CHARACTER_MACROS - macros
@@ -223,8 +223,8 @@ function MT:CreateCopyFrame()
 				--PlaySoundFile("Sound/INTERFACE/igQuestFailed.ogg")
 			end
 		end)
-	
-	mtcframe:SetScript("OnShow", 
+
+	mtcframe:SetScript("OnShow",
 		function()
 			mtcframe:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
 			updatechars(mtcchars)
@@ -236,7 +236,7 @@ function MT:CreateCopyFrame()
 			PlaySound(839)
 		end)
 
-	mtcframe:SetScript("OnHide", 
+	mtcframe:SetScript("OnHide",
 		function()
 			MT:MacroFrameUpdate()
 			MacroToolkitFrame:Show()

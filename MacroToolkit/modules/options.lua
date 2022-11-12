@@ -41,7 +41,7 @@ function MT:SetScale(value)
 	if MacroTookitBuilderFrame then MacroToolkitBuilderFrame:SetScale(value) end
 	MacroToolkitFrame:SetSize(638, MT.db.profile.height)
 end
-					
+
 local function addCharMacros()
 	MT.db.global.allcharmacros = true
 	local numMacros = select(2, GetNumMacros())
@@ -72,9 +72,9 @@ local checkPanel = {
 					if value then
 						MT.showmacroframe = ShowMacroFrame
 						ShowMacroFrame = function() MacroToolkitFrame:Show() end
-						MT.origMTText = MacroFrameText 
+						MT.origMTText = MacroFrameText
 						MacroFrameText = MacroToolkitFrameText
-					elseif MT.showmacroframe then 
+					elseif MT.showmacroframe then
 						ShowMacroFrame = MT.showmacroframe
 						MacroFrameText = MT.origMTText
 					end
@@ -218,7 +218,7 @@ local checkPanel = {
 					else MacroToolkitFrame:SetScript("OnKeyDown", nil) end
 				end,
 		},
-		]]-- 
+		]]--
 	},
 }
 
@@ -635,8 +635,8 @@ local interfacePanel = {
 						function(info, name)
 							local font = LSM:Fetch(LSM.MediaType.FONT, name)
 							MT.db.profile.fonts.edfont = name
-							MacroToolkitText:SetFont(font, MT.db.profile.fonts.edsize)
-							MacroToolkitFauxText:SetFont(font, MT.db.profile.fonts.edsize)
+							MacroToolkitText:SetFont(font, MT.db.profile.fonts.edsize, '')
+							MacroToolkitFauxText:SetFont(font, MT.db.profile.fonts.edsize, '')
 						end,
 				},
 				editorfontsize = {
@@ -655,8 +655,8 @@ local interfacePanel = {
 						function(info, value)
 							MT.db.profile.fonts.edsize = value
 							local font = MacroToolkitText:GetFont()
-							MacroToolkitText:SetFont(font, value)
-							MacroToolkitFauxText:SetFont(font, value)
+							MacroToolkitText:SetFont(font, value, '')
+							MacroToolkitFauxText:SetFont(font, value, '')
 						end,
 				},
 				errorfontface = {
@@ -671,7 +671,7 @@ local interfacePanel = {
 						function(info, name)
 							local font = LSM:Fetch(LSM.MediaType.FONT, name)
 							MT.db.profile.fonts.errfont = name
-							MacroToolkitErrors:SetFont(font, MT.db.profile.fonts.errsize)
+							MacroToolkitErrors:SetFont(font, MT.db.profile.fonts.errsize, '')
 						end,
 				},
 				errorfontsize = {
@@ -691,7 +691,7 @@ local interfacePanel = {
 						function(info, value)
 							MT.db.profile.fonts.errsize = value
 							local font = MacroToolkitErrors:GetFont()
-							MacroToolkitErrors:SetFont(font, value)
+							MacroToolkitErrors:SetFont(font, value, '')
 						end,
 				},
 				iconfontface = {
@@ -736,7 +736,7 @@ local interfacePanel = {
 						function(info, name)
 							local font = LSM:Fetch(LSM.MediaType.FONT, name)
 							MT.db.profile.fonts.mfont = name
-							MacroToolkitSelMacroName:SetFont(font, 16)
+							MacroToolkitSelMacroName:SetFont(font, 16, '')
 						end,
 				},
 			},
@@ -841,7 +841,7 @@ local interfacePanel = {
 					type = "execute",
 					name = L["Reset position"],
 					func =
-						function() 
+						function()
 							MT.db.profile.x = (UIParent:GetWidth() - 638) / 2
 							MT.db.profile.y = (UIParent:GetHeight() - 424) / 2
 							MacroToolkitFrame:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
