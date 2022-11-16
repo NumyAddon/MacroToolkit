@@ -971,39 +971,9 @@ function MT:CreateSecureActionButton(index)
 	frame:SetAttribute("macrotext", "")
 	frame:SetAttribute("dynamic", false)
 	frame:RegisterForClicks("AnyUp", "AnyDown")
-
-	-- As of patch 10.0.0, SecureActionButtonTemplate depends on ActionButtonUseKeyDown CVar and only performs its
-	-- action on either up or down click, not both. We don't want to override the user's preference for all action
-	-- buttons, so we have to work with whichever is chosen, e.g. by simply simulating both in the trigger macro.
-	--
-	-- Further, a long-standing bug in /click slash command means a down click is performed if and only if a button
-	-- name is passed. This means we can't simulate an up click with a non-default mouse button, and macros with
-	-- [btn:N] conditions would misbehave if executed on up click.
-	--
-	-- We can work around this limitation by simulating the down click first, recording the button to be used, and
-	-- restoring it as an override on the up click. Applying the override on the macrotext action button directly
-	-- gets only considered by the SABT machinery but macro options, GetMouseButtonClicked, etc, won't be aware of
-	-- it, therefore we must route it through :Click() using a proxy SAB with type=click. SABT type=click does not
-	-- pass down parameter and only performs up clicks, so down clicks must be done on the target button directly.
-	--
-	-- See exFormat variable and its usage in MacroToolkit.lua for the trigger macro.
-	--
-	-- This will likely need to be removed/reworked when https://github.com/Stanzilla/WoWUIBugs/issues/317 is fixed.
-	local proxy = CreateFrame("Button", format("MTSBP%d", index), nil, "SecureActionButtonTemplate")
-	proxy:SetAttribute("type", "click")
-	proxy:SetAttribute("clickbutton", frame)
-
-	-- Configure the button to record mousebutton on downclick
-	SecureHandlerWrapScript(frame, "OnClick", proxy, [[
-		if down then
-			owner:SetAttribute("origbutton", button)
-		end
-	]])
-
-	-- Configure the proxy to override mousebutton on upclick
-	SecureHandlerWrapScript(proxy, "OnClick", proxy, [[
-		if not down then
-			return self:GetAttribute("origbutton")
-		end
-	]])
+	--[[
+	 	As of 10.0.2, setting the attribute pressAndHoldAction to 1 will allow you to force it to run on down,
+		regardless of the ActionButtonUseKeyDown CVar. So now we can just `/click [btn:x] btnName 1` and it will work
+	--]]
+	frame:SetAttribute('pressAndHoldAction', '1')
 end

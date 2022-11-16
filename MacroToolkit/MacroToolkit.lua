@@ -11,7 +11,7 @@ local BreakUpLargeNumbers, DeleteCursorItem, GetContainerNumSlots, UnitAura, Get
 local UseContainerItem, SetCVar, SetRaidTarget, PlaySound, HideUIPanel = UseContainerItem, SetCVar, SetRaidTarget, PlaySound, HideUIPanel
 local PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlot = PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlot
 local CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor = CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor
-local exFormat = "%s%s%s [btn:1]%s LeftButton;[btn:2]%s RightButton;[btn:3]%s MiddleButton;[btn:4]%s Button4;[btn:5]%s Button5\n%s %s"
+local exFormat = "%s%s%s [btn:1]%s LeftButton 1;[btn:2]%s RightButton 1;[btn:3]%s MiddleButton 1;[btn:4]%s Button4 1;[btn:5]%s Button5 1"
 
 -- GLOBALS: ChatEdit_InsertLink StaticPopupDialogs SpellBookFrame MacroToolkitText MacroToolkitEnterText MacroToolkitFauxText MacroToolkitSelMacroName MacroToolkitSelBg MacroToolkitDelete
 -- GLOBALS: MacroToolkitExtend MacroToolkitShorten MacroToolkitSelMacroButton MacroToolkitLimit MacroToolkitEdit MacroToolkitCopy GameTooltip MacroToolkitBind MacroToolkitConditions
@@ -571,8 +571,7 @@ function MT:ExtendMacro(save, macrobody, idx, exists)
 	--modified 15/12/13 - need to ensure button info is passed to the secure frame
 	--local newbody = format("%s%s%s %s", showtooltip, show, MT.click, securebutton:GetName())
 	local n = format("MTSB%d", exists and idx or index)
-	local np = format("MTSBP%d", exists and idx or index)
-	local newbody = format(exFormat, showtooltip, show, MT.click, n, n, n, n, n, MT.click, np)
+	local newbody = format(exFormat, showtooltip, show, MT.click, n, n, n, n, n)
 	if not idx then
 		MacroToolkitText.extended = true
 		_G[format("MacroToolkitButton%d", (MTF.selectedMacro - MTF.macroBase))].extended = true
@@ -600,23 +599,21 @@ function MT:CorrectExtendedMacros()
 		if body then
 			if string.find(body, format("%s MacroToolkitSecureButton%%d+", MT.click)) then
 				local b = format("MTSB%d", string.match(body, "MacroToolkitSecureButton(%d+)"))
-				local bp = format("MTSBP%d", string.match(body, "MacroToolkitSecureButton(%d+)"))
 				local showtooltip = select(3, string.find(body, "(#showtooltip.-)\n"))
 				local show = select(3, string.find(body, "(#show .-)\n"))
 				if showtooltip then showtooltip = format("%s\n", showtooltip) else showtooltip = "" end
 				if show then show = format("%s\n", show) else show = "" end
-				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, bp)
+				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b)
 				EditMacro(m, nil, nil, newbody)
 			end
-			-- upgrade for the 10.0.0 /click workaround
+			-- upgrade for the 10.0.0 /click workaround - updated to 10.0.2 pain
 			if string.find(body, format("%s %sMTSBP?%%d+", MT.click, '%[btn:1%]')) then
 				local b = format("MTSB%d", string.match(body, "MTSBP?(%d+)"))
-				local bp = format("MTSBP%d", string.match(body, "MTSBP?(%d+)"))
 				local showtooltip = select(3, string.find(body, "(#showtooltip.-)\n"))
 				local show = select(3, string.find(body, "(#show .-)\n"))
 				if showtooltip then showtooltip = format("%s\n", showtooltip) else showtooltip = "" end
 				if show then show = format("%s\n", show) else show = "" end
-				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b, MT.click, bp)
+				local newbody = format(exFormat, showtooltip, show, MT.click, b, b, b, b, b)
 				EditMacro(m, nil, nil, newbody)
 			end
 		end
