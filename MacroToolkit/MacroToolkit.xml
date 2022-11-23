@@ -10,10 +10,11 @@
 					</Anchors>
 				</Texture>
 			</Layer>
-			<Layer level="ARTWORK">
-				<FontString name="$parentName" inherits="GameFontHighlightSmall" parentKey="Name">
+			<Layer level="OVERLAY">
+				<FontString name="$parentName" inherits="GameFontHighlightSmall" wordwrap="false" parentKey="Name">
+					<Size x="36" y="10"/>
 					<Anchors>
-						<Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="5"/>
+						<Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="2"/>
 					</Anchors>
 				</FontString>
 			</Layer>
