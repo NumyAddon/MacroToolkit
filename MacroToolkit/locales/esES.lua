@@ -4,7 +4,7 @@ if not L then return end
 
 L["%d of %d characters used"] = "%d de %d caracteres utilizados"
 L["%s is trying to send you a macro. Accept?"] = "%s te ha enviado un macro. \194\191Aceptarlo?"
---Translation missing 
+--Translation missing
 L["(experimental)"] = "(experimental)"
 L["Ability icons"] = "Iconos de habilidades"
 L["Achievement icons"] = "Iconos de logros"
@@ -33,7 +33,7 @@ L["combat"] = "en combate"
 L["Command already defined elsewhere"] = "Este comando ha sido definido en otra parte"
 L["Command removed"] = "Comando borrado"
 L["Commands"] = "Comandos"
---Translation missing 
+--Translation missing
 L["Comments"] = "Comments"
 L["Condition Builder"] = "Constructor de condiciones"
 L["Conditional execution"] = "Ejecuci\195\179n condicional"
@@ -48,7 +48,7 @@ L["Custom slash command"] = "Comandos de barra personalizados"
 L["datetime format"] = "%d/%m/%y %H:%M:%S"
 L["dead"] = "muerto"
 L["Delete all macros"] = "Borrar todas las macros"
---Translation missing 
+--Translation missing
 L["Delete all macros on the current tab"] = "Delete all macros on the current tab"
 L["Delete Backup"] = "Borrar copia de seguridad"
 L["Destroy grey items"] = "Destruir objetos grises"
@@ -88,14 +88,14 @@ L["Fonts"] = "Fuentes"
 L["Food"] = "Comida"
 L["form"] = "forma"
 L["Full width macro editor"] = "Editor de macros de ancho completo"
---Translation missing 
+--Translation missing
 L["Go Large"] = "Go Large"
---Translation missing 
+--Translation missing
 L["Go Small"] = "Go Small"
 L["group"] = "grupo"
 L["harm"] = "hostile"
 L["help"] = "amigable"
---Translation missing 
+--Translation missing
 L["Hide 'Macro shortened by n characters' popup"] = "Hide 'Macro shortened by n characters' popup"
 L["Icons"] = "Iconos"
 L["indoors"] = "interiores"
@@ -117,8 +117,8 @@ L["Macro name font"] = "Fuente para nombres de macros"
 L["Macro shortened by %d character"] = "Macro acortada en %d caracter"
 L["Macro shortened by %d characters"] = "Macro acortada en %d caracteres"
 L["Macro slots available"] = "Ranuras de macros disponibles"
---Translation missing 
-L["Macro Toolkit can only handle tooltip commands up to a maximum of 113 characters. Your tooltip will not work as expected unless you shorten it"] = "Macro Toolkit can only handle tooltip commands up to a maximum of 113 characters. Your tooltip will not work as expected unless you shorten it"
+--Translation missing
+L["Macro Toolkit can only handle tooltip commands up to a maximum of %d characters. Your tooltip will not work as expected unless you shorten it"] = "Macro Toolkit can only handle tooltip commands up to a maximum of %d characters. Your tooltip will not work as expected unless you shorten it"
 L["Macro Toolkit has found %d orphaned macros. Restore?"] = "Macro Toolkit ha encontrado %d macros hu\195\169rfanos. \194\191Restaurarlos?"
 L["Macro Toolkit slash commands"] = "Comandos barra Macro Toolkit"
 L["Make all character specific macros available to all characters"] = "Hace todos macros espec\195\173ficas de personajes disponibles para todos caracteres."
@@ -165,7 +165,7 @@ L["Press the key you wish to bind, or press 'Remove' to unbind the current macro
 L["Print a message"] = "Mostrar un mensaje"
 L["Print map coordinates"] = "Imprimir coordenadas del mapa"
 L["Profiles"] = "Perfiles"
---Translation missing 
+--Translation missing
 L["pvptalent"] = "PVP talent"
 L["Question mark icon"] = "Signo de interrogaci\195\179n"
 L["raid"] = "en tu grupo de raid"
@@ -185,7 +185,7 @@ L["RightButton"] = "Bot\195\179n derecho del rat\195\179n"
 L["Save failed"] = "Guardado fallido"
 L["Script saved"] = "Script guardado"
 L["Scripts"] = true
---Translation missing 
+--Translation missing
 L["Search by spell ID"] = "Search by spell ID"
 L["Sell grey items"] = "Vender objetos grises"
 L["Set raid target"] = "Marcado objetivo de raid"
@@ -197,14 +197,14 @@ L["Size"] = "Tama\195\177o"
 L["spec"] = "especializaci\195\179n"
 L["specific Macro Toolkit user"] = "un usuario espec\195\173fico de Macro Toolkit"
 L["Spell icons"] = "Iconos de hechizos"
---Translation missing 
+--Translation missing
 L["Spell ID"] = "Spell ID"
 L["Status of target"] = "Estado del objetivo"
 L["stealth"] = "sigilo"
 L["Summon random favourite mount"] = "Invocar montura favorita al azar"
 L["swimming"] = "nadando"
 L["Syntax Highlighting"] = "Marcado de sintaxis"
---Translation missing 
+--Translation missing
 L["talent"] = "talent condition"
 L["target"] = "objetivo"
 L["targetlasttarget"] = "Seleccionar \195\186ltimo objetivo"
@@ -216,7 +216,7 @@ L["The following must be unchecked in order to display the faction emblem"] = "L
 L["The following must be unchecked in order to use the macro editor in full width mode"] = "La siguiente opci\195\179n debe estar desactivada para usar el editor de macros en el modo de ancho completo."
 L["The macro editor height can be increased by dragging the bottom of Macro Toolkit's frame downwards"] = "Cambiar la altura del editor de macros haciendo clic y arrastrando la parte inferior del marco de Macro Tooltip."
 L["This may impact performance and loading time on low end machines"] = "Este puede reducir el rendimiento y aumentar el tiempo para cargar en ordenadores menos potentes."
---Translation missing 
+--Translation missing
 L["This will enable macro icon names instead of numbers. Uses about 2MB of RAM."] = "This will enable macro icon names instead of numbers. Uses about 2MB of RAM."
 L["This will remove Macro Toolkit's copy of all your character specific Macros. The macros themselves will not be affected."] = "Este eliminar\195\161 todas copias de tus macros espec\195\173ficos de personajes de Macro Toolkit. Esto no eliminar\195\161 los macros reales."
 L["Toggle cloak"] = "Cambiar capa"
@@ -227,7 +227,7 @@ L["unithasvehicleui"] = "el objetivo tiene UI de veh\195\173culo"
 L["Unknown parameter"] = "Par\195\161metro desconocido"
 L["Unknown parameter causes error"] = "Par\195\161metro desconocido causa error"
 L["Unmatched"] = "No concuerda"
---Translation missing 
+--Translation missing
 L["Use icon name lookup library for icon search"] = "Use icon name lookup library for icon search"
 L["Use syntax highlighting"] = "Usar marcado de sintaxis"
 L["vehicleui"] = "el jugador tiene UI de veh\195\173culo"

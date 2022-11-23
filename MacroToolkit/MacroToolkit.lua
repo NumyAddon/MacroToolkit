@@ -554,8 +554,13 @@ function MT:ExtendMacro(save, macrobody, idx, exists)
 	local show = select(3, string.find(body, "(#show .-)\n"))
 	showtooltip = checktooltip(showtooltip, body)
 	if showtooltip then
-		if strlenutf8(showtooltip) > 113 then
-			StaticPopupDialogs["MACROTOOLKIT_TOOLONG"].text = L["Macro Toolkit can only handle tooltip commands up to a maximum of 113 characters. Your tooltip will not work as expected unless you shorten it"]
+		local characterLimit, longestExtendedMacroLength, newLineLength = 255, 143, 1
+		local showtooltipLimit = (characterLimit - longestExtendedMacroLength - newLineLength)
+		if strlenutf8(showtooltip) > showtooltipLimit then
+			StaticPopupDialogs["MACROTOOLKIT_TOOLONG"].text = format(
+				L["Macro Toolkit can only handle tooltip commands up to a maximum of %d characters. Your tooltip will not work as expected unless you shorten it"],
+				showtooltipLimit
+			)
 			StaticPopup_Show("MACROTOOLKIT_TOOLONG")
 			showtooltip = nil
 		end
