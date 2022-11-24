@@ -4,6 +4,7 @@ local MT = MacroToolkit
 MT.skinned = {}
 
 function MT:Skin(frame)
+	if true then return end -- disabled for now
 	if not IsAddOnLoaded("ElvUI") then return end
 	if MT.db.profile.noskin then return end
 	if not MT.skinned[frame:GetName()] then
@@ -13,6 +14,7 @@ function MT:Skin(frame)
 end
 
 function MT:LoadElvSkin(frame)
+	if true then return end -- disabled for now
 	local E, L, V, P, G, _ = unpack(ElvUI)
 	local S = E:GetModule("Skins")
 
