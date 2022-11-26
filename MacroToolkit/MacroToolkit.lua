@@ -956,18 +956,41 @@ function MT:MacroFrameUpdate()
 	else MacroToolkitClear:Disable() end
 end
 
-function MT:ContainerOnLoad(this)
+function MT:ContainerOnLoad(container)
+	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
+	local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
+	local OnDragStart = function(button) if not InCombatLockdown() then PickupMacro(MTF.macroBase + button:GetID()) end end
+	local OnClick = function(button, btn) self:MacroButtonOnClick(button, btn) end
 	local button
-	local maxMacroButtons = (this:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
-	local bname = (this:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
+	local buttonWidth = 45
+	local buttonsPerRow = container:GetWidth() / buttonWidth
 	for i = 1, maxMacroButtons do
-		button = CreateFrame("CheckButton", format("%s%d", bname, i), this, "MacroToolkitButtonTemplate")
-		button:SetScript("OnClick", function(this, button) MT:MacroButtonOnClick(this, button) end)
-		button:SetScript("OnDragStart", function(this) if not InCombatLockdown() then PickupMacro(MTF.macroBase + this:GetID()) end end)
+		button = CreateFrame("CheckButton", format("%s%d", bname, i), container, "MacroToolkitButtonTemplate")
+		button:SetScript("OnClick", OnClick)
+		button:SetScript("OnDragStart", OnDragStart)
 		button:SetID(i)
-		if i == 1 then button:SetPoint("TOPLEFT", this, "TOPLEFT", 6, -6)
-		elseif mod(i, NUM_MACROS_PER_ROW) == 1 then button:SetPoint("TOP", _G[format("%s%d", bname, i - NUM_MACROS_PER_ROW)], "BOTTOM", 0, -10)
-		else button:SetPoint("LEFT", _G[format("%s%d", bname, i - 1)], "RIGHT", 13, 0) end
+	end
+	self:RepositionContainerButtons(container)
+end
+
+function MT:RepositionContainerButtons(container)
+	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
+	local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
+	local buttonWidth = 49
+	local oldButtonsPerRow = container.buttonsPerRow
+	local buttonsPerRow = math.max(6, math.floor((container:GetWidth() + 5) / buttonWidth))
+	if buttonsPerRow == oldButtonsPerRow then return end
+	container.buttonsPerRow = buttonsPerRow
+	for i = 1, maxMacroButtons do
+		local button = _G[format("%s%d", bname, i)]
+		button:ClearAllPoints()
+		if i == 1 then
+			button:SetPoint("TOPLEFT", container, "TOPLEFT", 6, -6)
+		elseif mod(i, buttonsPerRow) == 1 then
+			button:SetPoint("TOP", _G[format("%s%d", bname, i - buttonsPerRow)], "BOTTOM", 0, -10)
+		else
+			button:SetPoint("LEFT", _G[format("%s%d", bname, i - 1)], "RIGHT", 13, 0)
+		end
 	end
 end
 

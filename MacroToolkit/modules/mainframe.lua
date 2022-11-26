@@ -1,6 +1,7 @@
 local _G = _G
 local MT = MacroToolkit
 local CreateFrame, PlaySound, GameTooltip, GameTooltip_Hide, UnitName = CreateFrame, PlaySound, GameTooltip, GameTooltip_Hide, UnitName
+local UIParent = UIParent
 local format, string, ipairs = format, string, ipairs
 local L = MT.L
 local AceGUI = MT.LS("AceGUI-3.0")
@@ -222,6 +223,7 @@ function MT:CreateMTFrame()
 	do
 		mtscroll:SetSize(294, 146)
 		mtscroll:SetPoint("TOPLEFT", 12, -66)
+		mtscroll:SetPoint("TOPRIGHT", -335, -225)
 		ScrollFrame_OnLoad(mtscroll)
 	end
 
@@ -259,12 +261,16 @@ function MT:CreateMTFrame()
 		mttextbg:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
 	end
 
-	local mtscrollchild = CreateFrame("Frame", "MacroToolkitButtonContainer", MacroToolkitButtonScroll, "BackdropTemplate")
+	local mtscrollchild = CreateFrame("Frame", "MacroToolkitButtonContainer", mtscroll, "BackdropTemplate")
 	do
 		mtscrollchild:SetSize(285, 10)
 		mtscrollchild:SetPoint("TOPLEFT")
-		MT:ContainerOnLoad(mtscrollchild)
+		self:ContainerOnLoad(mtscrollchild)
 		mtscroll:SetScrollChild(mtscrollchild)
+		mtscroll:SetScript("OnSizeChanged", function(_, w, _)
+			mtscrollchild:SetWidth(w)
+			self:RepositionContainerButtons(mtscrollchild)
+		end)
 	end
 
 	local mteditbutton = CreateFrame("Button", "MacroToolkitEdit", mtframe, "BackdropTemplate,UIPanelButtonTemplate")
@@ -311,11 +317,10 @@ function MT:CreateMTFrame()
 		end
 
 		mtmscroll:SetScript("OnVerticalScroll", onverticalscroll)
-		mtmscroll:SetScript("OnMouseWheel",
-			function(this, value, scrollBar)
-				ScrollFrameTemplate_OnMouseWheel(MacroToolkitFauxScrollFrame, value)
-				ScrollFrameTemplate_OnMouseWheel(this, value)
-			end)
+		mtmscroll:SetScript("OnMouseWheel", function(this, value, scrollBar)
+			ScrollFrameTemplate_OnMouseWheel(MacroToolkitFauxScrollFrame, value)
+			ScrollFrameTemplate_OnMouseWheel(this, value)
+		end)
 	end
 
 	local mtmscrollchild = CreateFrame("EditBox", "MacroToolkitText", mtmscroll, "BackdropTemplate")
@@ -465,15 +470,14 @@ function MT:CreateMTFrame()
 		mtsavebutton:SetFrameStrata("HIGH")
 		mtsavebutton:SetSize(80, 22)
 		mtsavebutton:SetPoint("BOTTOM", mtcancelbutton, "TOP", 0, 15)
-		mtsavebutton:SetScript("OnClick",
-			function()
-				--PlaySound("igMainMenuOptionCheckBoxOn")
-				PlaySound(856)
-				MT:SaveMacro()
-				MT:MacroFrameUpdate()
-				if MT.MTPF then MT.MTPF:Hide() end
-				MacroToolkitText:ClearFocus()
-			end)
+		mtsavebutton:SetScript("OnClick", function()
+			--PlaySound("igMainMenuOptionCheckBoxOn")
+			PlaySound(856)
+			MT:SaveMacro()
+			MT:MacroFrameUpdate()
+			if MT.MTPF then MT.MTPF:Hide() end
+			MacroToolkitText:ClearFocus()
+		end)
 	end
 
 	local mcopy
@@ -791,7 +795,7 @@ function MT:CreateMTFrame()
 		table.sort(ddvalues, function(a,b) return a < b end)
 		mtaddscript:SetText(_G.KEY_INSERT)
 		mtaddscript:SetSize(80, 22)
-		mtaddscript:SetPoint("TOPRIGHT", mtframe, "TOPRIGHT", -15, -80)
+		mtaddscript:SetPoint("TOPRIGHT", -15, -80)
 		mtaddscript:Disable()
 		mtaddscript:SetScript("OnClick", function(this)
 			if not MT.insertspecial then return end
@@ -842,7 +846,7 @@ function MT:CreateMTFrame()
 			else mtchan.frame:Hide() end
 			mtaddscript:Enable()
 		end)
-		mtscriptdd:SetPoint("TOPLEFT", mtscrolltop, "TOPRIGHT", 0, 0)
+		mtscriptdd:SetPoint("BOTTOMRIGHT", mtaddscript, "BOTTOMLEFT", -8, 0)
 	end
 
 	local mtopt = CreateFrame("Button", "MacroToolkitOptionsButton", mtframe, "BackdropTemplate,UIPanelButtonTemplate")
@@ -907,7 +911,7 @@ function MT:CreateMTFrame()
 	do
 		mtaddslot:SetText(_G.KEY_INSERT)
 		mtaddslot:SetSize(80, 22)
-		mtaddslot:SetPoint("BOTTOMLEFT", mtscrollbot, "BOTTOMRIGHT", 208, 7)
+		mtaddslot:SetPoint("TOPRIGHT", -15, -187)
 		mtaddslot:Disable()
 		mtaddslot:SetScript("OnClick", function(this)
 			if not MT.insertslot then return end
@@ -934,7 +938,7 @@ function MT:CreateMTFrame()
 		mtslotdd:SetWidth(200)
 		mtslotdd:SetLabel(format("%s:", L["Insert slot"]))
 		mtslotdd:SetCallback("OnValueChanged", function(info, name, key) MT.insertslot = key; mtaddslot:Enable() end)
-		mtslotdd:SetPoint("BOTTOMLEFT", mtscrollbot, "BOTTOMRIGHT", 0, 5)
+		mtslotdd:SetPoint("BOTTOMRIGHT", mtaddslot, "BOTTOMLEFT", -8, 0)
 	end
 
 	local mtbackup = CreateFrame("Button", "MacroToolkitBackup", mtframe, "BackdropTemplate,UIPanelButtonTemplate")
