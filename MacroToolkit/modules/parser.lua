@@ -2,6 +2,7 @@ local MT = MacroToolkit
 local string, table, ipairs, pairs, type, math = string, table, ipairs, pairs, type, math
 local strsplit, select, wipe, tonumber, tostring = strsplit, select, wipe, tonumber, tostring
 local GetSpellInfo, GetItemInfo = GetSpellInfo, GetItemInfo, IsHelpfulSpell, IsHarmfulSpell
+local format = string.format
 local _G = _G
 local L = MT.L
 MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
@@ -85,7 +86,7 @@ end
 --* Damerau�Levenshtein Distance                  *
 --* based on code from http://nayruden.com/?p=115 *
 --*************************************************
-function getLevenshtein(s, t, lim)
+local function getLevenshtein(s, t, lim)
     local slen, tlen = #s, #t
     if lim and math.abs(slen - tlen) >= lim then return lim end
     if type(s) == "string" then s = {string.byte(s, 1, slen)} end
@@ -257,7 +258,7 @@ local function validateParameters(parameters, commandtext)
     elseif GetItemInfo(parameters) then c = format("|c%s", MT.db.profile.itemcolour)
     elseif isNumeric({parameters}) then c = format("|c%s", MT.db.profile.stringcolour)
     elseif MT.db.profile.unknown then err = format("%s: |c%s%s|r", L["Unknown parameter"], MT.db.profile.stringcolour, parameters) end
-    return c, err, err2
+    return c, err
 end
 
 local function parseSequence(parameters)
@@ -305,10 +306,11 @@ local function parseSequence(parameters)
     return err, reset, cs, c, rwhole, err2
 end
 
-local function validateCondition(condition, optionarguments)
-    local c, cc, cond = format("|c%s", MT.db.profile.defaultcolour), format("|c%s", MT.db.profile.conditioncolour), true
-    local msg = format("%s: %s%s", L["Invalid condition"], cc, condition)
+local function validateCondition(condition, optionArguments, parameters)
+    local color, conditionColor, isCondition = format("|c%s", MT.db.profile.defaultcolour), format("|c%s", MT.db.profile.conditioncolour), true
+    local msg = format("%s: %s%s", L["Invalid condition"], conditionColor, condition)
     local target, noa, valid, arg1, no
+    local colorArguments = false
 
     if string.len(condition) == 0 then return "", nil end
     if string.sub(condition, 1, 2) == "no" then
@@ -321,75 +323,96 @@ local function validateCondition(condition, optionarguments)
         if e then target = string.sub(condition, e + 1) end
         if not target then
             msg = L["Invalid target"]
-            cond = false
+            isCondition = false
         elseif string.find(trim(target),"[%p%s%c]") then
             msg = format("%s: |c%s%s", L["Invalid target"], MT.db.profile.targetcolour, trim(target))
-            cond = false
+            isCondition = false
         else msg = nil end
     else
-        for k, v in pairs(MT.conditions) do
-            if k == condition then
-                if v > 0 and k ~= "group" and k ~= "mod" and k ~= "modifier" and k~= "pet" and (not no) then
-                    if #optionarguments == 0 then
-                        msg = format("%s: %s%s", L["Argument not optional"], cc, condition)
-                        noa = true
-                        cond = false
-                    end
+        local k = condition
+        local v = MT.conditions[k] or nil
+        if v then
+            if v > 0 and k ~= "group" and k ~= "mod" and k ~= "modifier" and k~= "pet" and (not no) then
+                if #optionArguments == 0 then
+                    msg = format("%s: %s%s", L["Argument not optional"], conditionColor, condition)
+                    noa = true
+                    isCondition = false
                 end
-                if #optionarguments > 0 then
-                    if v == 0 then
-                        msg = format("%s: %s%s", L["Invalid argument"], cc, condition)
-                        cond = false
-                    elseif v == 1 then --validate numeric
-                        valid, arg1 = isNumeric(optionarguments)
-                        if not valid then
-                            msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], cc, condition, arg1)
-                            cond = false
-                        else msg = nil end
-                    elseif v == 2 then --validate text
-                        if isNumeric(optionarguments) then
-                            msg = format("%s: %s%s", L["Arguments must not be numeric"], cc, condition)
-                            cond = false
-                        else msg = nil end
-                    elseif v == 3 then --validate alphanumeric
-                        valid, arg1 = isAlphaNumeric(optionarguments)
-                        if not valid then
-                            msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], cc, condition, arg1)
-                            cond = false
-                        else msg = nil end
-                    elseif v > 3 and v < 7 then --validate group
-                        valid, arg1 = isValid(optionarguments, v)
-                        if not valid then
-                            msg = format("%s: %s%s|r - %s", L["Invalid argument"], cc, condition, arg1)
-                            cond = false
-                        else msg = nil end
-                    elseif v == 7 then
-                        valid, arg1 = isNumeric(optionarguments, true)
-                        if not valid then
-                            msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], cc, condition, arg1)
-                            cond = false
-                        else msg = nil end
-                    elseif v == 8 then --validate alphanumeric + spaces
-                        valid, arg1 = isAlphaNumeric(optionarguments, "[%w ]+")
-                        if not valid then
-                            msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], cc, condition, arg1)
-                            cond = false
-                        else msg = nil end
-                    end
-                elseif not noa then msg = nil end
-                break
+            end
+            if #optionArguments > 0 then
+                if v == 0 then
+                    msg = format("%s: %s%s", L["Invalid argument"], conditionColor, condition)
+                    isCondition = false
+                elseif v == 1 then --validate numeric
+                    valid, arg1 = isNumeric(optionArguments)
+                    if not valid then
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, condition, arg1)
+                        isCondition = false
+                    else msg = nil end
+                elseif v == 2 then --validate text
+                    if isNumeric(optionArguments) then
+                        msg = format("%s: %s%s", L["Arguments must not be numeric"], conditionColor, condition)
+                        isCondition = false
+                    else msg = nil end
+                elseif v == 3 then --validate alphanumeric
+                    valid, arg1 = isAlphaNumeric(optionArguments)
+                    if not valid then
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, condition, arg1)
+                        isCondition = false
+                    else msg = nil end
+                elseif v > 3 and v < 7 then --validate group
+                    valid, arg1 = isValid(optionArguments, v)
+                    if not valid then
+                        msg = format("%s: %s%s|r - %s", L["Invalid argument"], conditionColor, condition, arg1)
+                        isCondition = false
+                    else msg = nil end
+                elseif v == 7 then
+                    valid, arg1 = isNumeric(optionArguments, true)
+                    if not valid then
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, condition, arg1)
+                        isCondition = false
+                    else msg = nil end
+                elseif v == 8 then --validate alphanumeric + spaces
+                    valid, arg1 = isAlphaNumeric(optionArguments, "[%w ]+")
+                    if not valid then
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, condition, arg1)
+                        isCondition = false
+                    else msg = nil end
+                end
+            elseif not noa then msg = nil end
+        end
+    end
+    if not msg then
+        color = conditionColor
+        if condition == 'known' and optionArguments and optionArguments[1] then
+            local name, _ = GetSpellInfo(optionArguments[1])
+            if not name then
+                msg = format("%s: [%s%s|r:%s] - %s", L["Invalid condition"], conditionColor, condition, optionArguments[1], "Unknown spell")
+                isCondition = false
+            elseif name ~= parameters then
+                local spellID = select(7, GetSpellInfo(parameters))
+                msg = format(
+                    "Known spell mismatch: [%s%s|r:%s (%s)]\n       %s%s",
+                    conditionColor,
+                    condition,
+                    optionArguments[1],
+                    name,
+                    parameters,
+                    spellID and format(" (%s)", spellID) or ""
+                )
+                isCondition = false
+            end
+            if name then
+                colorArguments = format("|c%s", MT.db.profile.spellcolour)
             end
         end
-    end
-    if not msg then c = cc
     else
         msg = format("%s|r", msg)
-        if cond then
-            local cmatch = findMatch(condition, MT.conditions)
-            msg = format("%s\n      %s: %s%s%s|r", msg, L["did you mean"], cc, no and "no" or "", findMatch(condition, MT.conditions))
+        if isCondition then
+            msg = format("%s\n      %s: %s%s%s|r", msg, L["did you mean"], conditionColor, no and "no" or "", findMatch(condition, MT.conditions))
         end
     end
-    return c, msg
+    return color, msg, colorArguments
 end
 
 local function replace(original, replacetext, replacewith, start)
@@ -657,13 +680,13 @@ function MT:ParseMacro(macrotext)
     local command_object, condition, condition_phrase, condition_string
     local option_arguments, parsed_text, errors = {}, {}, {}
     local parameters, option_word, option_argument, target, pp
-    local spos, schar, ss, se, pt, err, col, pos, mout, vv, epos, lpos
+    local spos, schar, ss, se, pt, err, color, pos, mout, vv, epos, lpos
 
     -- ticket 139 - handle comments at the start of a line
     if string.sub(macrotext, 1, 2) == format("%s%s", MT.slash, MT.slash) then
         comment = string.sub(macrotext, 3)
-        col = format("|c%s", MT.db.profile.comcolour)
-        table.insert(parsed_text, {t = comment, c = col, s = 3})
+        color = format("|c%s", MT.db.profile.comcolour)
+        table.insert(parsed_text, { t = comment, c = color, s = 3})
     else
         schar = string.sub(macrotext, 1, 1)
         if schar == "#" or schar == MT.slash then
@@ -673,21 +696,21 @@ function MT:ParseMacro(macrotext)
             if spos then command_verb = string.sub(macrotext, 2, spos - 1)
             else
                 command_verb = string.sub(macrotext, 2)
-                col, err = validateCommandVerb(command_verb)
+                color, err = validateCommandVerb(command_verb)
                 if err then table.insert(errors, err) end
-                table.insert(parsed_text, {t = command_verb, c = col, s = 2})
+                table.insert(parsed_text, { t = command_verb, c = color, s = 2})
                 vv = true
             end
             if spos then options = string.sub(macrotext, spos + 1) end
             if isScript(command_verb) then
                 if spos then
                     parameters = options
-                    col, err = validateParameters(parameters, command_verb)
+                    color, err = validateParameters(parameters, command_verb)
                     if err then table.insert(errors, err) end
-                    table.insert(parsed_text, {t = parameters, c = col, s = spos + 1})
-                    col, err = validateCommandVerb(command_verb, parameters)
+                    table.insert(parsed_text, { t = parameters, c = color, s = spos + 1})
+                    color, err = validateCommandVerb(command_verb, parameters)
                     if err then table.insert(errors, err) end
-                    table.insert(parsed_text, {t = command_verb, c = col, s = 2})
+                    table.insert(parsed_text, { t = command_verb, c = color, s = 2})
                 end
             elseif options then
                 if string.find(options, ";") then command_objects = {strsplit(";", options)}
@@ -729,29 +752,29 @@ function MT:ParseMacro(macrotext)
                             local fc = MT:FindComment(parameters)
                             if fc then
                                 comment = string.sub(parameters, fc + 2)
-                                col = format("|c%s", MT.db.profile.comcolour)
+                                color = format("|c%s", MT.db.profile.comcolour)
                                 local ppos = MT:FindComment(macrotext)
-                                table.insert(parsed_text, {t = comment, c = col, s = ppos + 2})
+                                table.insert(parsed_text, { t = comment, c = color, s = ppos + 2})
                                 parameters = string.sub(parameters, 1, fc - 1)
                             end
-                            col, err = validateParameters(parameters, command_verb)
+                            color, err = validateParameters(parameters, command_verb)
                             if err then table.insert(errors, err) end
                             pos, epos = string.find(macrotext, escape(parameters), epos or 1)
-                            table.insert(parsed_text, {t = parameters, c = col, s = pos})
+                            table.insert(parsed_text, { t = parameters, c = color, s = pos})
                         end
                     end
                     if not vv then
                         local fc = MT:FindComment(parameters)
                         if fc then
                             comment = string.sub(parameters, fc + 2)
-                            col = format("|c%s", MT.db.profile.comcolour)
+                            color = format("|c%s", MT.db.profile.comcolour)
                             local ppos = MT:FindComment(macrotext)
-                            table.insert(parsed_text, {t = comment, c = col, s = ppos + 2})
+                            table.insert(parsed_text, { t = comment, c = color, s = ppos + 2})
                             parameters = string.sub(parameters, 1, fc - 1)
                         end
-                        col, err = validateCommandVerb(command_verb, parameters)
+                        color, err = validateCommandVerb(command_verb, parameters)
                         if err then table.insert(errors, err) end
-                        table.insert(parsed_text, {t = command_verb, c = col, s = 2})
+                        table.insert(parsed_text, { t = command_verb, c = color, s = 2})
                         vv = true
                     end
                     for _, c in ipairs(conditions) do
@@ -763,10 +786,17 @@ function MT:ParseMacro(macrotext)
                                 option_arguments = {strsplit("/", string.sub(condition_phrase, spos + 1))}
                                 condition = string.sub(condition_phrase, 1, spos - 1)
                             else condition = condition_phrase end
-                            col, err = validateCondition(condition, option_arguments)
+                            local colorArguments
+                            color, err, colorArguments = validateCondition(condition, option_arguments, parameters)
                             if err then table.insert(errors, err) end
                             pos = string.find(macrotext, escape(condition), c.p)
-                            table.insert(parsed_text, {t = condition, c = col, s = pos})
+                            table.insert(parsed_text, { t = condition, c = color, s = pos})
+                            if colorArguments then
+                                for _, argument in ipairs(option_arguments) do
+                                    pos = string.find(macrotext, escape(argument), pos)
+                                    table.insert(parsed_text, { t = argument, c = colorArguments, s = pos})
+                                end
+                            end
                         end
                     end
                 end
@@ -781,7 +811,7 @@ function MT:ParseMacro(macrotext)
     local lbefore, lafter
     for _, term in ipairs(parsed_text) do
         lbefore = string.len(mout)
-        mout = replace(mout, term.t, format("%s%s%s", term.c == "" and "" or term.c, term.t, term.c == "" and "" or "|r"), term.s + offset)
+        mout = replace(mout, term.t, format("%s%s%s", term.c, term.t, term.c == "" and "" or "|r"), term.s + offset)
         lafter = string.len(mout)
         offset = offset + (lafter - lbefore)
     end
