@@ -389,7 +389,7 @@ local function validateCondition(condition, optionArguments, parameters)
             if not name then
                 msg = format("%s: [%s%s|r:%s] - %s", L["Invalid condition"], conditionColor, condition, optionArguments[1], "Unknown spell")
                 isCondition = false
-            elseif name ~= parameters then
+            elseif name:lower() ~= parameters:lower() and optionArguments[1]:lower() ~= parameters:lower() then
                 local spellID = select(7, GetSpellInfo(parameters))
                 msg = format(
                     "Known spell mismatch: [%s%s|r:%s (%s)]\n       %s%s",
