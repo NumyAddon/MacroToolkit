@@ -169,6 +169,9 @@ local function validateCommandVerb(commandtext, parameters)
             break
         end
     end
+    if IsSecureCmd('/'..commandtext) then
+        msg = nil
+    end
     if not msg then c = cc
     else
         msg = format("%s|r", msg)
