@@ -175,7 +175,7 @@ function MT:CreateMTPopup()
 	spellsearch:SetSize(32, 32)
 	spellsearch:SetPoint("LEFT", searchBox, "RIGHT", 10, 0)
 
-	function showchecktip()
+	local function showchecktip()
 		GameTooltip:SetOwner(MacroToolkitSpellCheck, "ANCHOR_TOPRIGHT")
 		GameTooltip:ClearLines()
 		GameTooltip:AddDoubleLine(format("%s%s%s",_G.NORMAL_FONT_COLOR_CODE, L["Spell ID"], _G.FONT_COLOR_CODE_CLOSE))
@@ -256,10 +256,13 @@ function MT:CreateMTPopup()
 				mtpfedit:SetText("")
 			elseif this.mode == "edit" then
 				if PanelTemplates_GetSelectedTab(MacroToolkitFrame) == 3 then
-					mtpfedit:SetText(MT.db.global.extra[tostring(MacroToolkitFrame.selectedMacro)].name)
+					local extraMacroInfo = MT.db.global.extra[tostring(MacroToolkitFrame.selectedMacro)]
+					mtpfedit:SetText(extraMacroInfo.name)
+					aisframe:SetSelectionByName(extraMacroInfo.texture)
 				else
-					local name = GetMacroInfo(MacroToolkitFrame.selectedMacro)
+					local name, icon = GetMacroInfo(MacroToolkitFrame.selectedMacro)
 					mtpfedit:SetText(name)
+					aisframe:SetSelectionByName(icon)
 				end
 			end
 			MacroToolkitEdit:Disable()
@@ -424,10 +427,10 @@ function MT:RefreshPlayerSpellIconInfo()
 end
 
 function MT:GetSpellorMacroIconInfo(index)
-	if not index then return end
+	if not index or not tonumber(index) then return end
 	--MT:RefreshPlayerSpellIconInfo()
 	--return MT.MACRO_ICON_FILENAMES[index]
-	local id, kind, texture = MacroToolkitPopupIcons:GetIconInfo(index)
+	local id, kind, texture = MacroToolkitPopupIcons:GetIconInfo(tonumber(index))
 	return texture
 end
 
@@ -458,7 +461,7 @@ end
 function MT:SelectTexture(selectedIcon)
 	mtpf.selectedIcon = selectedIcon
 	mtpf.selectedIconTexture = nil
-	local texture = MT:GetSpellorMacroIconInfo(mtpf.selectedIcon)
+	local texture = MT:GetSpellorMacroIconInfo(mtpf.selectedIcon) or selectedIcon or "INV_Misc_QuestionMark"
 	if type(texture) == "number" then
 		MacroToolkitSelMacroButton.Icon:SetTexture(texture)
 	else
@@ -528,7 +531,7 @@ function MT:PopupOkayButtonOnClick()
 		if MacroToolkitPopup.mode == "new" then
 			if PanelTemplates_GetSelectedTab(MacroToolkitFrame) > 2 then
 				index = MT:GetNextIndex()
-				MT.db.global.extra[index] = {name = text, texture = iconTexture, body = ""}
+				MT.db.global.extra[tostring(index)] = {name = text, texture = iconTexture, body = ""}
 			else
 				index = CreateMacro(text, iconTexture, nil, (MacroToolkitFrame.macroBase > 0))
 				MacroToolkitText.extended = nil
@@ -536,8 +539,9 @@ function MT:PopupOkayButtonOnClick()
 		elseif MacroToolkitPopup.mode == "edit" then
 			if PanelTemplates_GetSelectedTab(MacroToolkitFrame) == 3 then
 				index = MacroToolkitFrame.selectedMacro
-				MT.db.global.extra[tostring(index)].name = text
-				MT.db.global.extra[tostring(index)].texture = iconTexture
+				local extraMacro = MT.db.global.extra[tostring(index)]
+				extraMacro.name = text or extraMacro.name
+				extraMacro.texture = iconTexture or extraMacro.texture
 			else index = EditMacro(MacroToolkitFrame.selectedMacro, text, iconTexture) end
 		end
 		MacroToolkitPopup:Hide()

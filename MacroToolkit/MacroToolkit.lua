@@ -802,9 +802,7 @@ function MT:MacroFrameUpdate()
 					macroButton:SetChecked(true)
 					if tab < 4 then MacroToolkitSelMacroName:SetText(name)
 					else MacroToolkitCSelMacroName:SetText(name) end
-					local _, _, index = string.find(body, "MTSB(%d+)")
-					local _, _, proxyIndex = string.find(body, "MTSBP(%d+)")
-					index = index or proxyIndex
+					local _, _, index = body and string.find(body, "MTSBP?(%d+)")
 					if index then
 						body = MT:GetExtendedBody(index, tab)
 						MacroToolkitText.extended = true
