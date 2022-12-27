@@ -802,7 +802,8 @@ function MT:MacroFrameUpdate()
 					macroButton:SetChecked(true)
 					if tab < 4 then MacroToolkitSelMacroName:SetText(name)
 					else MacroToolkitCSelMacroName:SetText(name) end
-					local _, _, index = body and string.find(body, "MTSBP?(%d+)")
+					local index
+					if body then _, _, index = string.find(body, "MTSBP?(%d+)") end
 					if index then
 						body = MT:GetExtendedBody(index, tab)
 						MacroToolkitText.extended = true
@@ -859,13 +860,13 @@ function MT:MacroFrameUpdate()
 						if result then
 							MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Red")
 							MacroToolkitBrokerIcon:SetScript("OnEnter",
-								function(this)
-									GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-									GameTooltip:SetText("Macro Toolkit Broker")
-									GameTooltip:AddLine(format("|cffff0000%s|r", cmd))
-									GameTooltip:AddLine(format("|cffffffffReason: |cff4466cc%s|r", result))
-									GameTooltip:Show()
-								end)
+									function(this)
+										GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+										GameTooltip:SetText("Macro Toolkit Broker")
+										GameTooltip:AddLine(format("|cffff0000%s|r", cmd))
+										GameTooltip:AddLine(format("|cffffffffReason: |cff4466cc%s|r", result))
+										GameTooltip:Show()
+									end)
 							MTF.brokerok = false
 							if MT:FindBrokerName(mname) then MT:BrokerRemove()
 							else MacroToolkitBrokerButton:Hide() end
