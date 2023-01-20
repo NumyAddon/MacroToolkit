@@ -481,7 +481,7 @@ function MT:CreateMTFrame()
 	end
 
 	local mcopy
-	local mttab1 = CreateFrame("Button", "MacroToolkitFrameTab1", mtframe, "BackdropTemplate,PanelTabButtonTemplate")
+	local mttab1 = CreateFrame("Button", "MacroToolkitFrameTab1", mtframe, "BackdropTemplate," .. (C_EditMode and "CharacterFrameTabTemplate" or "CharacterFrameTabButtonTemplate"))
 	do
 		--mttab1:SetText(_G.GENERAL_MACROS)
 		mttab1:SetText(_G.GENERAL)
@@ -507,7 +507,7 @@ function MT:CreateMTFrame()
 			end)
 	end
 
-	local mttab2 = CreateFrame("Button", "MacroToolkitFrameTab2", mtframe, "BackdropTemplate,PanelTabButtonTemplate")
+	local mttab2 = CreateFrame("Button", "MacroToolkitFrameTab2", mtframe, "BackdropTemplate," .. (C_EditMode and "CharacterFrameTabTemplate" or "CharacterFrameTabButtonTemplate"))
 	do
 		mttab2:SetID(2)
 		mttab2:SetPoint("LEFT", mttab1, "RIGHT", 0, 0)
@@ -541,7 +541,7 @@ function MT:CreateMTFrame()
 			end)
 	end
 
-	local mttab3 = CreateFrame("Button", "MacroToolkitFrameTab3", mtframe, "BackdropTemplate,PanelTabButtonTemplate")
+	local mttab3 = CreateFrame("Button", "MacroToolkitFrameTab3", mtframe, "BackdropTemplate," .. (C_EditMode and "CharacterFrameTabTemplate" or "CharacterFrameTabButtonTemplate"))
 	do
 		mttab3:SetID(3)
 		mttab3:SetPoint("LEFT", mttab2, "RIGHT", 0, 0)

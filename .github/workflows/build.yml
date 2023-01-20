@@ -17,8 +17,10 @@ jobs:
       - name: Replace toc-versions
         uses: Numynum/ToCVersions@master
 
-      - name: Create Retail Package
+      - name: Create Package
         uses: BigWigsMods/packager@master
+        with:
+          args: -S
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}

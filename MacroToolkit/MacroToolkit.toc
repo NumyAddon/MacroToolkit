@@ -1,4 +1,8 @@
 ## Interface: @toc-version-retail@
+## Interface-Retail: @toc-version-retail@
+## Interface-Classic: @toc-version-classic@
+## Interface-BCC: @toc-version-bcc@
+## Interface-Wrath: @toc-version-wrath@
 ## Title: Macro Toolkit
 ## Notes: Enhanced macro frame with additional tools
 ## Notes-zhTW: 增強巨集UI，方便編寫巨集並加強功能
