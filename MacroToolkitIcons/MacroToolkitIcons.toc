@@ -4,6 +4,7 @@
 ## Interface-BCC: @toc-version-bcc@
 ## Interface-Wrath: @toc-version-wrath@
 ## Author: Deepac
+## IconTexture: 982414
 ## Title: MacroToolkit Icon Data
 ## Version: @project-version@
 ## Notes: Load on demand data for MacroToolkit
