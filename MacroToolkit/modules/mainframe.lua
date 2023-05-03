@@ -224,7 +224,10 @@ function MT:CreateMTFrame()
 		mtscroll:SetSize(294, 146)
 		mtscroll:SetPoint("TOPLEFT", 12, -66)
 		mtscroll:SetPoint("TOPRIGHT", -335, -225)
-		ScrollFrame_OnLoad(mtscroll)
+		if not UIPanelScrollFrame_OnLoad then
+			-- wrath support
+			ScrollFrame_OnLoad(mtscroll)
+		end
 	end
 
 	local mtscrolltop = mtscroll:CreateTexture(nil, "ARTWORK")
