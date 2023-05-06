@@ -206,14 +206,14 @@ function lib:LoadKeywords(addonName)
 
 	-- Get the revision # of the specified addon (if it's enabled and loadable).
 	local addonRevision = nil
-	local addonLoadable = addonName and select(5, GetAddOnInfo(addonName))
+	local addonLoadable = addonName and select(4, GetAddOnInfo(addonName))
 	if addonLoadable then
 		addonRevision = tonumber(GetAddOnMetadata(addonName, "X-Revision"))
 	end
 
 	-- Then, get the revision # of the default library (if it's enabled and loadable).
 	local defaultRevision = nil
-	local defaultLoadable = select(5, GetAddOnInfo("AdvancedIconSelector-KeywordData"))
+	local defaultLoadable = select(4, GetAddOnInfo("AdvancedIconSelector-KeywordData"))
 	if defaultLoadable then
 		defaultRevision = tonumber(GetAddOnMetadata("AdvancedIconSelector-KeywordData", "X-Revision"))
 	end
