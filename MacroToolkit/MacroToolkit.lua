@@ -125,33 +125,35 @@ function MT:eventHandler(this, event, arg1, ...)
 					HideUIPanel(MacroFrame)
 					MTF:Show()
 				end)
-		elseif arg1 == "Blizzard_TradeSkillUI" then
-			--override code to handle tradeskill links
-			local function btsui_onclick()
-				local activeEditBox =  ChatEdit_GetActiveWindow()
-				local activeMacroFrameText
-				if MacroFrameText and MacroFrameText:IsShown() and MacroFrameText:HasFocus() then
-					activeMacroFrameText = MacroFrameText
-				elseif MacroToolkitText:IsShown() and MacroToolkitText:HasFocus() then
-					activeMacroFrameText = MacroToolkitText
-				end
-				if activeMacroFrameText then
-					--local link = GetTradeSkillListLink()
-					local link = C_TradeSkillUI.GetTradeSkillListLink()
-					local text = format("%s%s", activeMacroFrameText:GetText(), link)
-					if 255 >= strlenutf8(text) then activeMacroFrameText:Insert(link) end
-				elseif activeEditBox then
-					--local link = GetTradeSkillListLink()
-					-- ticket 134 - fix by picro
-					local link = C_TradeSkillUI.GetTradeSkillListLink()
-					if not ChatEdit_InsertLink(link) then assert(activeEditBox:GetName(), "Failed to add tradeskill link") end
-				--else ToggleDropDownMenu(1, nil, TradeSkillLinkDropDown, "TradeSkillLinkFrame", 25, 25) end
-				else ToggleDropDownMenu(1, nil, TradeSkillFrame.LinkToDropDown, TradeSkillFrame.LinkToButton, 25, 25) end
-				--PlaySound("igMainMenuOptionCheckBoxOn")
-				PlaySound(856)
-			end
-			--TradeSkillLinkButton:SetScript("OnClick", btsui_onclick)
-			TradeSkillFrame.LinkToButton:SetScript("OnClick", btsui_onclick)
+		--- breaks on wrath classic
+		--- @TODO: found out if we care
+		--elseif arg1 == "Blizzard_TradeSkillUI" then
+		--	--override code to handle tradeskill links
+		--	local function btsui_onclick()
+		--		local activeEditBox =  ChatEdit_GetActiveWindow()
+		--		local activeMacroFrameText
+		--		if MacroFrameText and MacroFrameText:IsShown() and MacroFrameText:HasFocus() then
+		--			activeMacroFrameText = MacroFrameText
+		--		elseif MacroToolkitText:IsShown() and MacroToolkitText:HasFocus() then
+		--			activeMacroFrameText = MacroToolkitText
+		--		end
+		--		if activeMacroFrameText then
+		--			--local link = GetTradeSkillListLink()
+		--			local link = C_TradeSkillUI.GetTradeSkillListLink()
+		--			local text = format("%s%s", activeMacroFrameText:GetText(), link)
+		--			if 255 >= strlenutf8(text) then activeMacroFrameText:Insert(link) end
+		--		elseif activeEditBox then
+		--			--local link = GetTradeSkillListLink()
+		--			-- ticket 134 - fix by picro
+		--			local link = C_TradeSkillUI.GetTradeSkillListLink()
+		--			if not ChatEdit_InsertLink(link) then assert(activeEditBox:GetName(), "Failed to add tradeskill link") end
+		--		--else ToggleDropDownMenu(1, nil, TradeSkillLinkDropDown, "TradeSkillLinkFrame", 25, 25) end
+		--		else ToggleDropDownMenu(1, nil, TradeSkillFrame.LinkToDropDown, TradeSkillFrame.LinkToButton, 25, 25) end
+		--		--PlaySound("igMainMenuOptionCheckBoxOn")
+		--		PlaySound(856)
+		--	end
+		--	--TradeSkillLinkButton:SetScript("OnClick", btsui_onclick)
+		--	TradeSkillFrame.LinkToButton:SetScript("OnClick", btsui_onclick)
 		end
 	elseif event == "PLAYER_LOGIN" then
 		MT:BuildCommandList()
