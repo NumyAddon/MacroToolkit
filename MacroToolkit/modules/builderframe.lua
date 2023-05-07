@@ -141,7 +141,7 @@ function MT:CreateBuilderFrame()
 
 	local ddotherorder = {"zero",
 		"bar", "bonusbar", "btn", "channeling", "nochanneling", "combat", "nocombat", "cursor",
-		"extrabar", "flyable", "noflyable", "flying", "noflying", "form", "indoors",
+		"extrabar", "advflyable", "noadvflyable", "flyable", "noflyable", "flying", "noflying", "form", "indoors",
 		"outdoors", "mod", "nomod", "known", "noknown", "mounted", "nomounted", "overridebar", "party", "raid",
 		"pet", "nopet", "petbattle", "possessbar", "spec", "stealth", "nostealth",
 		"swimming", "noswimming", "pvptalent", "talent", "vehicleui", "novehicleui", "worn",

@@ -61,6 +61,7 @@ MT.slots = {
 --0=none,1=numeric,2=textual,3=alphanumeric,4=party/raid,5=mod keys,6=mouse buttons,7=numeric with /,8=alphanumeric with spaces
 MT.conditions={
 	["actionbar"]=1,
+	["advflyable"]=0,
 	["bar"]=1,
 	["bonusbar"]=1,
 	["btn"]=6,
