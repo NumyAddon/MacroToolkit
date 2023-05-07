@@ -395,8 +395,9 @@ local function validateCondition(condition, optionArguments, parameters)
             elseif name:lower() ~= parameters:lower() and optionArguments[1]:lower() ~= parameters:lower() then
                 local spellID = select(7, GetSpellInfo(parameters))
                 msg = format(
-                    "Known spell mismatch: [%s%s|r:%s (%s)]\n       %s%s",
+                    "Known spell mismatch: [%s%s%s|r:%s (%s)]\n       %s%s",
                     conditionColor,
+                    no and "no" or "",
                     condition,
                     optionArguments[1],
                     name,
@@ -779,17 +780,20 @@ function MT:ParseMacro(macrotext)
                     end
                     for _, c in ipairs(conditions) do
                         local cps = {strsplit(",", c.c)}
+                        local offset = c.p;
                         for _, condition_phrase in ipairs(cps) do
                             spos = string.find(condition_phrase, ":")
                             wipe(option_arguments)
                             if spos then
                                 option_arguments = {strsplit("/", string.sub(condition_phrase, spos + 1))}
                                 condition = string.sub(condition_phrase, 1, spos - 1)
-                            else condition = condition_phrase end
+                            else
+                                condition = condition_phrase
+                            end
                             local colorArguments
                             color, err, colorArguments = validateCondition(condition, option_arguments, parameters)
                             if err then table.insert(errors, err) end
-                            pos = string.find(macrotext, escape(condition), c.p)
+                            pos = string.find(macrotext, escape(condition), offset)
                             table.insert(parsed_text, { t = condition, c = color, s = pos})
                             if colorArguments then
                                 for _, argument in ipairs(option_arguments) do
@@ -797,6 +801,7 @@ function MT:ParseMacro(macrotext)
                                     table.insert(parsed_text, { t = argument, c = colorArguments, s = pos})
                                 end
                             end
+                            offset = offset + string.len(condition_phrase) + 1 -- +1 for the comma
                         end
                     end
                 end
