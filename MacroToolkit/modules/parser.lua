@@ -681,7 +681,24 @@ function MT:ParseMacro(macrotext)
     local command_object, condition, condition_phrase, condition_string
     local option_arguments, parsed_text, errors = {}, {}, {}
     local parameters, option_word, option_argument, target, pp
-    local spos, schar, ss, se, pt, err, color, pos, mout, vv, epos, lpos
+    local spos, firstCharacter, ss, se, pt, err, color, pos, mout, vv, epos, lpos
+
+    local ignoredRanges = {}
+    local function ignoreRange(start, finish)
+        for i = start, finish do
+            ignoredRanges[i] = true
+        end
+    end
+    local function isIgnored(index)
+        return ignoredRanges[index] == true
+    end
+    -- add hyperlinks to ignored ranges
+    local hyperlinkStart, hyperlinkFinish = string.find(macrotext, "|H.-|h.-|h")
+    while hyperlinkStart do
+        ignoreRange(hyperlinkStart, hyperlinkFinish)
+        hyperlinkStart, hyperlinkFinish = string.find(macrotext, "|H.-|h.-|h", hyperlinkFinish + 1)
+    end
+
 
     -- ticket 139 - handle comments at the start of a line
     if string.sub(macrotext, 1, 2) == format("%s%s", MT.slash, MT.slash) then
@@ -689,12 +706,13 @@ function MT:ParseMacro(macrotext)
         color = format("|c%s", MT.db.profile.comcolour)
         table.insert(parsed_text, { t = comment, c = color, s = 3})
     else
-        schar = string.sub(macrotext, 1, 1)
-        if schar == "#" or schar == MT.slash then
+        firstCharacter = string.sub(macrotext, 1, 1)
+        if firstCharacter == "#" or firstCharacter == MT.slash then
             local matchbrackets = matchedBrackets(macrotext)
             if matchbrackets ~= "" then table.insert(errors, format("%s: %s", L["Unmatched"], matchbrackets)) end
             spos = string.find(macrotext, " ")
-            if spos then command_verb = string.sub(macrotext, 2, spos - 1)
+            if spos then
+                command_verb = string.sub(macrotext, 2, spos - 1)
             else
                 command_verb = string.sub(macrotext, 2)
                 color, err = validateCommandVerb(command_verb)
@@ -781,27 +799,29 @@ function MT:ParseMacro(macrotext)
                     for _, c in ipairs(conditions) do
                         local cps = {strsplit(",", c.c)}
                         local offset = c.p;
-                        for _, condition_phrase in ipairs(cps) do
-                            spos = string.find(condition_phrase, ":")
-                            wipe(option_arguments)
-                            if spos then
-                                option_arguments = {strsplit("/", string.sub(condition_phrase, spos + 1))}
-                                condition = string.sub(condition_phrase, 1, spos - 1)
-                            else
-                                condition = condition_phrase
-                            end
-                            local colorArguments
-                            color, err, colorArguments = validateCondition(condition, option_arguments, parameters)
-                            if err then table.insert(errors, err) end
-                            pos = string.find(macrotext, escape(condition), offset)
-                            table.insert(parsed_text, { t = condition, c = color, s = pos})
-                            if colorArguments then
-                                for _, argument in ipairs(option_arguments) do
-                                    pos = string.find(macrotext, escape(argument), pos)
-                                    table.insert(parsed_text, { t = argument, c = colorArguments, s = pos})
+                        if not isIgnored(offset) then
+                            for _, condition_phrase in ipairs(cps) do
+                                spos = string.find(condition_phrase, ":")
+                                wipe(option_arguments)
+                                if spos then
+                                    option_arguments = {strsplit("/", string.sub(condition_phrase, spos + 1))}
+                                    condition = string.sub(condition_phrase, 1, spos - 1)
+                                else
+                                    condition = condition_phrase
                                 end
+                                local colorArguments
+                                color, err, colorArguments = validateCondition(condition, option_arguments, parameters)
+                                if err then table.insert(errors, err) end
+                                pos = string.find(macrotext, escape(condition), offset)
+                                table.insert(parsed_text, { t = condition, c = color, s = pos})
+                                if colorArguments then
+                                    for _, argument in ipairs(option_arguments) do
+                                        pos = string.find(macrotext, escape(argument), pos)
+                                        table.insert(parsed_text, { t = argument, c = colorArguments, s = pos})
+                                    end
+                                end
+                                offset = offset + string.len(condition_phrase) + 1 -- +1 for the comma
                             end
-                            offset = offset + string.len(condition_phrase) + 1 -- +1 for the comma
                         end
                     end
                 end
@@ -815,10 +835,20 @@ function MT:ParseMacro(macrotext)
     local offset = 0
     local lbefore, lafter
     for _, term in ipairs(parsed_text) do
-        lbefore = string.len(mout)
-        mout = replace(mout, term.t, format("%s%s%s", term.c, term.t, term.c == "" and "" or "|r"), term.s + offset)
-        lafter = string.len(mout)
-        offset = offset + (lafter - lbefore)
+        if not isIgnored(term.s) then
+            lbefore = string.len(mout)
+            mout = replace(mout, term.t, format("%s%s%s", term.c, term.t, term.c == "" and "" or "|r"), term.s + offset)
+            lafter = string.len(mout)
+            offset = offset + (lafter - lbefore)
+        end
+    end
+    if MT.debugging and ViragDevTool_AddData then
+        ViragDevTool_AddData({
+            mout = mout,
+            rawMout = mout:gsub("|", "||"),
+            rawOriginal = macrotext:gsub("|", "||"),
+            parsed_text = parsed_text,
+        }, "formatted macro text")
     end
     return mout, errors, command_verb, pp
 end
