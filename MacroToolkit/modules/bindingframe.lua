@@ -87,7 +87,10 @@ function MT:CreateBindingFrame()
 	frame.profile:SetSize(20, 20)
 	frame.profile:SetPoint("TOPLEFT", button1, "BOTTOMLEFT", -50, -5)
 	frame.profile:SetHitRectInsets(0, -100, 0, 0)
-	frame.profile.text:SetFormattedText(" %s%s", _G.HIGHLIGHT_FONT_COLOR_CODE, _G.CHARACTER_SPECIFIC_KEYBINDINGS)
+	local text = frame.profile.text or _G[frame.profile:GetName() .. "Text"]
+	if text then
+		text:SetFormattedText(" %s%s", _G.HIGHLIGHT_FONT_COLOR_CODE, _G.CHARACTER_SPECIFIC_KEYBINDINGS)
+	end
 	frame.profile.enabled = true
 	frame.profile:SetScript("OnClick",
 		function(this)
