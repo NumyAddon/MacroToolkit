@@ -203,6 +203,7 @@ end
 -- You don't necessarily need to do this manually - it will automatically be done when an icon window / icon frame /
 -- search object is first used, assuming a keywordAddonName field is specified in options.
 function lib:LoadKeywords(addonName)
+	local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata
 
 	-- Get the revision # of the specified addon (if it's enabled and loadable).
 	local addonRevision = nil
