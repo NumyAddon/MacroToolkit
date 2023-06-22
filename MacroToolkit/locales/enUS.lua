@@ -1,5 +1,4 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("MacroToolkit", "enUS", true)
-local _G = _G
 
 if not L then return end
 
@@ -193,6 +192,8 @@ L["noexists"] = "does not exist"
 L["extrabar"] = "extra bar"
 L["flyable"] = true
 L["noflyable"] = "not flyable"
+L["advflyable"] = "advflyable (dragonriding)"
+L["noadvflyable"] = "not advflyable (dragonriding)"
 L["flying"] = true
 L["noflying"] = "not flying"
 L["form"] = "form/stance"

@@ -144,10 +144,10 @@ local function validateCommandVerb(commandtext, parameters)
         for k, v in pairs(MT.commands) do
             if k == commandtext then
                 if v[3] then cc = format("|c%s", MT.db.profile.emotecolour) end
-                if v[2] == 5 then
+                if v[2] == MT.COMMAND_REMOVED then
                     msg = format("%s: %s%s%s", L["Command removed"], MT.slash, cc, commandtext)
                     p = true
-                elseif v[2] == 1 then
+                elseif v[2] == MT.COMMAND_PARAM_REQUIRED then
                     if not param then
                         msg = format("%s: %s%s%s", L["Required parameter missing"], MT.slash, cc, commandtext)
                         p = true
@@ -335,7 +335,7 @@ local function validateCondition(condition, optionArguments, parameters)
         local k = condition
         local v = MT.conditions[k] or nil
         if v then
-            if v > 0 and k ~= "group" and k ~= "mod" and k ~= "modifier" and k~= "pet" and (not no) then
+            if v ~= MT.CONDITION_TYPE_NONE and not MT.optionalConditions[k] and (not no) then
                 if #optionArguments == 0 then
                     msg = format("%s: %s%s", L["Argument not optional"], conditionColor, condition)
                     noa = true
@@ -343,39 +343,41 @@ local function validateCondition(condition, optionArguments, parameters)
                 end
             end
             if #optionArguments > 0 then
-                if v == 0 then
+                if v == MT.CONDITION_TYPE_NONE then
                     msg = format("%s: %s%s", L["Invalid argument"], conditionColor, condition)
                     isCondition = false
-                elseif v == 1 then --validate numeric
+                elseif v == MT.CONDITION_TYPE_NUMERIC then
                     valid, arg1 = isNumeric(optionArguments)
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, condition, arg1)
                         isCondition = false
                     else msg = nil end
-                elseif v == 2 then --validate text
+                elseif v == MT.CONDITION_TYPE_TEXTUAL then
                     if isNumeric(optionArguments) then
                         msg = format("%s: %s%s", L["Arguments must not be numeric"], conditionColor, condition)
                         isCondition = false
                     else msg = nil end
-                elseif v == 3 then --validate alphanumeric
+                elseif v == MT.CONDITION_TYPE_ALPHANUMERIC then
                     valid, arg1 = isAlphaNumeric(optionArguments)
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, condition, arg1)
                         isCondition = false
                     else msg = nil end
-                elseif v > 3 and v < 7 then --validate group
+                elseif v == MT.CONDITION_TYPE_PARTY_RAID
+                        or v == MT.CONDITION_TYPE_MOD_KEYS
+                        or v == MT.CONDITION_TYPE_MOUSEBUTTONS then
                     valid, arg1 = isValid(optionArguments, v)
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Invalid argument"], conditionColor, condition, arg1)
                         isCondition = false
                     else msg = nil end
-                elseif v == 7 then
+                elseif v == MT.CONDITION_TYPE_NUMERIC_WITH_SLASH then
                     valid, arg1 = isNumeric(optionArguments, true)
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, condition, arg1)
                         isCondition = false
                     else msg = nil end
-                elseif v == 8 then --validate alphanumeric + spaces
+                elseif v == MT.CONDITION_TYPE_ALPHANUMERIC_WITH_SPACES then
                     valid, arg1 = isAlphaNumeric(optionArguments, "[%w ]+")
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, condition, arg1)

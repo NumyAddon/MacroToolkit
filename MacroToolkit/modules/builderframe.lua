@@ -1,3 +1,4 @@
+--- @type MacroToolkit
 local MT = MacroToolkit
 local L = MT.L
 local AceGUI = MT.LS("AceGUI-3.0")
@@ -159,8 +160,8 @@ function MT:CreateBuilderFrame()
 			realkey = string.sub(key, 3)
 			negate = true
 		end
-		local ctype = negate and 0 or (MT.conditions[realkey] or 0)
-		if ctype == 1 then
+		local ctype = negate and MT.CONDITION_TYPE_NONE or (MT.conditions[realkey] or MT.CONDITION_TYPE_NONE)
+		if ctype == MT.CONDITION_TYPE_NUMERIC then
 			ddvals.zero = ""
 			local cap = 7
 			if realkey == "spec" then cap = 4 end
@@ -169,32 +170,34 @@ function MT:CreateBuilderFrame()
 			pdd.frame:Show()
 			eb.frame:Hide()
 			ed.frame:Hide()
-		elseif ctype == 2 or ctype == 3 or ctype == 8 then
+		elseif ctype == MT.CONDITION_TYPE_TEXTUAL
+				or ctype == MT.CONDITION_TYPE_ALPHANUMERIC
+				or ctype == MT.CONDITION_TYPE_ALPHANUMERIC_WITH_SPACES then
 			pdd.frame:Hide()
 			eb.frame:Show()
 			ed.frame:Hide()
-		elseif ctype == 4 then
+		elseif ctype == MT.CONDITION_TYPE_PARTY_RAID then
 			local b = {"zero","party","raid"}
 			for _, bt in ipairs(b) do ddvals[bt] = L[bt] end
 			pdd:SetList(ddvals, b)
 			pdd.frame:Show()
 			eb.frame:Hide()
 			ed.frame:Hide()
-		elseif ctype == 5 then
+		elseif ctype == MT.CONDITION_TYPE_MOD_KEYS then
 			local b = {"zero","alt","shift","ctrl"}
 			for _, bt in ipairs(b) do ddvals[bt] = L[bt] end
 			pdd:SetList(ddvals, b)
 			pdd.frame:Show()
 			eb.frame:Hide()
 			ed.frame:Hide()
-		elseif ctype == 6 then
+		elseif ctype == MT.CONDITION_TYPE_MOUSEBUTTONS then
 			local b = {"zero","LeftButton","MiddleButton","RightButton","Button4","Button5"}
 			for _, bt in ipairs(b) do ddvals[bt] = L[bt] end
 			pdd:SetList(ddvals, b)
 			pdd.frame:Show()
 			eb.frame:Hide()
 			ed.frame:Hide()
-		elseif ctype == 7 then
+		elseif ctype == MT.CONDITION_TYPE_NUMERIC_WITH_SLASH then
 			ddvals.zero = ""
 			for n = 1, 7 do ddvals[tostring(n)] = n end
 			pdd:SetList(ddvals)
