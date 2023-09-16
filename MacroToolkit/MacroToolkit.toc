@@ -16,7 +16,10 @@
 
 #@no-lib-strip@
 # Libraries
-embeds.xml
+embeds-core.xml
+#@version-retail@
+embeds-retail.xml
+#@end-version-retail@
 #@end-no-lib-strip@
 
 libs\LibAdvancedIconSelector-MTK\LibAdvancedIconSelector-MTK.xml

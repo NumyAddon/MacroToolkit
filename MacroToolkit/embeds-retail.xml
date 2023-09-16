@@ -1,0 +1,3 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.blizzard.com/wow/ui/" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://www.blizzard.com/wow/ui/../../FrameXML/UI.xsd">
+<Include file="libs\LibTalentTree-1.0\LibTalentTree-1.0.xml"/>
+</Ui>
