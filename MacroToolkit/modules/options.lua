@@ -118,15 +118,16 @@ local checkPanel = {
 			get = function() return MT.db.profile.replacemt end,
 			set  = function(info, value) MT.db.profile.replacemt = value end,
 		},
-		broker = {
-			order = 5,
-			type = "toggle",
-			name = L["Enable data broker"],
-			desc = L["Enable certain types of macro to be called via a data broker addon"],
-			width = "full",
-			get = function() return MT.db.profile.broker end,
-			set = function(info, value) MT.db.profile.broker = value MT:MacroFrameUpdate() end,
-		},
+		-- disabled broker code (issue #37)
+		--broker = {
+		--	order = 5,
+		--	type = "toggle",
+		--	name = L["Enable data broker"],
+		--	desc = L["Enable certain types of macro to be called via a data broker addon"],
+		--	width = "full",
+		--	get = function() return MT.db.profile.broker end,
+		--	set = function(info, value) MT.db.profile.broker = value MT:MacroFrameUpdate() end,
+		--},
 		noskin = {
 			order = 6,
 			type = "toggle",

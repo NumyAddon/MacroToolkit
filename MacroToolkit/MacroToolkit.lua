@@ -855,32 +855,35 @@ function MT:MacroFrameUpdate()
 						MacroToolkitCSelMacroButton:SetID(i)
 						MacroToolkitCSelMacroButton.Icon:SetTexture(texture)
 					end
-					if MT.db.profile.broker then
-						local result, cmd = _G.ERR_NOT_IN_COMBAT, ""
-						if not InCombatLockdown() then result, cmd = MT:RunCommands(true, body) end
-						local mname = MacroToolkitSelMacroName:GetText()
-						if result then
-							MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Red")
-							MacroToolkitBrokerIcon:SetScript("OnEnter",
-									function(this)
-										GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-										GameTooltip:SetText("Macro Toolkit Broker")
-										GameTooltip:AddLine(format("|cffff0000%s|r", cmd))
-										GameTooltip:AddLine(format("|cffffffffReason: |cff4466cc%s|r", result))
-										GameTooltip:Show()
-									end)
-							MTF.brokerok = false
-							if MT:FindBrokerName(mname) then MT:BrokerRemove()
-							else MacroToolkitBrokerButton:Hide() end
-						else
-							MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Green")
-							MacroToolkitBrokerIcon:SetScript("OnEnter", nil)
-							if MT:FindBrokerName(mname) then MT:BrokerRemove()
-							else MT:BrokerAdd() end
-							MTF.brokerok = true
-						end
-						MacroToolkitBrokerIcon:Show()
-					else MacroToolkitBrokerIcon:Hide() end
+					-- disabled broker code (issue #37)
+					--if MT.db.profile.broker then
+					--	local result, cmd = _G.ERR_NOT_IN_COMBAT, ""
+					--	if not InCombatLockdown() then result, cmd = MT:RunCommands(true, body) end
+					--	local mname = MacroToolkitSelMacroName:GetText()
+					--	if result then
+					--		MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Red")
+					--		MacroToolkitBrokerIcon:SetScript("OnEnter",
+					--				function(this)
+					--					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+					--					GameTooltip:SetText("Macro Toolkit Broker")
+					--					GameTooltip:AddLine(format("|cffff0000%s|r", cmd))
+					--					GameTooltip:AddLine(format("|cffffffffReason: |cff4466cc%s|r", result))
+					--					GameTooltip:Show()
+					--				end)
+					--		MTF.brokerok = false
+					--		if MT:FindBrokerName(mname) then MT:BrokerRemove()
+					--		else MacroToolkitBrokerButton:Hide() end
+					--	else
+					--		MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Green")
+					--		MacroToolkitBrokerIcon:SetScript("OnEnter", nil)
+					--		if MT:FindBrokerName(mname) then MT:BrokerRemove()
+					--		else MT:BrokerAdd() end
+					--		MTF.brokerok = true
+					--	end
+					--	MacroToolkitBrokerIcon:Show()
+					--else
+						MacroToolkitBrokerIcon:Hide()
+					--end
 				else macroButton:SetChecked(false) end
 				if tab == 4 then macroButton.extended = exmacros[i].extended end
 			else
