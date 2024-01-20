@@ -801,7 +801,7 @@ function MT:MacroFrameUpdate()
 				if MTF.selectedMacro then pos = ((tab == 3) and MTF.extrapos or (MTF.selectedMacro - MTF.macroBase)) end
 				if tab == 4 then pos = MT.MTCF.selectedMacro end
 				if MTF.selectedMacro and i == pos then
-					macroButton:SetChecked(true)
+					macroButton:OnClick()
 					if tab < 4 then MacroToolkitSelMacroName:SetText(name)
 					else MacroToolkitCSelMacroName:SetText(name) end
 					local index
@@ -961,16 +961,23 @@ function MT:MacroFrameUpdate()
 end
 
 function MT:ContainerOnLoad(container)
+	Mixin(container, SelectorMixin)
+	container.buttons = {}
+	function container:EnumerateButtons()
+		return pairs(self.buttons)
+	end
+	container:SetSelectedIndex(1)
+	container.initialized = true
+
 	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
 	local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
 	local OnDragStart = function(button) if not InCombatLockdown() then PickupMacro(MTF.macroBase + button:GetID()) end end
 	local OnClick = function(button, btn) self:MacroButtonOnClick(button, btn) end
-	local button
-	local buttonWidth = 45
-	local buttonsPerRow = container:GetWidth() / buttonWidth
 	for i = 1, maxMacroButtons do
-		button = CreateFrame("CheckButton", format("%s%d", bname, i), container, "MacroToolkitButtonTemplate")
-		button:SetScript("OnClick", OnClick)
+		local button = CreateFrame("CheckButton", format("%s%d", bname, i), container, "MacroToolkitButtonTemplate")
+		container.buttons[button] = true
+		container:RunSetup(button, i)
+		button:HookScript("OnClick", OnClick)
 		button:SetScript("OnDragStart", OnDragStart)
 		button:SetID(i)
 	end
