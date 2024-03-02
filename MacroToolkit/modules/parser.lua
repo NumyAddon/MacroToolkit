@@ -10,7 +10,8 @@ MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}
 local function trim(s) return string.match(s, "^%s*(.*%S)") or "" end
 local function escape(s) return (s:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]","%%%1"):gsub("%z","%%z")) end
 
-local LibTalentTreeExists, LibTalentTree = pcall(LibStub, "LibTalentTree-1.0");
+local LibTalentTree = LibStub("LibTalentTree-1.0");
+local LibTalentTreeExists = LibTalentTree:IsCompatible();
 local spellCache;
 local function getSpellCache()
     if spellCache then return spellCache end
