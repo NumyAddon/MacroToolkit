@@ -1,4 +1,5 @@
 local _G = _G
+--- @class MacroToolkit
 local MT = MacroToolkit
 local AceConfig = MT.LS("AceConfig-3.0")
 local AceConfigDialog = MT.LS("AceConfigDialog-3.0")

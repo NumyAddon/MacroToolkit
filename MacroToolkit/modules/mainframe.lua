@@ -1,4 +1,5 @@
 local _G = _G
+--- @class MacroToolkit
 local MT = MacroToolkit
 local CreateFrame, PlaySound, GameTooltip, GameTooltip_Hide, UnitName = CreateFrame, PlaySound, GameTooltip, GameTooltip_Hide, UnitName
 local UIParent = UIParent
@@ -1087,7 +1088,7 @@ function MT:CreateSecureFrames()
 	end
 
 	--extra macros
-	for b = 1001, 1000 + _G.MAX_ACCOUNT_MACROS do
+	for b = 1001, 1000 + MT.MAX_EXTRA_MACROS do
 		self:CreateSecureActionButton(b)
 	end
 end

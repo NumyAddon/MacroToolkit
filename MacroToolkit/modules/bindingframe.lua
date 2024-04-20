@@ -1,3 +1,4 @@
+--- @class MacroToolkit
 local MT = MacroToolkit
 local MTB
 local GetBindingText, LoadBindings, SetBinding, GetBindingKey = GetBindingText, LoadBindings, SetBinding, GetBindingKey

@@ -1,3 +1,4 @@
+--- @class MacroToolkit
 local MT = MacroToolkit
 
 -- copied the update timing concept from SecureStateDriverManager

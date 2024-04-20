@@ -1,3 +1,4 @@
+--- @class MacroToolkit
 local MT = MacroToolkit
 local mtpf
 local L = MT.L

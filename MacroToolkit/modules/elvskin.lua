@@ -1,5 +1,6 @@
 local _G = _G
 local format, unpack, string = format, unpack, string
+--- @class MacroToolkit
 local MT = MacroToolkit
 MT.skinned = {}
 
@@ -217,7 +218,7 @@ function MT:LoadElvSkin(frame)
 	end
 
 	if frame == MacroToolkitFrame or frame == MacroToolkitCopyFrame or frame == MacroToolkitPopup then
-		for i = 1, _G.MAX_ACCOUNT_MACROS do
+		for i = 1, MT.MAX_EXTRA_MACROS do
 			local b = _G[format("MacroToolkitButton%d", i)]
 			local c = _G[format("MacroToolkitCButton%d", i)]
 			local t = _G[format("MacroToolkitButton%dIcon", i)]

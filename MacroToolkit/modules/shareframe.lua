@@ -1,3 +1,4 @@
+--- @class MacroToolkit
 local MT = MacroToolkit
 local L = MT.L
 local string, format, strsplit = string, format, strsplit

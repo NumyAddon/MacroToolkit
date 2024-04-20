@@ -1,5 +1,5 @@
 local _G = _G
---- @type MacroToolkit
+--- @class MacroToolkit
 local MT = MacroToolkit
 MT.LS = LibStub
 MT.L = MT.LS("AceLocale-3.0"):GetLocale("MacroToolkit")
@@ -8,6 +8,7 @@ MT.LDB = MT.LS("LibDataBroker-1.1")
 MT.slash = string.sub(_G.SLASH_CAST1, 1, 1)
 MT.click = _G.SLASH_CLICK1
 MT.target = _G.SLASH_TARGET1
+MT.MAX_EXTRA_MACROS = 1000 -- I'd like to see you try to hit this limit :P
 local L = MT.L
 local SendChatMessage, format = SendChatMessage, format
 

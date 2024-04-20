@@ -1,3 +1,4 @@
+--- @class MacroToolkit
 local MT = MacroToolkit
 local MTF
 local L, _G = MT.L, _G
@@ -463,9 +464,13 @@ function MT:SetMacros(account, extra, copy)
 	MTF.macroBase = account and 0 or _G.MAX_ACCOUNT_MACROS
 	MTF.macroMax = account and _G.MAX_ACCOUNT_MACROS or _G.MAX_CHARACTER_MACROS
 	if extra then
-		if MT:CountExtra() > 0 then MTF.selectedMacro = 1001
-		else MTF.selectedMacro = nil end
+		if MT:CountExtra() > 0 then
+		    MTF.selectedMacro = 1001
+		else
+		    MTF.selectedMacro = nil
+        end
 		MTF.macroBase = 1000
+		MTF.macroMax = MT.MAX_EXTRA_MACROS
 	elseif copy then
 		MTF.selectedMacro = 1
 		MTF.macroBase = 1
@@ -520,7 +525,7 @@ function MT:GetNextIndex()
 	if tab == 3 then
 		index = 1001
 		mstart = 1001
-		mend = 1000 + _G.MAX_ACCOUNT_MACROS
+		mend = 1000 + MT.MAX_EXTRA_MACROS
 	end
 	for m = mstart, mend do
 		local var = (m > _G.MAX_ACCOUNT_MACROS) and "char" or "global"
@@ -718,16 +723,16 @@ function MT:SelOnClick(this)
 end
 
 function MT:MacroFrameUpdate()
-	local numMacros, tab
+	local numMacros
 	local numAccountMacros, numCharacterMacros = GetNumMacros()
 	local macroButtonName, macroButton, macroIcon, macroName, macroUnbound
 	local name, texture, body
-	local selectedName, selectedBody, selectedIcon
 	local tab = PanelTemplates_GetSelectedTab(MTF)
 	local exmacros = {}
 
 	numMacros = (MTF.macroBase == 0) and numAccountMacros or numCharacterMacros
 	if MT.MTCF then if MT.MTCF:IsShown() then tab = 4 end end
+	local maxMacroButtons = max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
 	if tab == 3 then
 		numMacros = MT:CountExtra()
 		for i, exm in pairs(MT.db.global.extra) do table.insert(exmacros, {name = exm.name, texture = exm.texture, body = exm.body, index = i}) end
@@ -736,6 +741,7 @@ function MT:MacroFrameUpdate()
 		if numMacros == _G.MAX_CHARACTER_MACROS then MacroToolkitCopyButton:Disable()
 		else MacroToolkitCopyButton:Enable() end
 	elseif tab == 4 then
+	    maxMacroButtons = _G.MAX_CHARACTER_MACROS
 		numMacros = 0
 		if MT.charcopy then
 			if MacroToolkitDB.char[MT.charcopy].extended then
@@ -759,7 +765,6 @@ function MT:MacroFrameUpdate()
 			table.sort(exmacros, function(a, b) return a.name < b.name end)
 		end
 	end
-	local maxMacroButtons = (tab == 4) and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
 	--local fsize = select(2, MacroToolkitButton1Name:GetFont())
 	local font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.mifont)
 	local k1, k2
@@ -888,7 +893,7 @@ function MT:MacroFrameUpdate()
 				if tab == 4 then macroButton.extended = exmacros[i].extended end
 			else
 				macroButton:SetChecked(false)
-				if tab == 3 then macroButton.extra = 1001 end
+				if tab == 3 then macroButton.extra = 1000 + i end
 				macroIcon:SetTexture("")
 				macroName:SetText("")
 				macroUnbound:Hide()
@@ -969,7 +974,7 @@ function MT:ContainerOnLoad(container)
 	container:SetSelectedIndex(1)
 	container.initialized = true
 
-	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
+	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
 	local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
 	local OnDragStart = function(button) if not InCombatLockdown() then PickupMacro(MTF.macroBase + button:GetID()) end end
 	local OnClick = function(button, btn) self:MacroButtonOnClick(button, btn) end
@@ -985,7 +990,7 @@ function MT:ContainerOnLoad(container)
 end
 
 function MT:RepositionContainerButtons(container)
-	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS)
+	local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
 	local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
 	local buttonWidth = 49
 	local oldButtonsPerRow = container.buttonsPerRow

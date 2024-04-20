@@ -1,3 +1,4 @@
+--- @class MacroToolkit
 local MT = MacroToolkit
 local string, table, ipairs, pairs, type, math = string, table, ipairs, pairs, type, math
 local strsplit, select, wipe, tonumber = strsplit, select, wipe, tonumber

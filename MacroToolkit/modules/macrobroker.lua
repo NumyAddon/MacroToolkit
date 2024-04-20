@@ -2,6 +2,7 @@
 --* Code based on the abandoned addon -- Macro Broker by Tuhljin *
 --****************************************************************
 
+--- @class MacroToolkit
 local MT = MacroToolkit
 local assert, type, strlower, select, strmatch, format, tonumber, strsub, strlen, strtrim = assert, type, strlower, select, strmatch, format, tonumber, strsub, strlen, strtrim
 local ipairs, error, pcall, loadstring, tinsert = ipairs, error, pcall, loadstring, tinsert
