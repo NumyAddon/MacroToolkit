@@ -900,7 +900,7 @@ function MT:CreateMTFrame()
 	mtmarkerdd = AceGUI:Create("Dropdown")
 	do
 		local mtmarkers = {}
-		for m = 1, 8 do mtmarkers[m] = format("%s0|t", _G.ICON_LIST[_G.ICON_TAG_LIST[format("rt%d", m)]]) end
+		for m = 1, 8 do mtmarkers[m] = format("%s0|t", _G.ICON_LIST[m]) end
 		mtmarkerdd.frame:SetParent(mtframe)
 		mtmarkerdd.label:SetTextColor(1, 1, 1, 1)
 		mtmarkerdd:SetList(mtmarkers)
