@@ -3,6 +3,7 @@
 ## Interface-Classic: @toc-version-classic@
 ## Interface-BCC: @toc-version-bcc@
 ## Interface-Wrath: @toc-version-wrath@
+## Interface-Cata: @toc-version-cata@
 ## Author: Deepac
 ## IconTexture: 982414
 ## Title: MacroToolkit Icon Data
