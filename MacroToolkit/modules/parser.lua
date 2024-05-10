@@ -349,20 +349,21 @@ local function parseSequence(parameters)
 end
 
 local function validateCondition(condition, optionArguments, parameters)
+    local tr_condition = condition:match('^%s*(.*)') -- trim leading whitespace
     local color, conditionColor, isCondition = format("|c%s", MT.db.profile.defaultcolour), format("|c%s", MT.db.profile.conditioncolour), true
-    local msg = format("%s: %s%s", L["Invalid condition"], conditionColor, condition)
+    local msg = format("%s: %s%s", L["Invalid condition"], conditionColor, tr_condition)
     local target, noa, valid, arg1, no
     local colorArguments = false
 
-    if string.len(condition) == 0 then return "", nil end
-    if string.sub(condition, 1, 2) == "no" then
-        condition = string.sub(condition,3)
+    if string.len(tr_condition) == 0 then return "", nil end
+    if string.sub(tr_condition, 1, 2) == "no" then
+        tr_condition = string.sub(tr_condition,3)
         no = true
     end
-    local s, e = string.find(condition, "target%s-=")
-    if not s then s, e = string.find(condition, "@") end
+    local s, e = string.find(tr_condition, "target%s-=")
+    if not s then s, e = string.find(tr_condition, "@") end
     if s then
-        if e then target = string.sub(condition, e + 1) end
+        if e then target = string.sub(tr_condition, e + 1) end
         if not target then
             msg = L["Invalid target"]
             isCondition = false
@@ -371,35 +372,35 @@ local function validateCondition(condition, optionArguments, parameters)
             isCondition = false
         else msg = nil end
     else
-        local k = condition
+        local k = tr_condition
         local v = MT.conditions[k] or nil
         if v then
             if v ~= MT.CONDITION_TYPE_NONE and not MT.optionalConditions[k] and (not no) then
                 if #optionArguments == 0 then
-                    msg = format("%s: %s%s", L["Argument not optional"], conditionColor, condition)
+                    msg = format("%s: %s%s", L["Argument not optional"], conditionColor, tr_condition)
                     noa = true
                     isCondition = false
                 end
             end
             if #optionArguments > 0 then
                 if v == MT.CONDITION_TYPE_NONE then
-                    msg = format("%s: %s%s", L["Invalid argument"], conditionColor, condition)
+                    msg = format("%s: %s%s", L["Invalid argument"], conditionColor, tr_condition)
                     isCondition = false
                 elseif v == MT.CONDITION_TYPE_NUMERIC then
                     valid, arg1 = isNumeric(optionArguments)
                     if not valid then
-                        msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, condition, arg1)
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
                 elseif v == MT.CONDITION_TYPE_TEXTUAL then
                     if isNumeric(optionArguments) then
-                        msg = format("%s: %s%s", L["Arguments must not be numeric"], conditionColor, condition)
+                        msg = format("%s: %s%s", L["Arguments must not be numeric"], conditionColor, tr_condition)
                         isCondition = false
                     else msg = nil end
                 elseif v == MT.CONDITION_TYPE_ALPHANUMERIC then
                     valid, arg1 = isAlphaNumeric(optionArguments)
                     if not valid then
-                        msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, condition, arg1)
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
                 elseif v == MT.CONDITION_TYPE_PARTY_RAID
@@ -407,19 +408,19 @@ local function validateCondition(condition, optionArguments, parameters)
                         or v == MT.CONDITION_TYPE_MOUSEBUTTONS then
                     valid, arg1 = isValid(optionArguments, v)
                     if not valid then
-                        msg = format("%s: %s%s|r - %s", L["Invalid argument"], conditionColor, condition, arg1)
+                        msg = format("%s: %s%s|r - %s", L["Invalid argument"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
                 elseif v == MT.CONDITION_TYPE_NUMERIC_WITH_SLASH then
                     valid, arg1 = isNumeric(optionArguments, true)
                     if not valid then
-                        msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, condition, arg1)
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be numeric"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
                 elseif v == MT.CONDITION_TYPE_ALPHANUMERIC_WITH_SPACES then
                     valid, arg1 = isAlphaNumeric(optionArguments, "[%w ]+")
                     if not valid then
-                        msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, condition, arg1)
+                        msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
                 end
@@ -428,10 +429,10 @@ local function validateCondition(condition, optionArguments, parameters)
     end
     if not msg then
         color = conditionColor
-        if condition == 'known' and optionArguments and optionArguments[1] then
+        if tr_condition == 'known' and optionArguments and optionArguments[1] then
             local name, _ = GetSpellInfoPlus(optionArguments[1])
             if not name then
-                msg = format("%s: [%s%s|r:%s] - %s", L["Invalid condition"], conditionColor, condition, optionArguments[1], "Unknown spell")
+                msg = format("%s: [%s%s|r:%s] - %s", L["Invalid condition"], conditionColor, tr_condition, optionArguments[1], "Unknown spell")
                 isCondition = false
             elseif name:lower() ~= parameters:lower() and optionArguments[1]:lower() ~= parameters:lower() then
                 local spellID = select(7, GetSpellInfoPlus(parameters))
@@ -439,7 +440,7 @@ local function validateCondition(condition, optionArguments, parameters)
                     "Known spell mismatch: [%s%s%s|r:%s (%s)]\n       %s%s",
                     conditionColor,
                     no and "no" or "",
-                    condition,
+                    tr_condition,
                     optionArguments[1],
                     name,
                     parameters,
@@ -454,7 +455,7 @@ local function validateCondition(condition, optionArguments, parameters)
     else
         msg = format("%s|r", msg)
         if isCondition then
-            msg = format("%s\n      %s: %s%s%s|r", msg, L["did you mean"], conditionColor, no and "no" or "", findMatch(condition, MT.conditions))
+            msg = format("%s\n      %s: %s%s%s|r", msg, L["did you mean"], conditionColor, no and "no" or "", findMatch(tr_condition, MT.conditions))
         end
     end
     return color, msg, colorArguments
