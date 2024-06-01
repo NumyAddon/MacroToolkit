@@ -2,11 +2,26 @@
 local MT = MacroToolkit
 local string, table, ipairs, pairs, type, math = string, table, ipairs, pairs, type, math
 local strsplit, select, wipe, tonumber = strsplit, select, wipe, tonumber
-local GetSpellInfo, GetItemInfo = GetSpellInfo, GetItemInfo
+local GetItemInfo = (GetItemInfo or C_Item.GetItemInfo)
 local format = string.format
 local _G = _G
 local L = MT.L
 MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
+
+
+local GetSpellInfo;
+do -- todo: rework after 11.0 release
+	GetSpellInfo = _G.GetSpellInfo or function(spellID)
+		if not spellID then
+			return nil;
+		end
+
+		local spellInfo = C_Spell.GetSpellInfo(spellID);
+		if spellInfo then
+			return spellInfo.name, nil, spellInfo.iconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID;
+		end
+	end
+end
 
 local function trim(s) return string.match(s, "^%s*(.*%S)") or "" end
 local function escape(s) return (s:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]","%%%1"):gsub("%z","%%z")) end

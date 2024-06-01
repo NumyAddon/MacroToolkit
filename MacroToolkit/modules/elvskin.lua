@@ -6,7 +6,7 @@ MT.skinned = {}
 
 function MT:Skin(frame)
 	if true then return end -- disabled for now
-	if not IsAddOnLoaded("ElvUI") then return end
+	if not C_AddOns.IsAddOnLoaded("ElvUI") then return end
 	if MT.db.profile.noskin then return end
 	if not MT.skinned[frame:GetName()] then
 		MT:LoadElvSkin(frame)

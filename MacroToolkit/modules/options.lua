@@ -16,7 +16,7 @@ local function createMainPanel()
 	local author = frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetFormattedText("|T%s:%d|t %s", "Interface\\AddOns\\MacroToolkit\\mtsm", 48, "Macro Toolkit")
 	title:SetPoint("CENTER", frame, "CENTER", 0, 170)
-	version:SetFormattedText("%s %s", _G.GAME_VERSION_LABEL, (GetAddOnMetadata or C_AddOns.GetAddOnMetadata)("MacroToolkit", "Version"))
+	version:SetFormattedText("%s %s", _G.GAME_VERSION_LABEL, C_AddOns.GetAddOnMetadata("MacroToolkit", "Version"))
 	version:SetPoint("CENTER", frame, "CENTER", 0, 130)
 	author:SetFormattedText("%s: Deepac", L["Author"])
 	author:SetPoint("CENTER", frame, "CENTER", 0, 100)
@@ -135,7 +135,7 @@ local checkPanel = {
 			name = L["Do not skin for ElvUI"],
 			desc = L["Requires a UI reload to take effect"],
 			width = "full",
-			hidden = not IsAddOnLoaded("ElvUI"),
+			hidden = not C_AddOns.IsAddOnLoaded("ElvUI"),
 			get = function() return MT.db.profile.noskin end,
 			set = function(info, value) MT.db.profile.noskin = value end,
 		},
@@ -148,9 +148,9 @@ local checkPanel = {
 			get = function() return MT.db.profile.useiconlib end,
 			set = function(info, value)
 				MT.db.profile.useiconlib = value
-				if value and not IsAddOnLoaded("MacroToolkitIcons") then
+				if value and not C_AddOns.IsAddOnLoaded("MacroToolkitIcons") then
 					--Try loading the data addon
-					local loaded, reason = LoadAddOn("MacroToolkitIcons")
+					local loaded, reason = C_AddOns.LoadAddOn("MacroToolkitIcons")
 
 					if not loaded then
 						--load failed

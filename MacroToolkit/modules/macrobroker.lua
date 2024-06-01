@@ -4,14 +4,25 @@
 
 --- @class MacroToolkit
 local MT = MacroToolkit
-local assert, type, strlower, select, strmatch, format, tonumber, strsub, strlen, strtrim = assert, type, strlower, select, strmatch, format, tonumber, strsub, strlen, strtrim
-local ipairs, error, pcall, loadstring, tinsert = ipairs, error, pcall, loadstring, tinsert
-local GetSpellInfo, GetSpellLink, GetItemInfo, GetItemIcon, GetSpellTexture = GetSpellInfo, GetSpellLink, GetItemInfo, GetItemIcon, GetSpellTexture
-local GetInventoryItemLink, GetInventoryItemTexture = GetInventoryItemLink, GetInventoryItemTexture
+local type, strlower, strmatch, format, strsub, strlen, strtrim = type, strlower, strmatch, format, strsub, strlen, strtrim
+local ipairs, tinsert = ipairs, tinsert
 local SecureCmdOptionParse, CreateFrame = SecureCmdOptionParse, CreateFrame
 local _G = _G
 local L = MT.L
 
+local GetSpellInfo;
+do -- todo: rework after 11.0 release
+	GetSpellInfo = _G.GetSpellInfo or function(spellID)
+		if not spellID then
+			return nil;
+		end
+
+		local spellInfo = C_Spell.GetSpellInfo(spellID);
+		if spellInfo then
+			return spellInfo.name, nil, spellInfo.iconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID;
+		end
+	end
+end
 -- GLOBALS: DEFAULT_CHAT_FRAME UIParent ChatEdit_SendText
 
 function MT:IsSecureCmd(slash, arg)

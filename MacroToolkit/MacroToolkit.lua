@@ -104,7 +104,7 @@ function MT:eventHandler(this, event, arg1, ...)
 				SlashCmdList[format("MACROTOOLKIT_%s", string.upper(s[2]))] = function(input) MT:DoMTMacroCommand(s[2], input) end
 			end
 			MT.db = MT.LS("AceDB-3.0"):New("MacroToolkitDB", MT.defaults, "profile")
-			if not IsAddOnLoaded("Blizzard_MacroUI") then LoadAddOn("Blizzard_MacroUI") end
+			if not C_AddOns.IsAddOnLoaded("Blizzard_MacroUI") then C_AddOns.LoadAddOn("Blizzard_MacroUI") end
 			if not MT.db.global.custom then MT.db.global.custom = {} end
 			if not MT.db.global.extra then MT.db.global.extra = {} end
 			for _, c in ipairs(MT.db.global.custom) do
@@ -262,7 +262,7 @@ function MT:eventHandler(this, event, arg1, ...)
 			MacroToolkitErrorScrollFrame:Hide()
 		end
 		MTF:Hide()
-		--if IsAddOnLoaded("ElvUI") then MT:LoadElvSkin() end
+		--if C_AddOns.IsAddOnLoaded("ElvUI") then MT:LoadElvSkin() end
 		MT.AC = MT.LS("AceComm-3.0")
 		MT.AC:RegisterComm("MacroToolkit", function(...) MT:ReceiveMacro(...) end)
 		if countTables(MT.db.char.brokers) > 0 then
@@ -271,7 +271,7 @@ function MT:eventHandler(this, event, arg1, ...)
 
 		if MacroToolkit.db.profile.useiconlib == true then
 			--Try loading the data addon
-			loaded, reason = LoadAddOn("MacroToolkitIcons")
+			loaded, reason = C_AddOns.LoadAddOn("MacroToolkitIcons")
 
 			if not loaded then
 				--load failed

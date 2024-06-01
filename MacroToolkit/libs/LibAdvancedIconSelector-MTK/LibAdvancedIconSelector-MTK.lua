@@ -34,7 +34,7 @@ local DEBUG = false
 if DEBUG and LibDebug then LibDebug() end
 
 local MAJOR_VERSION = "LibAdvancedIconSelector-MTK"
-local MINOR_VERSION = 14			-- (do not call GetAddOnMetaData)
+local MINOR_VERSION = 15
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub to operate") end
 local lib = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -203,20 +203,19 @@ end
 -- You don't necessarily need to do this manually - it will automatically be done when an icon window / icon frame /
 -- search object is first used, assuming a keywordAddonName field is specified in options.
 function lib:LoadKeywords(addonName)
-	local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata
 
 	-- Get the revision # of the specified addon (if it's enabled and loadable).
 	local addonRevision = nil
-	local addonLoadable = addonName and select(4, GetAddOnInfo(addonName))
+	local addonLoadable = addonName and select(4, C_AddOns.GetAddOnInfo(addonName))
 	if addonLoadable then
-		addonRevision = tonumber(GetAddOnMetadata(addonName, "X-Revision"))
+		addonRevision = tonumber(C_AddOns.GetAddOnMetadata(addonName, "X-Revision"))
 	end
 
 	-- Then, get the revision # of the default library (if it's enabled and loadable).
 	local defaultRevision = nil
-	local defaultLoadable = select(4, GetAddOnInfo("AdvancedIconSelector-KeywordData"))
+	local defaultLoadable = select(4, C_AddOns.GetAddOnInfo("AdvancedIconSelector-KeywordData"))
 	if defaultLoadable then
-		defaultRevision = tonumber(GetAddOnMetadata("AdvancedIconSelector-KeywordData", "X-Revision"))
+		defaultRevision = tonumber(C_AddOns.GetAddOnMetadata("AdvancedIconSelector-KeywordData", "X-Revision"))
 	end
 
 	-- Finally, get the revision that is already loaded.
@@ -226,12 +225,12 @@ function lib:LoadKeywords(addonName)
 	-- Load the specified addon if it's newer than the current library and at least as new as the default library.
 	local source = nil
 	if addonRevision and (not currentRevision or addonRevision > currentRevision) and (not defaultRevision or addonRevision >= defaultRevision) then
-		LoadAddOn(addonName)
+		C_AddOns.LoadAddOn(addonName)
 		source = addonName
 
 	-- Otherwise, load the default library if it's newer than the current library.
 	elseif defaultRevision and (not currentRevision or defaultRevision > currentRevision) then
-		LoadAddOn("AdvancedIconSelector-KeywordData")
+		C_AddOns.LoadAddOn("AdvancedIconSelector-KeywordData")
 		source = "AdvancedIconSelector-KeywordData"
 	end
 
