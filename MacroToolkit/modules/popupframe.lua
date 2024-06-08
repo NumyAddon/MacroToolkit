@@ -2,11 +2,36 @@
 local MT = MacroToolkit
 local mtpf
 local L = MT.L
-local GetSpellTabInfo, GetSpellBookItemTexture, GetSpellInfo, GetSpellTexture = GetSpellTabInfo, GetSpellBookItemTexture, GetSpellInfo, GetSpellTexture
-local GetFlyoutInfo, GetFlyoutSlotInfo, GetSpellBookItemInfo = GetFlyoutInfo, GetFlyoutSlotInfo, GetSpellBookItemInfo
+local GetFlyoutInfo, GetFlyoutSlotInfo = GetFlyoutInfo, GetFlyoutSlotInfo
 local string, tinsert, format = string, tinsert, format
 local CreateFrame, PlaySound, PanelTemplates_GetSelectedTab = CreateFrame, PlaySound, PanelTemplates_GetSelectedTab
 local EditMacro, CreateMacro, GetMacroInfo = EditMacro, CreateMacro, GetMacroInfo
+local GetNumSpellTabs = GetNumSpellTabs or C_SpellBook.GetNumSpellBookSkillLines
+local function GetSpellTabInfo(index)
+    if _G.GetSpellTabInfo then
+        return _G.GetSpellTabInfo(index)
+    else
+        local info = C_SpellBook.GetSpellBookSkillLineInfo(index)
+        if not info then return nil end
+        return info.name, info.iconID, info.itemIndexOffset, info.numSpellBookItems, info.isGuild, info.specID or 0
+    end
+end
+local GetSpellBookItemInfo = GetSpellBookItemInfo or C_SpellBook.GetSpellBookItemType
+local GetSpellBookItemTexture = GetSpellBookItemTexture or C_SpellBook.GetSpellBookItemTexture
+local GetSpellTexture = GetSpellTexture or C_Spell.GetSpellTexture
+local GetSpellInfo;
+do -- todo: rework after 11.0 release
+	GetSpellInfo = _G.GetSpellInfo or function(spellID)
+		if not spellID then
+			return nil;
+		end
+
+		local spellInfo = C_Spell.GetSpellInfo(spellID);
+		if spellInfo then
+			return spellInfo.name, nil, spellInfo.iconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID;
+		end
+	end
+end
 
 MT.MACRO_ICON_FILENAMES = {}
 
@@ -385,16 +410,17 @@ function MT:RefreshPlayerSpellIconInfo()
 
 	-- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
 	local activeIcons = {}
+	local spellBank = Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player or "player";
 
 	for i = 1, GetNumSpellTabs() do
-		local tab, tabTex, offset, numSpells, _ = GetSpellTabInfo(i)
+		local _, _, offset, numSpells, _ = GetSpellTabInfo(i)
 		offset = offset + 1
 		local tabEnd = offset + numSpells
 		for j = offset, tabEnd - 1 do
 			--to get spell info by slot, you have to pass in a pet argument
-			local spellType, ID = GetSpellBookItemInfo(j, "player");
+			local spellType, ID = GetSpellBookItemInfo(j, spellBank);
 			if (spellType ~= "FUTURESPELL") then
-				local fileID = GetSpellBookItemTexture(j, "player")
+				local fileID = GetSpellBookItemTexture(j, spellBank)
 				if (fileID) then
 					activeIcons[fileID] = true
 				end
