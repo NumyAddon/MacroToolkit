@@ -913,7 +913,9 @@ function MT:CreateOptions()
 	if MT.db.profile.showerrors then MT.db.profile.viserrors = MT.db.profile.showerrors; MT.db.profile.showerrors = nil end
 	local mainPanel = createMainPanel()
 	mainPanel.name = "Macro Toolkit"
-	InterfaceOptions_AddCategory(mainPanel)
+	local category, _ = Settings.RegisterCanvasLayoutCategory(mainPanel, mainPanel.name)
+	category.ID = mainPanel.name
+	Settings.RegisterAddOnCategory(category)
 	AceConfig:RegisterOptionsTable("MacroToolkitOptionsCheck", checkPanel)
 	AceConfig:RegisterOptionsTable("MacroToolkitOptionsColours", coloursPanel)
 	AceConfig:RegisterOptionsTable("MacroToolkitOptionsIcons", iconsPanel)
