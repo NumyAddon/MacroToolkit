@@ -24,3 +24,28 @@ jobs:
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare for Discord webhook
+        id: discord-webhook-prep
+        run: |
+          echo "ZIP_NAME=$(ls .release/*.zip)" >> $GITHUB_OUTPUT
+          {
+            echo 'CHANGELOG<<EOF'
+            cat .release/*/CHANGELOG.md
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Notify Discord webhook
+        uses: "tsickert/discord-webhook@v6.0.0"
+        with:
+          webhook-url: "${{secrets.DISCORD_WEBHOOK_URL}}"
+          content: "[${{ github.repository }}](https://github.com/${{ github.repository }}) New version released: [${{ github.event.release.tag_name }}](https://github.com/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }})"
+          username: "NumyAddon"
+          avatar-url: "https://avatars.githubusercontent.com/u/97855854?s=200&v=4"
+          filename: ${{ steps.discord-webhook-prep.outputs.ZIP_NAME }}
+          embed-title: "${{ github.repository }} ${{ github.event.release.tag_name }}"
+          embed-url: "https://github.com/${{ github.repository }}"
+          embed-description: "${{ steps.discord-webhook-prep.outputs.CHANGELOG }}"
+          embed-author-name: "${{ github.event.release.author.login }}"
+          embed-author-url: "${{ github.event.release.author.html_url }}"
+          embed-author-icon-url: "${{ github.event.release.author.avatar_url }}"
