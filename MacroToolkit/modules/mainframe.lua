@@ -628,12 +628,29 @@ function MT:CreateMTFrame()
 
 	local mtex = CreateFrame("Button", "MacroToolkitExtend", mtframe, "BackdropTemplate,UIPanelButtonTemplate")
 	do
-		mtex:SetText(L["Extend"])
 		mtex:SetSize(80, 22)
 		mtex:SetFrameStrata("HIGH")
 		mtex:SetFrameLevel(lvl)
 		mtex:SetPoint("LEFT", mtdel, "RIGHT", 80, 0)
 		mtex:SetScript("OnClick", function(this) MT:ExtendClick(this) end)
+		local enable = mtex.Enable
+		local disable = mtex.Disable
+		function mtex:SetExtend(extend)
+            if extend then
+                self:SetText(L["Extend"])
+                if not MT.extendedMacrosSupported then
+                    disable(self)
+                    self.Enable = nop
+                end
+            else
+                self:SetText(L["Unextend"])
+                if not MT.extendedMacrosSupported then
+                    enable(self)
+                    self.Enable = enable
+                end
+            end
+		end
+		mtex:SetExtend(true)
 	end
 
 	local mtshorten = CreateFrame("Button", "MacroToolkitShorten", mtframe, "BackdropTemplate,UIPanelButtonTemplate")
@@ -1018,6 +1035,7 @@ function MT:CreateMTFrame()
 
 	local mterroricon = CreateFrame("Frame", "MacroToolkitErrorIcon", mtframe, "BackdropTemplate")
 	do
+	    mterroricon:SetFrameLevel(10)
 		mterroricon:SetSize(16, 16)
 		local mteit = mterroricon:CreateTexture(nil, "ARTWORK")
 		mteit:SetTexture("Interface\\DialogFrame\\DialogIcon-AlertNew-16")

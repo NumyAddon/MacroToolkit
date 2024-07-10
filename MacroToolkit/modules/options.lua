@@ -71,13 +71,10 @@ local checkPanel = {
 			set = function(info, value)
 					MT.db.profile.override = value
 					if value then
-						MT.showmacroframe = ShowMacroFrame
-						ShowMacroFrame = function() MacroToolkitFrame:Show() end
-						MT.origMTText = MacroFrameText
-						MacroFrameText = MacroToolkitFrameText
+						MT.origMTText = MT.origMTText or MacroFrameText
+						MacroFrameText = MacroToolkitText or MacroFrameText
 					elseif MT.showmacroframe then
-						ShowMacroFrame = MT.showmacroframe
-						MacroFrameText = MT.origMTText
+						MacroFrameText = MT.origMTText or MacroFrameText
 					end
 				end,
 			},

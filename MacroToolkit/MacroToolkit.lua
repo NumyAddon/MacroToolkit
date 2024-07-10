@@ -24,6 +24,9 @@ local exFormat = "%s%s%s [btn:1]%s LeftButton 1;[btn:2]%s RightButton 1;[btn:3]%
 -- GLOBALS: EjectPassengerFromSeat UIErrorsFrame SetMapToCurrentZone VehicleExit GetPlayerMapPosition SummonRandomCritter C_MountJournal ToggleDropDownMenu TradeSkillLinkDropDown
 -- GLOBALS: GetTradeSkillListLink LoadAddOn ShowMacroFrame IsAddOnLoaded
 
+-- "extended" macros will no longer work beyond the 255 character limit, so we won't support extending macros, only un-extending them
+MT.extendedMacrosSupported = select(4, GetBuildInfo()) < 110000;
+
 local NUM_MACROS_PER_ROW = 6
 
 MT.Spells = {}
@@ -113,10 +116,14 @@ function MT:eventHandler(this, event, arg1, ...)
 				SlashCmdList[format("MACROTOOLKIT_CUSTOM_%s", string.upper(c.n))] = function(input) MT:DoCustomCommand(c.s, input) end
 			end
 		elseif arg1 == "Blizzard_MacroUI" then
+		    hooksecurefunc('ShowMacroFrame', function()
+		        if not MT.db.profile.override then return; end
+		        HideUIPanel(MacroFrame);
+		        MTF:Show();
+		    end);
 			if MT.db.profile.override then
-				MT.showmacroframe = ShowMacroFrame
-				ShowMacroFrame = showtoolkit
-				MT.origMTText = MacroFrameText
+                MT.origMTText = MT.origMTText or MacroFrameText
+                MacroFrameText = MacroToolkitText or MacroFrameText
 			end
 			local mtbutton = CreateFrame("Button", "MacroToolkitOpen", MacroFrame, "UIPanelButtonTemplate")
 			mtbutton:SetText(L["Toolkit"])
@@ -486,6 +493,9 @@ function MT:FormatMacro(macrotext)
 	if macrotext == "" then return "", "" end
 	local lines = {strsplit("\n", macrotext)}
 	local mout, eout = "", ""
+	if not MT.extendedMacrosSupported and macrotext:len() > 255 then
+        eout = L["Extended macros are no longer supported in this version of WOW. Please shorten your macro."] .. "\n"
+    end
 	for n, l in ipairs(lines) do
 		if l == "" then mout = format("%s\n", mout)
 		else
@@ -592,7 +602,7 @@ function MT:ExtendMacro(save, macrobody, idx, exists)
 	if exists then CreateMacro(MT.db.char.extended[idx].name, MT.db.char.extended[idx].icon, newbody, tonumber(idx) > _G.MAX_ACCOUNT_MACROS)
 	else EditMacro(idx or MTF.selectedMacro, nil, nil, newbody) end
 	if not save and not idx and not exists then
-		MacroToolkitExtend:SetText(L["Unextend"])
+		MacroToolkitExtend:SetExtend(false)
 		MacroToolkitText:GetScript("OnTextChanged")(MacroToolkitText)
 		MT:UpdateCharLimit()
 	end
@@ -654,7 +664,7 @@ local function unextend(body)
 	securebutton:SetAttribute("dynamic", false)
 	MacroToolkitText.extended = nil
 	_G[format("MacroToolkitButton%d", (MTF.selectedMacro - MTF.macroBase))].extended = nil
-	MacroToolkitExtend:SetText(L["Extend"])
+	MacroToolkitExtend:SetExtend(true)
 	EditMacro(MTF.selectedMacro, nil, nil, body)
 	MT:MacroFrameUpdate()
 	MT:UpdateCharLimit()
@@ -681,7 +691,7 @@ function MT:UpdateCharLimit()
 	local extended = MacroToolkitText.extended
 	local dct = MacroToolkitText:GetText()
 	local chars = strlenutf8(dct)
-	local limit = extended and 1024 or 255
+	local limit = extended and MT.extendedMacrosSupported and 1024 or 255
 	if MTF.selectedMacro > 1000 or extended then
 		if chars > 1024 then
 			local ft = string.sub(dct, 1, 1024)
@@ -691,7 +701,8 @@ function MT:UpdateCharLimit()
 		local ft = string.sub(dct, 1, 255)
 		MacroToolkitText:SetText(ft)
 	end
-	MacroToolkitLimit:SetFormattedText(L["%d of %d characters used"], chars, limit)
+	local color = (chars > limit) and "|cffff0000" or "|cffffffff"
+	MacroToolkitLimit:SetFormattedText(color .. L["%d of %d characters used"], chars, limit)
 end
 
 function MT:UpdateErrors(errortext)
@@ -815,7 +826,7 @@ function MT:MacroFrameUpdate()
 					if index then
 						body = MT:GetExtendedBody(index, tab)
 						MacroToolkitText.extended = true
-						MacroToolkitExtend:SetText(L["Unextend"])
+						MacroToolkitExtend:SetExtend(false)
 						macroButton.extended = true
 						if MT.db.profile.visextend then MacroToolkitExtend:Show() end
 						MacroToolkitSelMacroButton:SetScript("OnClick", function(this) MT:SelOnClick(this) end)
@@ -832,7 +843,7 @@ function MT:MacroFrameUpdate()
 					else
 						MacroToolkitText.extended = nil
 						macroButton.extended = nil
-						MacroToolkitExtend:SetText(L["Extend"])
+						MacroToolkitExtend:SetExtend(true)
 						if MT.db.profile.visextend then MacroToolkitExtend:Show() end
 						MacroToolkitSelMacroButton:SetScript("OnClick", function(this) MT:SelOnClick(this) end)
 					end

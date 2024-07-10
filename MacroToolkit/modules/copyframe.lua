@@ -14,7 +14,7 @@ function MT:CreateCopyFrame()
 	end
 
 	if MT.db.profile.scale then mtcframe:SetScale(MT.db.profile.scale) end
-	mtcframe:SetSize(638, 424)
+	mtcframe:SetSize(638, 310 + (38 * (_G.MAX_CHARACTER_MACROS/6)))
 	mtcframe:SetMovable(true)
 	mtcframe:EnableMouse(true)
 	mtcframe:EnableKeyboard(true)
@@ -35,7 +35,7 @@ function MT:CreateCopyFrame()
 	local mtchbleft = mtcframe:CreateTexture(nil, "ARTWORK")
 	mtchbleft:SetTexture("Interface\\ClassTrainerFrame\\UI-ClassTrainer-HorizontalBar")
 	mtchbleft:SetSize(556, 16)
-	mtchbleft:SetPoint("TOPLEFT", 2, -210)
+	mtchbleft:SetPoint("BOTTOMLEFT", 2, 185)
 	mtchbleft:SetTexCoord(0, 1, 0, 0.25)
 
 	local mtchbright = mtcframe:CreateTexture(nil, "ARTWORK")
@@ -44,10 +44,17 @@ function MT:CreateCopyFrame()
 	mtchbright:SetPoint("LEFT", mtchbleft, "RIGHT", 0, 0)
 	mtchbright:SetTexCoord(0, 0.29296875, 0.25, 0.5)
 
+	local mtctextbg = CreateFrame("Frame", "MacroToolkitCTextBg", mtcframe, "BackdropTemplate")
+	mtctextbg:SetSize(624, 105)
+	mtctextbg:SetPoint("BOTTOMRIGHT", mtcframe, -8, 30)
+	mtctextbg:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16, tileSize = 16, tile = true, insets = {left = 5, right = 5, top = 5, bottom = 5}})
+	mtctextbg:SetBackdropBorderColor(_G.TOOLTIP_DEFAULT_COLOR.r, _G.TOOLTIP_DEFAULT_COLOR.g, _G.TOOLTIP_DEFAULT_COLOR.b)
+	mtctextbg:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+
 	local mtcselbg = mtcframe:CreateTexture("MacroToolkitCSelBg", "ARTWORK")
 	mtcselbg:SetTexture("Interface\\Buttons\\UI-EmptySlot")
 	mtcselbg:SetSize(64, 64)
-	mtcselbg:SetPoint("TOPLEFT", 5, -218)
+	mtcselbg:SetPoint("BOTTOMLEFT", mtctextbg, "TOPLEFT", -5, -5)
 
 	local mtcselname = mtcframe:CreateFontString("MacroToolkitCSelMacroName", "ARTWORK", "GameFontNormalLarge")
 	mtcselname:SetJustifyH("LEFT")
@@ -67,13 +74,6 @@ function MT:CreateCopyFrame()
 	mtcmacros:SetSize(285, 10)
 	mtcmacros:SetPoint("TOPLEFT", 12, -66)
 	MT:ContainerOnLoad(mtcmacros)
-
-	local mtctextbg = CreateFrame("Frame", "MacroToolkitCTextBg", mtcframe, "BackdropTemplate")
-	mtctextbg:SetPoint("TOPLEFT", 6, -289)
-	mtctextbg:SetPoint("BOTTOMRIGHT", mtcframe, -8, 30)
-	mtctextbg:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16, tileSize = 16, tile = true, insets = {left = 5, right = 5, top = 5, bottom = 5}})
-	mtctextbg:SetBackdropBorderColor(_G.TOOLTIP_DEFAULT_COLOR.r, _G.TOOLTIP_DEFAULT_COLOR.g, _G.TOOLTIP_DEFAULT_COLOR.b)
-	mtctextbg:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
 
 	local mtmcscroll = CreateFrame("ScrollFrame", "MacroToolkitCScrollFrame", mtctextbg, "BackdropTemplate,UIPanelScrollFrameTemplate")
 	mtmcscroll:SetPoint("TOPLEFT", 10, -6)
@@ -192,7 +192,7 @@ function MT:CreateCopyFrame()
 	end
 
 	local mtcslottext = mtcframe:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	mtcslottext:SetPoint("TOPLEFT", mtcchars.frame, "BOTTOMLEFT", 0, -82)
+	mtcslottext:SetPoint("BOTTOMLEFT", mtchbleft, "BOTTOMLEFT", 320, 20)
 
 	local mtcnotice = mtcframe:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	mtcnotice:SetPoint("BOTTOMLEFT", mtcslottext, "TOPLEFT", 0, 5)
@@ -228,7 +228,7 @@ function MT:CreateCopyFrame()
 
 	mtcframe:SetScript("OnShow",
 		function()
-			mtcframe:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
+			--mtcframe:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
 			updatechars(mtcchars)
 			updateslots(mtcslottext)
 			mtcnotice:SetText("")
