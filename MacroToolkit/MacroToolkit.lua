@@ -51,8 +51,8 @@ MT.defaults = {
 		fonts = {edfont = "Friz Quadrata TT", edsize = 10, errfont = "Friz Quadrata TT", errsize = 10,
 			mfont = "Friz Quadrata TT", mifont = "Friz Quadrata TT", misize = 10},
 	},
-	global = {custom = {}, extended = {}, extra = {}, allcharmacros = false},
-	char = {extended = {}, wodupgrade = false, brokers = {}},
+	global = {custom = {}, extended = {}, extra = {}, allcharmacros = true},
+	char = {extended = {}, wodupgrade = false, brokers = {}, macros = {}},
 }
 
 local function showtoolkit()
