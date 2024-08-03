@@ -41,7 +41,7 @@ local function getSpellCache()
         local nodeInfo = LibTalentTree:GetNodeInfo(nodeId);
         for _, entryID in ipairs(nodeInfo and nodeInfo.entryIDs or {}) do
             local entryInfo = LibTalentTree:GetEntryInfo(entryID);
-            local definitionInfo = entryInfo and C_Traits.GetDefinitionInfo(entryInfo.definitionID);
+            local definitionInfo = entryInfo and entryInfo.definitionID and C_Traits.GetDefinitionInfo(entryInfo.definitionID);
             local spellID = definitionInfo and definitionInfo.spellID;
             if spellID and GetSpellInfo(spellID) then
                 spellCache[string.lower(GetSpellInfo(spellID))] = spellID;
