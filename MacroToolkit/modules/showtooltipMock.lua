@@ -1,6 +1,20 @@
 --- @class MacroToolkit
 local MT = MacroToolkit
 
+local GetSpellInfo;
+do -- todo: rework after 11.0 release
+	GetSpellInfo = _G.GetSpellInfo or function(spellID)
+		if not spellID then
+			return nil;
+		end
+
+		local spellInfo = C_Spell.GetSpellInfo(spellID);
+		if spellInfo then
+			return spellInfo.name, nil, spellInfo.iconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID;
+		end
+	end
+end
+
 -- copied the update timing concept from SecureStateDriverManager
 local UPDATE_THROTTLE = 0.2;
 local timer = 0;
