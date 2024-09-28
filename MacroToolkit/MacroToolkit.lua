@@ -25,7 +25,7 @@ local exFormat = "%s%s%s [btn:1]%s LeftButton 1;[btn:2]%s RightButton 1;[btn:3]%
 -- GLOBALS: GetTradeSkillListLink LoadAddOn ShowMacroFrame IsAddOnLoaded
 
 -- "extended" macros will no longer work beyond the 255 character limit, so we won't support extending macros, only un-extending them
-MT.extendedMacrosSupported = select(4, GetBuildInfo()) < 110000;
+MT.extendedMacrosSupported = select(4, GetBuildInfo()) == 40400; -- right now, only cata 4.4.0 supports extended macros
 
 local NUM_MACROS_PER_ROW = 6
 
@@ -494,7 +494,7 @@ function MT:FormatMacro(macrotext)
 	local lines = {strsplit("\n", macrotext)}
 	local mout, eout = "", ""
 	if not MT.extendedMacrosSupported and macrotext:len() > 255 then
-        eout = L["Extended macros are no longer supported in this version of WOW. Please shorten your macro."] .. "\n"
+        eout = L["Extended macros are no longer supported in this version of WoW. Please shorten your macro."] .. "\n"
     end
 	for n, l in ipairs(lines) do
 		if l == "" then mout = format("%s\n", mout)
