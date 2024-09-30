@@ -7,7 +7,7 @@ local format = string.format
 local _G = _G
 local L = MT.L
 MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
-
+local SHOW_META, SHOWTOOLTIP_META = "#show", "#showtooltip"
 
 local GetSpellInfo;
 do -- todo: rework after 11.0 release
@@ -189,7 +189,7 @@ local function validateCommandVerb(commandtext, parameters)
     local prefix = MT.slash
 
     commandtext = trim(commandtext)
-    if commandtext == string.sub(_G.SLASH_SHOWTOOLTIP1, 2) or commandtext == string.sub(_G.SLASH_SHOW1, 2) then prefix = "#" end
+    if commandtext == string.sub(SHOWTOOLTIP_META, 2) or commandtext == string.sub(SHOW_META, 2) then prefix = "#" end
     local msg = format("%s: %s%s%s", L["Invalid command"], prefix, cc, commandtext)
     --ticket 139
     if string.sub(commandtext, 1, 1) == MT.slash then
@@ -231,7 +231,7 @@ local function validateCommandVerb(commandtext, parameters)
         msg = format("%s|r", msg)
         local matched = findMatch(commandtext, MT.commands)
         prefix = MT.slash
-        if matched == string.sub(_G.SLASH_SHOWTOOLTIP1, 2) or matched == string.sub(_G.SLASH_SHOW1, 2) then prefix = "#" end
+        if matched == string.sub(SHOWTOOLTIP_META, 2) or matched == string.sub(SHOW_META, 2) then prefix = "#" end
         if not p then msg = format("%s\n      %s: %s%s|r", msg, L["did you mean"], prefix, matched) end
     end
     return c, msg
@@ -629,14 +629,14 @@ function MT:ShortenMacro(macrotext)
             line = string.gsub(line, "form%s-:%s+", "form:")
             s, e, s1, s2 = string.find(line, "%](%a.-);(.-)$")
             if s then if s1 == s2 then line = format("%s[]%s", string.sub(line, 1, s), s1) end end
-            s, e = string.find(line, _G.SLASH_SHOWTOOLTIP1)
+            s, e = string.find(line, SHOWTOOLTIP_META)
             if s then showt = i
             else
-                s, e = string.find(line, _G.SLASH_SHOW1)
+                s, e = string.find(line, SHOW_META)
                 if s then show = i end
             end
             local _, _, command, parameters = MT:ParseMacro(line)
-            if command == string.sub(_G.SLASH_SHOW1, 2) or command == string.sub(_G.SLASH_SHOWTOOLTIP1, 2) then
+            if command == string.sub(SHOW_META, 2) or command == string.sub(SHOWTOOLTIP_META, 2) then
                 if not shows then shows = parameters end
             elseif isCast(command) then if not firstc then firstc = parameters end
             elseif isScript(command) then
@@ -717,7 +717,7 @@ function MT:ShortenMacro(macrotext)
         end
     end
     if show and showt then table.remove(mout, show) end
-    if shows and shows == firstc then mout[showt] = _G.SLASH_SHOWTOOLTIP1 end
+    if firstc and showt and shows and shows:lower() == firstc:lower() then mout[showt] = SHOWTOOLTIP_META end
     local mshort = ""
     for i, m in ipairs(mout) do mshort = format("%s%s\n", mshort, m) end
     mshort = trim(mshort)
