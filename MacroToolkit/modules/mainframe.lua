@@ -719,7 +719,6 @@ function MT:CreateMTFrame()
 			if MT.db.profile.override then
 				if not (MacroFrameText == MacroToolkitText) then MacroFrameText = MacroToolkitText end
 			end
-			--MT:Skin(mtframe)
 			mtframe:ClearAllPoints()
 			mtframe:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
 			mtframe:Raise()

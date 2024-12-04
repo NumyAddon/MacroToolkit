@@ -401,10 +401,11 @@ function MT:CreateBuilderFrame()
 			for _, eb in ipairs(ebobjs) do eb:SetText(""); eb.frame:Hide() end
 			for _, ed in ipairs(edobjs) do ed:SetValue("zero"); ed.frame:Hide() end
 			mtbpreview:SetText("")
-			MT:Skin(mtbf)
 		end)
 
 	mtbf:SetScript("OnHide", function() MacroToolkitFrame:Show() end)
+
+	self:ApplyElvSkin()
 	return mtbf
 end
 

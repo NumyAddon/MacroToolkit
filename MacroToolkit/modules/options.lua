@@ -18,7 +18,7 @@ local function createMainPanel()
 	title:SetPoint("CENTER", frame, "CENTER", 0, 170)
 	version:SetFormattedText("%s %s", _G.GAME_VERSION_LABEL, C_AddOns.GetAddOnMetadata("MacroToolkit", "Version"))
 	version:SetPoint("CENTER", frame, "CENTER", 0, 130)
-	author:SetFormattedText("%s: Deepac", L["Author"])
+	author:SetFormattedText("%s: Deepac\nMaintainer: Numy", L["Author"])
 	author:SetPoint("CENTER", frame, "CENTER", 0, 100)
 	return frame
 end

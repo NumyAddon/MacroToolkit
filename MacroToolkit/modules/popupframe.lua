@@ -314,7 +314,6 @@ function MT:CreateMTPopup()
 			aisframe:SetSectionVisibility("MiscellaneousIcons", MT.db.profile.miscicons)
 			aisframe:SetSectionVisibility("SpellIcons", MT.db.profile.spellicons)
 			MT:UpdateIconCount()
-			MT:Skin(mtpf)
 		end)
 
 	mtpf:SetScript("OnHide",

@@ -160,7 +160,6 @@ function MT:CreateScriptFrame()
 				end
 			end
 			mtsscrollchild:SetText(scripttext)
-			MT:Skin(mtsf)
 		end)
 	
 	mtsf:SetScript("OnHide", function() MacroToolkitFrame:Show() end)

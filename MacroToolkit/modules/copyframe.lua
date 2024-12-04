@@ -233,7 +233,6 @@ function MT:CreateCopyFrame()
 			updateslots(mtcslottext)
 			mtcnotice:SetText("")
 			MT:MacroFrameUpdate()
-			MT:Skin(mtcframe)
 			--PlaySound("igCharacterInfoOpen")
 			PlaySound(839)
 		end)
@@ -246,5 +245,6 @@ function MT:CreateCopyFrame()
 			PlaySound(840)
 		end)
 
+	self:ApplyElvSkin()
 	return mtcframe
 end

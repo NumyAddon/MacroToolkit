@@ -168,7 +168,6 @@ function MT:CreateSharePopup()
 			channelonclick(raid)
 			frame.player = nil
 			MacroToolkitFrame:Hide()
-			MT:Skin(frame)
 		end)
 	frame:SetScript("OnHide", function() MacroToolkitFrame:Show() end)
 

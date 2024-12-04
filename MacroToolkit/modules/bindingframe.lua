@@ -42,7 +42,6 @@ function MT:CreateBindingFrame()
 			else frame.title:SetText(_G.KEY_BINDINGS) end
 			frame.bindingsChanged = nil
 			MT:UpdateBindingFrame()
-			MT:Skin(frame)
 		end)
 	frame:SetScript("OnHide",
 		function()

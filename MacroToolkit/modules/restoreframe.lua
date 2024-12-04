@@ -132,7 +132,6 @@ function MT:CreateRestoreFrame()
 				mtrfrestore:Enable()
 				mtrfdelete:Enable()
 			end
-			MT:Skin(mtrf)
 		end)
 
 	mtrf:SetScript("OnHide",

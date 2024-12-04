@@ -270,7 +270,7 @@ function MT:eventHandler(this, event, arg1, ...)
 			MacroToolkitErrorScrollFrame:Hide()
 		end
 		MTF:Hide()
-		--if C_AddOns.IsAddOnLoaded("ElvUI") then MT:LoadElvSkin() end
+		if C_AddOns.IsAddOnLoaded("ElvUI") then MT:ApplyElvSkin() end
 		MT.AC = MT.LS("AceComm-3.0")
 		MT.AC:RegisterComm("MacroToolkit", function(...) MT:ReceiveMacro(...) end)
 		if countTables(MT.db.char.brokers) > 0 then
