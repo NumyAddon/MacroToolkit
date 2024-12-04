@@ -12,5 +12,6 @@
 ## LoadOnDemand: 1
 ## RequiredDeps: MacroToolkit
 ## X-Curse-Project-ID: 47117
+## X-Wago-ID: jK8XprKy
 
 ..\MacroToolkit\modules\textures.lua

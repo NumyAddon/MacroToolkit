@@ -14,6 +14,7 @@
 ## SavedVariables: MacroToolkitDB
 ## OptionalDeps: ElvUI, Ace3
 ## X-Curse-Project-ID: 47117
+## X-Wago-ID: jK8XprKy
 
 #@no-lib-strip@
 # Libraries
