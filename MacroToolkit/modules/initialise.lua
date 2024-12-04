@@ -127,14 +127,35 @@ MT.optionalConditions = {
 	channelling = true,
 }
 
+-- creates a table that mixes all the possible combinations of the mods
+local function generateCombinations(mods, modCombos, currentCombo, used)
+    modCombos = modCombos or {}
+    currentCombo = currentCombo or {}
+    used = used or {}
+    if next(currentCombo) then
+        table.insert(modCombos, table.concat(currentCombo, ""))
+    end
+
+    for i, mod in ipairs(mods) do
+        if not used[i] then
+            used[i] = true
+            table.insert(currentCombo, mod)
+            generateCombinations(mods, modCombos, currentCombo, used)
+            table.remove(currentCombo)
+            used[i] = false
+        end
+    end
+
+    return modCombos
+end
+local modCombos = generateCombinations({'cmd', 'ctrl', 'shift', 'alt'}) -- there's 64 of these.. ain't nobody got time for that :p
+
 MT.optargs={
 	[6]={"1","2","3","4","5","LeftButton","MiddleButton","RightButton","Button4","Button5"},
 	[5]={
-		"alt","altctrl","altshift","altshiftctrl","altctrlshift",
-		"shift","shiftctrl","shiftalt","shiftaltctrl","shiftctrlalt",
-		"ctrl","ctrlalt","ctrlshift","ctrlshiftalt","ctrlaltshift",
-		"AUTOLOOTTOGGLE","STICKCAMERA","SPLITSTACK","PICKUPACTION","COMPAREITEMS", -- specify whichever key is bound to these actions
-		"OPENALLBAGS","QUESTWATCHTOGGLE","SELFCAST", -- specify whichever key is bound to these actions
+		"AUTOLOOTTOGGLE", "STICKCAMERA", "SPLITSTACK", "PICKUPACTION", "COMPAREITEMS", -- specify whichever key is bound to these actions
+		"OPENALLBAGS", "QUESTWATCHTOGGLE", "SELFCAST", -- specify whichever key is bound to these actions
+		unpack(modCombos), -- needs to be last
 	},
 	[4]={"party","raid"},
 }

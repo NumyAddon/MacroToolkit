@@ -278,6 +278,7 @@ local function isValid(args, opt)
         end
         for _, o in ipairs(MT.optargs[opt]) do
             if type(a) == "string" then a = string.lower(a) end
+            if type(o) == "string" then o = string.lower(o) end
             if o == trim(a) then
                 valid = true
                 break
@@ -690,7 +691,7 @@ function MT:ShortenMacro(macrotext)
                 line = string.gsub(line, format("%s Sound_EnableSFX 1", scon), format("%smtso", MT.slash))
                 line = string.gsub(line, format("%s VehicleExit%%(%%)", srun), format("%smtev", MT.slash))
             end
-            --*** ticket 89
+            -- cmd isn't supported, cause I really don't want to make this even more unreadable, just to support mac users
             line = string.gsub(line, "(mod:ctrl),mod:(.-),mod(.-)", "%1%2%3")
             line = string.gsub(line, "(mod:shift),mod:(.-),mod:(.-)", "%1%2%3")
             line = string.gsub(line, "(mod:alt),mod:(.-),mod:(.-)", "%1%2%3")
