@@ -35,7 +35,7 @@ local function getSpellCache()
     -- for now, just built based on current class' talents, and only for retail
     if not LibTalentTreeExists then return spellCache end
 
-    local treeId = LibTalentTree:GetClassTreeId(UnitClassBase('player'));
+    local treeId = LibTalentTree:GetClassTreeID(UnitClassBase('player'));
     local nodes = C_Traits.GetTreeNodes(treeId);
     for _, nodeId in ipairs(nodes) do
         local nodeInfo = LibTalentTree:GetNodeInfo(nodeId);
