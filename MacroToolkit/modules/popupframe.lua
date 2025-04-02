@@ -404,17 +404,16 @@ function MT:CreateMTPopup()
 	return mtpf
 end
 
+--- note: I'm honestly not sure what this function is for
 function MT:RefreshPlayerSpellIconInfo()
-	--if MT.MACRO_ICON_FILENAMES then return end
-
 	-- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
 	local activeIcons = {}
 	local spellBank = Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player or "player";
 
 	for i = 1, GetNumSpellTabs() do
 		local _, _, offset, numSpells, _ = GetSpellTabInfo(i)
-		offset = offset + 1
-		local tabEnd = offset + numSpells
+		offset = (offset or 0) + 1
+		local tabEnd = offset + (numSpells or 0)
 		for j = offset, tabEnd - 1 do
 			--to get spell info by slot, you have to pass in a pet argument
 			local spellType, ID = GetSpellBookItemInfo(j, spellBank);
@@ -428,7 +427,7 @@ function MT:RefreshPlayerSpellIconInfo()
 				local _, _, numSlots, isKnown = GetFlyoutInfo(ID)
 				if (isKnown and numSlots > 0) then
 					for k = 1, numSlots do
-						local spellID, overrideSpellID, isKnown = GetFlyoutSlotInfo(ID, k)
+						local spellID, _, isKnown = GetFlyoutSlotInfo(ID, k)
 						if (isKnown) then
 							local fileID = GetSpellTexture(spellID)
 							if (fileID) then
