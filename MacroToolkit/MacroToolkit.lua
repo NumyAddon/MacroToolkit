@@ -1149,8 +1149,10 @@ function MT:GetBackupName()
 	StaticPopup_Show("MACROTOOLKIT_BACKUPNAME")
 end
 
+--- @param dialog StaticPopupTemplate
 function MT:SetBackupName(dialog)
-	local name = dialog.editBox:GetText() or ""
+    local editBox = dialog.GetEditBox and dialog:GetEditBox() or dialog.editBox;
+	local name = editBox:GetText() or ""
 	dialog:Hide()
 	MT:BackupMacros(name)
 end
