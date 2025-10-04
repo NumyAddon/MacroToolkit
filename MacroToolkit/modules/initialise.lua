@@ -10,7 +10,7 @@ MT.click = _G.SLASH_CLICK1
 MT.target = _G.SLASH_TARGET1
 MT.MAX_EXTRA_MACROS = 1000 -- I'd like to see you try to hit this limit :P
 local L = MT.L
-local SendChatMessage, format = SendChatMessage, format
+local format = format
 
 MT.frame:RegisterEvent("ADDON_LOADED")
 MT.frame:RegisterEvent("PLAYER_LOGIN")

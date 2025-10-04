@@ -15,6 +15,9 @@ local PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlo
 local CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor = CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor
 local exFormat = "%s%s%s [btn:1]%s LeftButton 1;[btn:2]%s RightButton 1;[btn:3]%s MiddleButton 1;[btn:4]%s Button4 1;[btn:5]%s Button5 1"
 
+local ChatEdit_InsertLink = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
+local SendChatMessage = C_ChatInfo and C_ChatInfo.SendChatMessage or SendChatMessage
+
 -- GLOBALS: ChatEdit_InsertLink StaticPopupDialogs SpellBookFrame MacroToolkitText MacroToolkitEnterText MacroToolkitFauxText MacroToolkitSelMacroName MacroToolkitSelBg MacroToolkitDelete
 -- GLOBALS: MacroToolkitExtend MacroToolkitShorten MacroToolkitSelMacroButton MacroToolkitLimit MacroToolkitEdit MacroToolkitCopy GameTooltip MacroToolkitBind MacroToolkitConditions
 -- GLOBALS: MacroToolkitShare MacroToolkitClear MacroToolkitBackup MacroToolkitBrokerIcon MacroToolkitNew MacroToolkitCSelMacroName MacroToolkitSelMacroButton.Icon MacroToolkitCText

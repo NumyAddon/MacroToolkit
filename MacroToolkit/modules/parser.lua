@@ -9,31 +9,17 @@ local L = MT.L
 MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
 local SHOW_META, SHOWTOOLTIP_META = "#show", "#showtooltip"
 
-local GetSpellInfo;
-do -- todo: rework after 11.0 release
-	GetSpellInfo = _G.GetSpellInfo or function(spellID)
-		if not spellID then
-			return nil;
-		end
-
-		local spellInfo = C_Spell.GetSpellInfo(spellID);
-		if spellInfo then
-			return spellInfo.name, nil, spellInfo.iconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID;
-		end
-	end
-end
-
 local function trim(s) return string.match(s, "^%s*(.*%S)") or "" end
 local function escape(s) return (s:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]","%%%1"):gsub("%z","%%z")) end
 
 local LibTalentTree = LibStub("LibTalentTree-1.0");
 local LibTalentTreeExists = LibTalentTree:IsCompatible();
-local spellCache;
-local function getSpellCache()
-    if spellCache then return spellCache end
-    spellCache = {}
+local spellNameCache;
+local function getSpellNameCache()
+    if spellNameCache then return spellNameCache end
+    spellNameCache = {}
     -- for now, just built based on current class' talents, and only for retail
-    if not LibTalentTreeExists then return spellCache end
+    if not LibTalentTreeExists then return spellNameCache end
 
     local treeId = LibTalentTree:GetClassTreeID(UnitClassBase('player'));
     local nodes = C_Traits.GetTreeNodes(treeId);
@@ -43,24 +29,25 @@ local function getSpellCache()
             local entryInfo = LibTalentTree:GetEntryInfo(entryID);
             local definitionInfo = entryInfo and entryInfo.definitionID and C_Traits.GetDefinitionInfo(entryInfo.definitionID);
             local spellID = definitionInfo and definitionInfo.spellID;
-            if spellID and GetSpellInfo(spellID) then
-                spellCache[string.lower(GetSpellInfo(spellID))] = spellID;
+            if spellID and C_Spell.GetSpellName(spellID) then
+                spellNameCache[string.lower(C_Spell.GetSpellName(spellID))] = spellID;
             end
         end
     end
 
-    return spellCache;
+    return spellNameCache;
 end
 
-local function GetSpellInfoPlus(spellIDOrName)
-    if GetSpellInfo(spellIDOrName) or tonumber(spellIDOrName, 10) then
-        return GetSpellInfo(spellIDOrName)
+local function getSpellNameAndID(spellIDOrName)
+    local spellInfo = C_Spell.GetSpellInfo(spellIDOrName);
+    if spellInfo or tonumber(spellIDOrName, 10) then
+        return spellInfo and spellInfo.name or nil, spellInfo and spellInfo.spellID or tonumber(spellIDOrName, 10);
     end
 
-    local cache = getSpellCache();
+    local cache = getSpellNameCache();
     local spellID = cache[string.lower(spellIDOrName)];
     if spellID then
-        return GetSpellInfo(spellID);
+        return C_Spell.GetSpellName(spellID), spellID;
     end
 end
 
@@ -312,7 +299,7 @@ local function validateParameters(parameters, commandtext)
     if string.sub(parameters, 1, 1) == "!" then parameters = string.sub(parameters, 2) end
     if isScript(commandtext) or  isConsole(commandtext) or isClick(commandtext) then c = format("|c%s", MT.db.profile.scriptcolour)
     elseif isTarget(commandtext) then c = format("|c%s", MT.db.profile.targetcolour)
-    elseif GetSpellInfoPlus(parameters) then c = format("|c%s", MT.db.profile.spellcolour)
+    elseif getSpellNameAndID(parameters) then c = format("|c%s", MT.db.profile.spellcolour)
     elseif GetItemInfo(parameters) then c = format("|c%s", MT.db.profile.itemcolour)
     elseif isNumeric({parameters}) then c = format("|c%s", MT.db.profile.stringcolour)
     elseif MT.db.profile.unknown then err = format("%s: |c%s%s|r", L["Unknown parameter"], MT.db.profile.stringcolour, parameters) end
@@ -446,12 +433,12 @@ local function validateCondition(condition, optionArguments, parameters)
     if not msg then
         color = conditionColor
         if tr_condition == 'known' and optionArguments and optionArguments[1] then
-            local name, _ = GetSpellInfoPlus(optionArguments[1])
+            local name, _ = getSpellNameAndID(optionArguments[1])
             if not name then
                 msg = format("%s: [%s%s|r:%s] - %s", L["Invalid condition"], conditionColor, tr_condition, optionArguments[1], "Unknown spell")
                 isCondition = false
             elseif name:lower() ~= parameters:lower() and optionArguments[1]:lower() ~= parameters:lower() then
-                local spellID = select(7, GetSpellInfoPlus(parameters))
+                local _, spellID = getSpellNameAndID(parameters)
                 msg = format(
                     "Known spell mismatch: [%s%s%s|r:%s (%s)]\n       %s%s",
                     conditionColor,
@@ -584,8 +571,7 @@ function MT:ShortenMacro(macrotext)
                 local spellNameOrID = string.gsub(v, "known:", "")
                 -- if not a number
                 if not tonumber(spellNameOrID) then
-                    local spellInfo = { GetSpellInfoPlus(spellNameOrID) }
-                    local spellName, spellID = spellInfo[1], spellInfo[7]
+                    local spellName, spellID = getSpellNameAndID(spellNameOrID)
                     if spellID and string.len(spellID) < string.len(spellName) then v = format("known:%d", spellID) end
                 end
                 line = string.gsub(line, k, v)
