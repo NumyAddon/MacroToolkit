@@ -1,20 +1,6 @@
 --- @class MacroToolkit
 local MT = MacroToolkit
 
-local GetSpellInfo;
-do -- todo: rework after 11.0 release
-	GetSpellInfo = _G.GetSpellInfo or function(spellID)
-		if not spellID then
-			return nil;
-		end
-
-		local spellInfo = C_Spell.GetSpellInfo(spellID);
-		if spellInfo then
-			return spellInfo.name, nil, spellInfo.iconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID;
-		end
-	end
-end
-
 -- copied the update timing concept from SecureStateDriverManager
 local UPDATE_THROTTLE = 0.2;
 local timer = 0;
@@ -63,7 +49,7 @@ local function handleBody(body, slot)
 
     local firstLine = string.match(errorOrSpell, "^(.-)\n") or errorOrSpell
     local trimmed = string.match(firstLine, "^%s*(.-)%s*$")
-    if trimmed == "" or not GetSpellInfo(trimmed) then return end
+    if trimmed == "" or not C_Spell.GetSpellName(trimmed) then return end
 
     SetMacroSpell(slot, trimmed, target)
 end
