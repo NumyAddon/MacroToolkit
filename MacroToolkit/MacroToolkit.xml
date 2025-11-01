@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\..\FrameXML\UI.xsd">
+https://raw.githubusercontent.com/Meorawr/wow-ui-schema/main/UI.xsd">
 	<CheckButton name="MacroToolkitButtonTemplate" inherits="SelectorButtonTemplate" virtual="true">
 		<Layers>
 			<Layer level="OVERLAY">
-				<Texture name="$parentUnbound" file="Interface\COMMON\VOICECHAT-MUTED">
+				<Texture name="$parentUnbound" parentKey="Unbound" file="Interface\COMMON\VOICECHAT-MUTED">
 					<Size x="32" y="32"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" x ="2" y="-3"/>
