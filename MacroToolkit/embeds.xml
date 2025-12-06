@@ -1,4 +1,5 @@
-<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.blizzard.com/wow/ui/" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://www.blizzard.com/wow/ui/../../FrameXML/UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+https://raw.githubusercontent.com/Gethe/wow-ui-source/refs/heads/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
     <Script file="libs\LibStub\LibStub.lua"/>
     <Include file="libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
     <Include file="libs\AceDB-3.0\AceDB-3.0.xml"/>

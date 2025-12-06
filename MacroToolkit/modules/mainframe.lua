@@ -906,7 +906,7 @@ function MT:CreateMTFrame()
         mtopt:SetSize(80, 22)
         mtopt:SetText(_G.MAIN_MENU)
         mtopt:SetPoint("RIGHT", mtcustom, "LEFT", -14, 0)
-        mtopt:SetScript("OnClick", function() if MT.MTPF then MT.MTPF:Hide() end Settings.OpenToCategory('Macro Toolkit') end)
+        mtopt:SetScript("OnClick", function() if MT.MTPF then MT.MTPF:Hide() end Settings.OpenToCategory(MT.categoryID) end)
     end
 
     local mtcon = CreateFrame("Button", "MacroToolkitConditions", mtframe, "BackdropTemplate,UIPanelButtonTemplate")

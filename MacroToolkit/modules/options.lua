@@ -913,20 +913,20 @@ function MT:CreateOptions()
     local mainPanel = createMainPanel()
     mainPanel.name = "Macro Toolkit"
     local category, _ = Settings.RegisterCanvasLayoutCategory(mainPanel, mainPanel.name)
-    category.ID = mainPanel.name
+    self.categoryID = category:GetID()
     Settings.RegisterAddOnCategory(category)
     AceConfig:RegisterOptionsTable("MacroToolkitOptionsCheck", checkPanel)
     AceConfig:RegisterOptionsTable("MacroToolkitOptionsColours", coloursPanel)
     AceConfig:RegisterOptionsTable("MacroToolkitOptionsIcons", iconsPanel)
     AceConfig:RegisterOptionsTable("MacroToolkitOptionsInterface", interfacePanel)
     AceConfig:RegisterOptionsTable("MacroToolkitOptionsProfiles", AceDBOptions:GetOptionsTable(MT.db))
-    MT.OptionsFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsCheck", _G.MAIN_MENU, "Macro Toolkit")
+    MT.OptionsFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsCheck", _G.MAIN_MENU, self.categoryID)
     MT.OptionsFrame.default = function() resetoptions() end
-    MT.ColoursFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsColours", L["Syntax Highlighting"], "Macro Toolkit")
+    MT.ColoursFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsColours", L["Syntax Highlighting"], self.categoryID)
     MT.ColoursFrame.default = function() resetcolours() end
-    MT.IconsFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsIcons", L["Icons"], "Macro Toolkit")
+    MT.IconsFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsIcons", L["Icons"], self.categoryID)
     MT.IconsFrame.default = function() reseticons() end
-    MT.InterfaceFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsInterface", _G.UIOPTIONS_MENU, "Macro Toolkit")
+    MT.InterfaceFrame = AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsInterface", _G.UIOPTIONS_MENU, self.categoryID)
     MT.InterfaceFrame.default = function() resetinterface() end
-    AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsProfiles", L["Profiles"], "Macro Toolkit")
+    AceConfigDialog:AddToBlizOptions("MacroToolkitOptionsProfiles", L["Profiles"], self.categoryID)
 end
