@@ -3,7 +3,7 @@
 ## Interface: 120000
 #@end-debug@
 ## Author: Deepac
-## IconTexture: 982414
+## IconTexture: Interface\AddOns\MacroToolkit\mtsm
 ## Title: MacroToolkit Icon Data
 ## Version: @project-version@
 ## Notes: Load on demand data for MacroToolkit
