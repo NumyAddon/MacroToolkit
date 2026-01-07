@@ -8,8 +8,6 @@ L["%s is trying to send you a macro. Accept?"] = "%s\230\173\163\229\156\168\229
 L["(experimental)"] = "(experimental)"
 L["Ability icons"] = "\230\138\128\232\131\189\229\155\190\230\160\135"
 L["Achievement icons"] = "\230\136\144\229\176\177\229\155\190\230\160\135"
---Translation missing
-L["Add broker"] = "Add broker"
 L["Additional conditions"] = "\233\153\132\229\138\160\230\157\161\228\187\182"
 L["alt"] = "alt\233\148\174"
 L["Are you sure? This operation cannot be undone."] = "\228\189\160\231\161\174\229\174\154\229\144\151?\232\191\153\228\184\170\230\147\141\228\189\156\230\151\160\230\179\149\230\129\162\229\164\141."
@@ -38,8 +36,6 @@ L["Commands"] = "\229\145\189\228\187\164"
 --Translation missing
 L["Comments"] = "Comments"
 L["Condition Builder"] = "\230\157\161\228\187\182\231\148\159\230\136\144\229\153\168"
---Translation missing
-L["Conditional execution"] = "Conditional execution"
 L["Conditions"] = "\230\157\161\228\187\182"
 L["Control which icons are available to pick for macros"] = "\230\142\167\229\136\182\233\130\163\228\186\155\229\143\175\228\190\155\230\140\145\233\128\137\231\154\132\229\174\143\229\145\189\228\187\164\231\154\132\229\155\190\230\160\135"
 L["Copy an extended macro from another character"] = "\228\187\142\229\143\166\228\184\128\228\184\170\232\167\146\232\137\178\229\164\141\229\136\182\228\184\128\228\184\170\229\183\178\230\137\169\229\177\149\231\154\132\229\174\143"
@@ -67,10 +63,6 @@ L["Do not skin for ElvUI"] = "Do not skin for ElvUI"
 L["Editor font"] = "\231\188\150\232\190\145\229\173\151\228\189\147"
 L["Eject passenger"] = "\229\188\185\229\176\132\228\185\152\229\174\162"
 L["Emotes"] = "\232\161\168\230\131\133"
---Translation missing
-L["Enable certain types of macro to be called via a data broker addon"] = "Enable certain types of macro to be called via a data broker addon"
---Translation missing
-L["Enable data broker"] = "Enable data broker"
 L["Enable sound effects"] = "\229\144\175\231\148\168\229\163\176\233\159\179\230\149\136\230\158\156"
 L["Enable UI errors"] = "\229\144\175\231\148\168UI\233\148\153\232\175\175"
 L["Enhanced macro frame with additional tools"] = "\229\162\158\229\188\186\229\174\143\229\145\189\228\187\164\230\161\134\230\158\182\231\154\132\233\153\132\229\138\160\229\183\165\229\133\183"
@@ -181,8 +173,6 @@ L["Question mark icon"] = "\233\151\174\229\143\183\229\155\190\230\160\135"
 L["raid"] = "\229\156\168\228\189\160\231\154\132\229\155\162\233\152\159\228\184\173"
 L["Raid marker"] = "\229\155\162\233\152\159\230\160\135\232\174\176"
 L["Random non-combat pet"] = "\233\154\143\230\156\186\233\157\158\230\136\152\230\150\151\229\174\160\231\137\169"
---Translation missing
-L["Remove broker"] = "Remove broker"
 L["Replace known scripts with Macro Toolkit slash commands"] = "\230\155\180\230\141\162\229\183\178\231\159\165Macro Toolkit\230\150\156\231\186\191\229\145\189\228\187\164\231\154\132\232\132\154\230\156\172"
 L["Replace scripts with slash command"] = "\230\155\180\230\141\162\230\150\156\231\186\191\229\145\189\228\187\164\231\154\132\232\132\154\230\156\172"
 L["Report to"] = "\230\138\165\229\145\138\231\187\153"

@@ -1012,26 +1012,6 @@ function MT:CreateMTFrame()
         end)
     end
 
-    local mtbrokericon = CreateFrame("Frame", "MacroToolkitBrokerIcon", mtframe, "BackdropTemplate")
-    do
-        mtbrokericon:SetSize(32, 16)
-        MT.brokericon = mtbrokericon:CreateTexture(nil, "ARTWORK")
-        MT.brokericon:SetPoint("TOPLEFT", mtbrokericon, "TOPLEFT")
-        MT.brokericon:SetPoint("BOTTOMRIGHT", mtbrokericon, "BOTTOMLEFT", 16, 0)
-        mtbrokericon:SetPoint("RIGHT", mtcancelbutton, "LEFT", -15, -6)
-        mtbrokericon:SetScript("OnLeave", GameTooltip_Hide)
-    end
-
-    local mtbbutton = CreateFrame("Button", "MacroToolkitBrokerButton", mtbrokericon, "BackdropTemplate")
-    do
-        mtbbutton:SetSize(16, 16)
-        mtbbutton:SetPoint("LEFT", MT.brokericon, "RIGHT")
-        mtbbutton:SetScript("OnLeave", GameTooltip_Hide)
-        --mtbbutton:SetFrameLevel(99)
-        mtbbutton:SetFrameLevel(mtmscroll:GetFrameLevel() + 1)
-        mtbrokericon:Hide()
-    end
-
     local mterroricon = CreateFrame("Frame", "MacroToolkitErrorIcon", mtframe, "BackdropTemplate")
     do
         mterroricon:SetFrameLevel(10)

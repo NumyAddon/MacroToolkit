@@ -13,8 +13,6 @@ L["Ability icons"] = "Ability icons"
 --Translation missing
 L["Achievement icons"] = "Achievement icons"
 --Translation missing
-L["Add broker"] = "Add broker"
---Translation missing
 L["Additional conditions"] = "Additional conditions"
 --Translation missing
 L["alt"] = "alt"
@@ -67,8 +65,6 @@ L["Comments"] = "Comments"
 --Translation missing
 L["Condition Builder"] = "Condition Builder"
 --Translation missing
-L["Conditional execution"] = "Conditional execution"
---Translation missing
 L["Conditions"] = "Conditions"
 --Translation missing
 L["Control which icons are available to pick for macros"] = "Control which icons are available to pick for macros"
@@ -117,10 +113,6 @@ L["Editor font"] = "Editor font"
 L["Eject passenger"] = "Eject passenger"
 --Translation missing
 L["Emotes"] = "Emotes"
---Translation missing
-L["Enable certain types of macro to be called via a data broker addon"] = "Enable certain types of macro to be called via a data broker addon"
---Translation missing
-L["Enable data broker"] = "Enable data broker"
 --Translation missing
 L["Enable sound effects"] = "Enable sound effects"
 --Translation missing
@@ -323,8 +315,6 @@ L["raid"] = "in your raid group"
 L["Raid marker"] = "Raid marker"
 --Translation missing
 L["Random non-combat pet"] = "Random non-combat pet"
---Translation missing
-L["Remove broker"] = "Remove broker"
 --Translation missing
 L["Replace known scripts with Macro Toolkit slash commands"] = "Replace known scripts with Macro Toolkit slash commands"
 --Translation missing

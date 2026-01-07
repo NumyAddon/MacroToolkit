@@ -26,14 +26,4 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/refs/heads/live/Interface/
 		</Scripts>
 	</CheckButton>
 
-	<Script file="modules\macrobroker.lua"/>
-	<EditBox name="MacroToolkit_EditBoxTemplate" inherits="ChatFrameEditBoxTemplate" hidden="true" virtual="true">
-		<Scripts>
-			<OnLoad>
-				self.chatFrame = DEFAULT_CHAT_FRAME;
-				ChatEdit_OnLoad(self);
-				self.chatFrame = MacroToolkit:fauxChatFrame()
-			</OnLoad>
-		</Scripts>
-	</EditBox>
 </Ui>

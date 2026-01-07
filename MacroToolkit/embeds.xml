@@ -11,6 +11,5 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/refs/heads/live/Interface/
     <Include file="libs\AceTimer-3.0\AceTimer-3.0.xml"/>
     <Include file="libs\LibSharedMedia-3.0\lib.xml"/>
     <Include file="libs\AceGUI-3.0-SharedMediaWidgets\widget.xml"/>
-    <Script file="libs\LibDataBroker-1.1\LibDataBroker-1.1.lua"/>
     <Include file="libs\LibTalentTree-1.0\LibTalentTree-1.0.xml"/>
 </Ui>

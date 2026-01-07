@@ -8,7 +8,6 @@ L["%s is trying to send you a macro. Accept?"] = "%s versucht Dir ein Makro zuzu
 L["(experimental)"] = "(experimental)"
 L["Ability icons"] = "F\195\164higkeitssymbole"
 L["Achievement icons"] = "Erfolgssymbole"
-L["Add broker"] = "Broker hinzuf\195\188gen"
 L["Additional conditions"] = "Zus\195\164tzliche Bedingungen"
 L["alt"] = "ALT"
 L["Are you sure? This operation cannot be undone."] = "Bist Du Dir sicher? Dieser Vorgang kann nicht r\195\188ckg\195\164ngig gemacht werden."
@@ -37,8 +36,6 @@ L["Commands"] = "Befehle"
 --Translation missing
 L["Comments"] = "Comments"
 L["Condition Builder"] = "Bedingung Erstellen"
---Translation missing
-L["Conditional execution"] = "Conditional execution"
 L["Conditions"] = "Bedingungen"
 --Translation missing
 L["Control which icons are available to pick for macros"] = "Control which icons are available to pick for macros"
@@ -70,8 +67,6 @@ L["Editor font"] = "Editor Font"
 L["Eject passenger"] = "Passagier auswerfen."
 L["Emotes"] = true
 --Translation missing
-L["Enable certain types of macro to be called via a data broker addon"] = "Enable certain types of macro to be called via a data broker addon"
-L["Enable data broker"] = "Data-Broker aktivieren"
 L["Enable sound effects"] = "Soundeffekte aktivieren"
 --Translation missing
 L["Enable UI errors"] = "Enable UI errors"
@@ -215,7 +210,6 @@ L["Question mark icon"] = "Fragezeichensymbol"
 L["raid"] = "in your raid group"
 L["Raid marker"] = "Raid Marker"
 L["Random non-combat pet"] = "Zuf\195\164lliges Nicht-Kampf-Haustier"
-L["Remove broker"] = "Broker entfernen"
 L["Replace known scripts with Macro Toolkit slash commands"] = "Ersetze bekannte Scripts mit MacroToolkit Slash-Befehlen"
 L["Replace scripts with slash command"] = "Ersetze Scripts mit Slash-Befehlen"
 L["Report to"] = "Bericht an"

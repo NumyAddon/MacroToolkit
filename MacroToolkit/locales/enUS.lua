@@ -131,13 +131,8 @@ L["You will need to log into each of your characters with Macro Toolkit enabled 
 L["This will remove Macro Toolkit's copy of all your character specific Macros. The macros themselves will not be affected."] = true
 L["Summon random favourite mount"] = true
 L["Print a message"] = true
-L["Enable data broker"] = true
-L["Enable certain types of macro to be called via a data broker addon"] = true
-L["Add broker"] = true
-L["Remove broker"] = true
 L["Do not skin for ElvUI"] = true
 L["Requires a UI reload to take effect"] = true
-L["Conditional execution"] = true
 L["Cannot execute secure commands"] = true
 L["Macro Toolkit can only handle tooltip commands up to a maximum of %d characters. Your tooltip will not work as expected unless you shorten it"] = true
 L["Are you sure you want to delete %s?"] = true

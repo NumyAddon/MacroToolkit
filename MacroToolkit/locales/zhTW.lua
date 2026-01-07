@@ -12,8 +12,6 @@ L["(experimental)"] = "(experimental)"
 L["Ability icons"] = "Ability icons"
 --Translation missing
 L["Achievement icons"] = "Achievement icons"
---Translation missing
-L["Add broker"] = "Add broker"
 L["Additional conditions"] = "\233\153\132\229\138\160\230\162\157\228\187\182"
 L["alt"] = true
 L["Are you sure? This operation cannot be undone."] = "\228\189\160\231\162\186\229\174\154\229\151\142\239\188\159 \230\173\164\230\147\141\228\189\156\228\184\141\229\143\175\230\146\164\230\182\136\227\128\130"
@@ -49,8 +47,6 @@ L["Commands"] = "\229\145\189\228\187\164"
 --Translation missing
 L["Comments"] = "Comments"
 L["Condition Builder"] = "\230\162\157\228\187\182\229\187\186\230\167\139\229\153\168"
---Translation missing
-L["Conditional execution"] = "Conditional execution"
 L["Conditions"] = "\230\162\157\228\187\182"
 --Translation missing
 L["Control which icons are available to pick for macros"] = "Control which icons are available to pick for macros"
@@ -87,10 +83,6 @@ L["Do not skin for ElvUI"] = "Do not skin for ElvUI"
 L["Editor font"] = "Editor font"
 L["Eject passenger"] = "\229\189\136\229\135\186\228\185\152\229\174\162"
 L["Emotes"] = "\232\161\168\230\131\133"
---Translation missing
-L["Enable certain types of macro to be called via a data broker addon"] = "Enable certain types of macro to be called via a data broker addon"
---Translation missing
-L["Enable data broker"] = "Enable data broker"
 L["Enable sound effects"] = "\229\149\159\231\148\168\233\159\179\230\149\136"
 --Translation missing
 L["Enable UI errors"] = "Enable UI errors"
@@ -261,8 +253,6 @@ L["Question mark icon"] = "Question mark icon"
 L["raid"] = "in your raid group"
 L["Raid marker"] = "\229\156\152\233\154\138\230\168\153\232\168\152"
 L["Random non-combat pet"] = "\233\154\168\230\169\159\233\157\158\230\136\176\233\172\165\229\175\181\231\137\169"
---Translation missing
-L["Remove broker"] = "Remove broker"
 L["Replace known scripts with Macro Toolkit slash commands"] = "Macro Toolkit \229\183\178\230\155\191\230\143\155\231\154\132\229\183\168\233\155\134\229\145\189\228\187\164"
 L["Replace scripts with slash command"] = "\230\155\191\230\143\155\229\183\168\233\155\134\232\133\179\230\156\172"
 L["Report to"] = "\229\160\177\229\145\138"

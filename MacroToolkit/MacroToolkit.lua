@@ -18,15 +18,6 @@ local exFormat = "%s%s%s [btn:1]%s LeftButton 1;[btn:2]%s RightButton 1;[btn:3]%
 local ChatEdit_InsertLink = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
 local SendChatMessage = C_ChatInfo and C_ChatInfo.SendChatMessage or SendChatMessage
 
--- GLOBALS: ChatEdit_InsertLink StaticPopupDialogs SpellBookFrame MacroToolkitText MacroToolkitEnterText MacroToolkitFauxText MacroToolkitSelMacroName MacroToolkitSelBg MacroToolkitDelete
--- GLOBALS: MacroToolkitExtend MacroToolkitShorten MacroToolkitSelMacroButton MacroToolkitLimit MacroToolkitEdit MacroToolkitCopy GameTooltip MacroToolkitBind MacroToolkitConditions
--- GLOBALS: MacroToolkitShare MacroToolkitClear MacroToolkitBackup MacroToolkitBrokerIcon MacroToolkitNew MacroToolkitCSelMacroName MacroToolkitSelMacroButton.Icon MacroToolkitCText
--- GLOBALS: MacroToolkitCFauxText MacroToolkitCSelMacroButton MacroToolkitCSelMacroButton.Icon MacroToolkitBrokerButton MacroToolkitCopyButton MacroToolkitDB MacroToolkitButton1Name
--- GLOBALS: MacroToolkitErrors MacroToolkitErrorIcon DEFAULT_CHAT_FRAME SendChatMessage SlashCmdList MacroFrame MacroDeleteButton TradeSkillLinkButton MacroToolkitFauxScrollFrame
--- GLOBALS: MacroToolkitErrorBg MacroToolkitErrorScrollFrame ChatEdit_GetActiveWindow MacroFrameText ShowCloak ShowingCloak ShowHelm ShowingHelm CanEjectPassengerFromSeat
--- GLOBALS: EjectPassengerFromSeat UIErrorsFrame SetMapToCurrentZone VehicleExit GetPlayerMapPosition SummonRandomCritter C_MountJournal ToggleDropDownMenu TradeSkillLinkDropDown
--- GLOBALS: GetTradeSkillListLink LoadAddOn ShowMacroFrame IsAddOnLoaded
-
 -- "extended" macros will no longer work beyond the 255 character limit, so we won't support extending macros, only un-extending them
 MT.extendedMacrosSupported = select(4, GetBuildInfo()) == 40400; -- right now, only cata 4.4.0 supports extended macros
 
@@ -41,7 +32,7 @@ MT.defaults = {
         commandcolour = "ff00bfff", spellcolour = "ff9932cc", targetcolour = "ffffd700",
         conditioncolour = "ff8b5a2b", defaultcolour = "ffffffff", errorcolour = "ffff0000",
         itemcolour = "fff08080", mtcolour = "ffcd2ea9", seqcolour ="ff006600", comcolour="ff00aa00",
-        usecolours = true, unknown = false, replacemt = true, doublewide = false, broker = false,
+        usecolours = true, unknown = false, replacemt = true, doublewide = false,
         viscondtions = true, visoptionsbutton = true, viscustom = true, hidepopup = false,
         visaddscript = true, visaddslot = true, viscrest = false,
         visbackup = true, visclear = true, visshare = true, useiconlib = true,
@@ -58,7 +49,7 @@ MT.defaults = {
             mfont = "Friz Quadrata TT", mifont = "Friz Quadrata TT", misize = 10},
     },
     global = {custom = {}, extended = {}, extra = {}, allcharmacros = true},
-    char = {extended = {}, wodupgrade = false, brokers = {}, macros = {}},
+    char = {extended = {}, wodupgrade = false, macros = {}},
 }
 
 local function showtoolkit()
@@ -277,9 +268,6 @@ function MT:eventHandler(this, event, arg1, ...)
         if C_AddOns.IsAddOnLoaded("ElvUI") then MT:ApplyElvSkin() end
         MT.AC = MT.LS("AceComm-3.0")
         MT.AC:RegisterComm("MacroToolkit", function(...) MT:ReceiveMacro(...) end)
-        if countTables(MT.db.char.brokers) > 0 then
-            for b, d in pairs(MT.db.char.brokers) do MT:CreateBrokerObject(b, d.label) end
-        end
 
         if MacroToolkit.db.profile.useiconlib == true then
             --Try loading the data addon
@@ -352,7 +340,6 @@ function MT:DoMTMacroCommand(command, parameters)
     if command == "mtce" then UIErrorsFrame:Clear()
     elseif command == "mteo" then UIErrorsFrame:RegisterEvent("UI_ERROR_MESSAGE")
     elseif command == "mtex" then UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
-    elseif command == "mtc" then MT:Eval(parameters)
     elseif command == "mtrp" then SummonRandomCritter()
     elseif command == "mtso" then SetCVar("Sound_EnableSFX", 1)
     elseif command == "mtsx" then SetCVar("Sound_EnableSFX", 0)
@@ -876,35 +863,6 @@ function MT:MacroFrameUpdate()
                         MacroToolkitCSelMacroButton:SetID(i)
                         MacroToolkitCSelMacroButton.Icon:SetTexture(texture)
                     end
-                    -- disabled broker code (issue #37)
-                    --if MT.db.profile.broker then
-                    --	local result, cmd = _G.ERR_NOT_IN_COMBAT, ""
-                    --	if not InCombatLockdown() then result, cmd = MT:RunCommands(true, body) end
-                    --	local mname = MacroToolkitSelMacroName:GetText()
-                    --	if result then
-                    --		MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Red")
-                    --		MacroToolkitBrokerIcon:SetScript("OnEnter",
-                    --				function(this)
-                    --					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-                    --					GameTooltip:SetText("Macro Toolkit Broker")
-                    --					GameTooltip:AddLine(format("|cffff0000%s|r", cmd))
-                    --					GameTooltip:AddLine(format("|cffffffffReason: |cff4466cc%s|r", result))
-                    --					GameTooltip:Show()
-                    --				end)
-                    --		MTF.brokerok = false
-                    --		if MT:FindBrokerName(mname) then MT:BrokerRemove()
-                    --		else MacroToolkitBrokerButton:Hide() end
-                    --	else
-                    --		MT.brokericon:SetTexture("Interface\\COMMON\\Indicator-Green")
-                    --		MacroToolkitBrokerIcon:SetScript("OnEnter", nil)
-                    --		if MT:FindBrokerName(mname) then MT:BrokerRemove()
-                    --		else MT:BrokerAdd() end
-                    --		MTF.brokerok = true
-                    --	end
-                    --	MacroToolkitBrokerIcon:Show()
-                    --else
-                        MacroToolkitBrokerIcon:Hide()
-                    --end
                 else macroButton:SetChecked(false) end
                 if tab == 4 then macroButton.extended = exmacros[i].extended end
             else
@@ -937,7 +895,6 @@ function MT:MacroFrameUpdate()
         MacroToolkitShare:Disable()
         MacroToolkitBind:Disable()
         MacroToolkitConditions:Disable()
-        MacroToolkitBrokerIcon:Hide()
     end
 
     --Update New Button

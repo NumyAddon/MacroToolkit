@@ -13,6 +13,5 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/refs/heads/live/Interface/
 	<Script file="bindingframe.lua"/>
 	<Script file="copyframe.lua"/>
 	<Script file="elvskin.lua"/>
-	<Script file="macrobroker.lua"/>
 	<Script file="showtooltipMock.lua"/>
 </Ui>

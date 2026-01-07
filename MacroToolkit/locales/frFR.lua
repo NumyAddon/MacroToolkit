@@ -8,7 +8,6 @@ L["%s is trying to send you a macro. Accept?"] = "%s veut vous envoyer une macro
 L["(experimental)"] = "(experimental)"
 L["Ability icons"] = "Ic\195\180ne de capacit\195\169"
 L["Achievement icons"] = "Ic\195\180ne de Haut-Fait"
-L["Add broker"] = "ajouter un afficheur de donn\195\169es"
 L["Additional conditions"] = "Conditions additionnelles"
 L["alt"] = true
 L["Are you sure? This operation cannot be undone."] = "Vous \195\170tes s\195\187r ? Cette op\195\169ration ne peut \195\170tre annul\195\169e."
@@ -36,7 +35,6 @@ L["Commands"] = "Commandes"
 --Translation missing
 L["Comments"] = "Comments"
 L["Condition Builder"] = "Constructeur conditionnel"
-L["Conditional execution"] = "Execution conditionnelle"
 L["Conditions"] = true
 --Translation missing
 L["Control which icons are available to pick for macros"] = "Control which icons are available to pick for macros"
@@ -65,8 +63,6 @@ L["Editor font"] = "police de caract\195\168re de l'editeur"
 L["Eject passenger"] = "\195\137jecter le passager"
 L["Emotes"] = true
 --Translation missing
-L["Enable certain types of macro to be called via a data broker addon"] = "Enable certain types of macro to be called via a data broker addon"
-L["Enable data broker"] = "Autoriser l'afficheur de donn\195\169es"
 L["Enable sound effects"] = "Activer les effets sonores"
 L["Enable UI errors"] = "Afficher les erreurs d'interface"
 L["Enhanced macro frame with additional tools"] = "Am\195\169liorer la fen\195\170tre de macro avec les outils additionnels"
@@ -175,7 +171,6 @@ L["Question mark icon"] = "Icone de question"
 L["raid"] = "dans votre groupe de raid"
 L["Raid marker"] = "Marqueur de raid"
 L["Random non-combat pet"] = "Mascotte non combattante al\195\169atoire"
-L["Remove broker"] = "retirer un afficheur de donn\195\169es"
 L["Replace known scripts with Macro Toolkit slash commands"] = "remplacer les scripts connus par les commandes Macro Toolkit"
 L["Replace scripts with slash command"] = "Remplacer les scripts par des commandes slash"
 L["Report to"] = "Envoyer un rapport \195\160 "
