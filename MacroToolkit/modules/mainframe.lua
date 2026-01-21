@@ -263,7 +263,7 @@ function MT:CreateMTFrame()
 
     local mtscrollchild = CreateFrame("Frame", "MacroToolkitButtonContainer", mtscroll, "BackdropTemplate")
     do
-        mtscrollchild:SetSize(285, 10)
+        mtscrollchild:SetSize(mtframe:GetWidth() - 345, 10)
         mtscrollchild:SetPoint("TOPLEFT")
         self:ContainerOnLoad(mtscrollchild)
         mtscroll:SetScrollChild(mtscrollchild)
