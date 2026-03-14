@@ -400,10 +400,162 @@ function MT:CreateMTFrame()
         mtmfscroll:SetScript("OnSizeChanged", function(_, w, _) mtmfscrollchild:SetWidth(w) end)
     end
 
+    local mttranslationbg = CreateFrame("Frame", "MacroToolkitTranslationBg", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+    do
+        mttranslationbg:SetFrameStrata(mtframe:GetFrameStrata())
+        mttranslationbg:SetToplevel(true)
+        mttranslationbg:SetPoint("TOPLEFT", mtframe, "TOPRIGHT", 5, 0)
+        mttranslationbg:SetPoint("BOTTOMLEFT", mtframe, "BOTTOMRIGHT", 5, 0)
+        mttranslationbg:SetWidth(302)
+        mttranslationbg:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true,
+            tileSize = 32,
+            edgeSize = 32,
+            insets = {left = 11, right = 12, top = 12, bottom = 11},
+        })
+        mttranslationbg:Hide()
+    end
+
+    local mttranslationtitle = mttranslationbg:CreateFontString("MacroToolkitTranslationLabel", "ARTWORK", "GameFontHighlightSmall")
+    do
+        mttranslationtitle:SetText(L["Spell translation"])
+        mttranslationtitle:SetFontObject("GameFontNormal")
+        mttranslationtitle:SetPoint("TOP", 0, -18)
+    end
+
+    local mttranslationlineleft = mttranslationbg:CreateTexture(nil, "ARTWORK")
+    do
+        mttranslationlineleft:SetTexture("Interface\\ClassTrainerFrame\\UI-ClassTrainer-HorizontalBar")
+        mttranslationlineleft:SetSize(96, 12)
+        mttranslationlineleft:SetPoint("TOPLEFT", 18, -34)
+        mttranslationlineleft:SetTexCoord(0, 0.75, 0, 0.25)
+    end
+
+    local mttranslationlineright = mttranslationbg:CreateTexture(nil, "ARTWORK")
+    do
+        mttranslationlineright:SetTexture("Interface\\ClassTrainerFrame\\UI-ClassTrainer-HorizontalBar")
+        mttranslationlineright:SetSize(96, 12)
+        mttranslationlineright:SetPoint("TOPRIGHT", -18, -34)
+        mttranslationlineright:SetTexCoord(0, 0.75, 0, 0.25)
+    end
+
+    local mttranslationdesc = mttranslationbg:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    do
+        mttranslationdesc:SetText(L["Convert the selected macro to preview localized spell names"])
+        mttranslationdesc:SetJustifyH("CENTER")
+        mttranslationdesc:SetPoint("TOPLEFT", 24, -48)
+        mttranslationdesc:SetPoint("TOPRIGHT", -24, -48)
+        mttranslationdesc:SetTextColor(0.75, 0.75, 0.75, 1)
+    end
+
+    local mttranslationsave = CreateFrame("Button", "MacroToolkitTranslateSave", mttranslationbg, "BackdropTemplate,UIPanelButtonTemplate")
+    do
+        mttranslationsave:SetSize(86, 22)
+        mttranslationsave:SetPoint("TOPLEFT", 16, -82)
+        mttranslationsave:SetText(L["Save spells"])
+        mttranslationsave:SetScript("OnClick", function() MT:SaveCurrentSpellTranslations() end)
+    end
+
+    local mttranslateconvert = CreateFrame("Button", "MacroToolkitTranslateConvert", mttranslationbg, "BackdropTemplate,UIPanelButtonTemplate")
+    do
+        mttranslateconvert:SetSize(86, 22)
+        mttranslateconvert:SetPoint("LEFT", mttranslationsave, "RIGHT", 5, 0)
+        mttranslateconvert:SetText(L["Convert"])
+        mttranslateconvert:SetScript("OnClick", function() MT:ConvertSelectedMacroToCurrentLocale() end)
+    end
+
+    local mttranslateoverwrite = CreateFrame("Button", "MacroToolkitTranslateOverwrite", mttranslationbg, "BackdropTemplate,UIPanelButtonTemplate")
+    do
+        mttranslateoverwrite:SetSize(86, 22)
+        mttranslateoverwrite:SetPoint("LEFT", mttranslateconvert, "RIGHT", 5, 0)
+        mttranslateoverwrite:SetText(L["Overwrite"])
+        mttranslateoverwrite:SetScript("OnClick", function() MT:OverwriteSelectedMacroWithTranslation() end)
+    end
+
+    local mttranslationstatus = mttranslationbg:CreateFontString("MacroToolkitTranslationStatus", "ARTWORK", "GameFontNormalSmall")
+    do
+        mttranslationstatus:SetPoint("TOPLEFT", mttranslationsave, "BOTTOMLEFT", 0, -8)
+        mttranslationstatus:SetPoint("TOPRIGHT", -16, -112)
+        mttranslationstatus:SetJustifyH("LEFT")
+        mttranslationstatus:SetJustifyV("TOP")
+        mttranslationstatus:SetHeight(28)
+        mttranslationstatus:SetTextColor(0.75, 0.75, 0.75, 1)
+    end
+
+    local mttranslationpreviewlabel = mttranslationbg:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    do
+        mttranslationpreviewlabel:SetText(L["Translation preview"])
+        mttranslationpreviewlabel:SetPoint("TOPLEFT", 18, -140)
+    end
+
+    local mttranslationinset = CreateFrame("Frame", nil, mttranslationbg, BackdropTemplateMixin and "BackdropTemplate")
+    do
+        mttranslationinset:SetPoint("TOPLEFT", 14, -156)
+        mttranslationinset:SetPoint("TOPRIGHT", -14, -156)
+        mttranslationinset:SetHeight(120)
+        mttranslationinset:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16, tileSize = 16, tile = true, insets = {left = 5, right = 5, top = 5, bottom = 5}})
+        mttranslationinset:SetBackdropBorderColor(_G.TOOLTIP_DEFAULT_COLOR.r, _G.TOOLTIP_DEFAULT_COLOR.g, _G.TOOLTIP_DEFAULT_COLOR.b)
+        mttranslationinset:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+    end
+
+    local mttranslationscroll = CreateFrame("ScrollFrame", "MacroToolkitTranslationScrollFrame", mttranslationinset, "BackdropTemplate,UIPanelScrollFrameTemplate")
+    do
+        mttranslationscroll:SetPoint("TOPLEFT", 10, -6)
+        mttranslationscroll:SetPoint("BOTTOMRIGHT", -26, 4)
+    end
+
+    local mttranslationscrollchild = CreateFrame("EditBox", "MacroToolkitTranslationText", mttranslationscroll, "BackdropTemplate")
+    do
+        mttranslationscrollchild:SetMultiLine(true)
+        mttranslationscrollchild:SetAutoFocus(false)
+        mttranslationscrollchild:SetCountInvisibleLetters(true)
+        mttranslationscrollchild:SetAllPoints()
+        mttranslationscrollchild:SetScript("OnEscapePressed", EditBox_ClearFocus)
+        local font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.edfont)
+        mttranslationscrollchild:SetFont(font, MT.db.profile.fonts.errsize, "")
+        mttranslationscroll:SetScrollChild(mttranslationscrollchild)
+        mttranslationscroll:SetScript("OnSizeChanged", function(_, w, _) mttranslationscrollchild:SetWidth(w) end)
+    end
+
+    local mtsavedpreviewlabel = mttranslationbg:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    do
+        mtsavedpreviewlabel:SetText(L["Saved translations"])
+        mtsavedpreviewlabel:SetPoint("TOPLEFT", mttranslationinset, "BOTTOMLEFT", 4, -10)
+    end
+
+    local mtsavedpreviewinset = CreateFrame("Frame", nil, mttranslationbg, BackdropTemplateMixin and "BackdropTemplate")
+    do
+        mtsavedpreviewinset:SetPoint("TOPLEFT", mttranslationinset, "BOTTOMLEFT", 0, -26)
+        mtsavedpreviewinset:SetPoint("BOTTOMRIGHT", -14, 14)
+        mtsavedpreviewinset:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16, tileSize = 16, tile = true, insets = {left = 5, right = 5, top = 5, bottom = 5}})
+        mtsavedpreviewinset:SetBackdropBorderColor(_G.TOOLTIP_DEFAULT_COLOR.r, _G.TOOLTIP_DEFAULT_COLOR.g, _G.TOOLTIP_DEFAULT_COLOR.b)
+        mtsavedpreviewinset:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+    end
+
+    local mtsavedpreviewscroll = CreateFrame("ScrollFrame", "MacroToolkitSavedTranslationScrollFrame", mtsavedpreviewinset, "BackdropTemplate,UIPanelScrollFrameTemplate")
+    do
+        mtsavedpreviewscroll:SetPoint("TOPLEFT", 10, -6)
+        mtsavedpreviewscroll:SetPoint("BOTTOMRIGHT", -26, 4)
+    end
+
+    local mtsavedpreviewtext = CreateFrame("EditBox", "MacroToolkitSavedTranslationText", mtsavedpreviewscroll, "BackdropTemplate")
+    do
+        mtsavedpreviewtext:SetMultiLine(true)
+        mtsavedpreviewtext:SetAutoFocus(false)
+        mtsavedpreviewtext:SetCountInvisibleLetters(true)
+        mtsavedpreviewtext:SetEnabled(false)
+        mtsavedpreviewtext:SetAllPoints()
+        local font = LSM:Fetch(LSM.MediaType.FONT, MT.db.profile.fonts.errfont)
+        mtsavedpreviewtext:SetFont(font, MT.db.profile.fonts.errsize, "")
+        mtsavedpreviewscroll:SetScrollChild(mtsavedpreviewtext)
+        mtsavedpreviewscroll:SetScript("OnSizeChanged", function(_, w, _) mtsavedpreviewtext:SetWidth(w) end)
+    end
+
     local mterrorbg = CreateFrame("Frame", "MacroToolkitErrorBg", mtframe, BackdropTemplateMixin and "BackdropTemplate")
     do
         mterrorbg:SetPoint("TOP", mttextbg, "TOP", 0, 0)
-        --mterrorbg:SetPoint("TOP", 328, -289)
         mterrorbg:SetPoint("BOTTOMRIGHT", -8, 40)
         mterrorbg:SetWidth(302)
         mterrorbg:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16, tileSize = 16, tile = true, insets = {left = 5, right = 5, top = 5, bottom = 5}})
@@ -720,6 +872,9 @@ function MT:CreateMTFrame()
             mtframe:ClearAllPoints()
             mtframe:SetPoint("BOTTOMLEFT", MT.db.profile.x, MT.db.profile.y)
             mtframe:Raise()
+            mttranslationbg:Show()
+            mttranslationbg:SetFrameStrata(mtframe:GetFrameStrata())
+            mttranslationbg:SetFrameLevel(mtframe:GetFrameLevel())
             MT:MacroFrameUpdate()
             --PlaySound("igCharacterInfoOpen")
             PlaySound(839)
@@ -729,10 +884,12 @@ function MT:CreateMTFrame()
             else mtcustomflyout:Enable() end
             if MacroBox and MT.db.profile.vismacrobox then mtmb:Show() else mtmb:Hide() end
             dwfunc()
+            MT:UpdateTranslationWorkspace()
         end)
 
         mtframe:SetScript("OnHide", function()
             if MT.MTPF then MT.MTPF:Hide() end
+            mttranslationbg:Hide()
             MT:SaveMacro()
             --PlaySound("igCharacterInfoClose")
             PlaySound(840)

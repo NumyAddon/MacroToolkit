@@ -48,7 +48,7 @@ MT.defaults = {
         fonts = {edfont = "Friz Quadrata TT", edsize = 10, errfont = "Friz Quadrata TT", errsize = 10,
             mfont = "Friz Quadrata TT", mifont = "Friz Quadrata TT", misize = 10},
     },
-    global = {custom = {}, extended = {}, extra = {}, allcharmacros = true},
+    global = {custom = {}, extended = {}, extra = {}, allcharmacros = true, spellTranslations = {}},
     char = {extended = {}, wodupgrade = false, macros = {}},
 }
 
@@ -105,6 +105,7 @@ function MT:eventHandler(this, event, arg1, ...)
             if not C_AddOns.IsAddOnLoaded("Blizzard_MacroUI") then C_AddOns.LoadAddOn("Blizzard_MacroUI") end
             if not MT.db.global.custom then MT.db.global.custom = {} end
             if not MT.db.global.extra then MT.db.global.extra = {} end
+            if not MT.db.global.spellTranslations then MT.db.global.spellTranslations = {} end
             for _, c in ipairs(MT.db.global.custom) do
                 _G[format("SLASH_MACROTOOLKIT_CUSTOM_%s%d", string.upper(c.n), 1)] = format("%s%s", MT.slash, c.n)
                 SlashCmdList[format("MACROTOOLKIT_CUSTOM_%s", string.upper(c.n))] = function(input) MT:DoCustomCommand(c.s, input) end
@@ -280,6 +281,7 @@ function MT:eventHandler(this, event, arg1, ...)
                 MacroToolkit.usingiconlib = true
             end
         end
+        if MT.ScanSpellTranslations then MT:ScanSpellTranslations() end
     end
 end
 
@@ -936,6 +938,7 @@ function MT:MacroFrameUpdate()
 
     if numMacros > 0 then MacroToolkitClear:Enable()
     else MacroToolkitClear:Disable() end
+    if MT.UpdateTranslationWorkspace then MT:UpdateTranslationWorkspace() end
 end
 
 function MT:ContainerOnLoad(container)
@@ -1097,6 +1100,7 @@ function MT:SaveMacro()
                 MT:UpdateIcon(_G[n])
             else EditMacro(MTF.selectedMacro, nil, nil, MacroToolkitText:GetText()) end
         end
+        if MT.CaptureMacroSpellTokens then MT:CaptureMacroSpellTokens(MacroToolkitText:GetText()) end
         MTF.textChanged = nil
     end
 end

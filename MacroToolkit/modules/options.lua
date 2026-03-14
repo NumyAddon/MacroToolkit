@@ -37,6 +37,7 @@ function MT:SetScale(value)
     MacroToolkitFrame:SetSize(MT.db.profile.width or 638, MT.db.profile.height)
     MT.db.profile.scale = value
     MacroToolkitFrame:SetScale(value)
+    if MacroToolkitTranslationBg then MacroToolkitTranslationBg:SetScale(value) end
     if MacroToolkitRestoreFrame then MacroToolkitRestoreFrame:SetScale(value) end
     if MacroTtoolkitPopup then MacroToolkitPopup:SetScale(value) end
     if MacroToolkitScriptFrame then MacroToolkitScriptFrame:SetScale(value) end
