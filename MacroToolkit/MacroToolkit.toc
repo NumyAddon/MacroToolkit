@@ -4,6 +4,7 @@
 #@end-debug@
 ## Title: Macro Toolkit
 ## Notes: Enhanced macro frame with additional tools
+## Notes-zhCN: 增强默认宏功能，提升命令编写体验。
 ## Notes-zhTW: 增強巨集UI，方便編寫巨集並加強功能
 ## Notes-esES: Marco de macros mejorado con herramientas adicionales
 ## Author: Deepac, marciowb, The_Junksterr, Numy
