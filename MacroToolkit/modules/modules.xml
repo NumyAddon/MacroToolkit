@@ -3,6 +3,7 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/refs/heads/live/Interface/
     <Script file="package.lua"/>
     <Script file="initialise.lua"/>
     <Script file="parser.lua"/>
+	<Script file="translation.lua"/>
 	<Script file="options.lua"/>
 	<Script file="mainframe.lua"/>
 	<Script file="restoreframe.lua"/>

@@ -146,6 +146,21 @@ L["Spell ID"] = true
 L["Search by spell ID"] = true
 L["(experimental)"] = true
 L["Reset position"] = true
+L["Spell translation"] = true
+L["Translation preview"] = true
+L["Saved translations"] = true
+L["Save spells"] = true
+L["Convert"] = true
+L["Overwrite"] = true
+L["Select a macro to translate"] = true
+L["Convert the selected macro to preview localized spell names"] = true
+L["Saved %d spell translations"] = true
+L["Saved %d macro spells and %d spellbook spells"] = true
+L["Saved %d macro spells, %d spellbook spells, and updated %d spells from saved data"] = true
+L["Translated %d spell references"] = true
+L["No stored spell translations matched this macro"] = true
+L["Convert a macro before overwriting it"] = true
+L["Overwrote the selected macro with translated spell names"] = true
 
 --conditions
 L["Condition Builder"] = true
