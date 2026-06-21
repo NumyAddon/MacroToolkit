@@ -7,6 +7,8 @@ local CreateFrame, UIParent = CreateFrame, UIParent
 local ipairs, table = ipairs, table
 local PanelTemplates_GetSelectedTab = PanelTemplates_GetSelectedTab
 local CreateMacro, EditMacro, GetMacroInfo = CreateMacro, EditMacro, GetMacroInfo
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 
 function MT:CreateRestoreFrame()
 	local mtrf = CreateFrame("Frame", "MacroToolkitRestoreFrame", UIParent, "BackdropTemplate")
@@ -170,8 +172,8 @@ local function createextended(name, icon, body, tab)
 	CreateMacro(name, icon, holder, tab == 2)
 	local mid, mindex
 	local var = (tab == 1) and "global" or "char"
-	local start = (tab == 1) and 1 or (_G.MAX_ACCOUNT_MACROS + 1)
-	local finish = (tab == 1) and _G.MAX_ACCOUNT_MACROS or (_G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS)
+	local start = (tab == 1) and 1 or (MAX_ACCOUNT_MACROS + 1)
+	local finish = (tab == 1) and MAX_ACCOUNT_MACROS or (MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS)
 	for i, m in pairs(MT.db[var].extended) do
 		if m.body == body then
 			mindex = i
@@ -205,10 +207,10 @@ function MT:RestoreBackup()
 				if tab == 3 then
 					if m.index > 1000 then MT.db.global.extra[offset] = {name = m.name, texture = m.icon, body = m.body} end
 					offset = offset + 1
-					if offset > 1000 + _G.MAX_ACCOUNT_MACROS then break end
+					if offset > 1000 + MAX_ACCOUNT_MACROS then break end
 				elseif m.index < 1000 then
 					if strlenutf8(m.body) > 255 then createextended(m.name, m.icon, m.body, tab)
-					else CreateMacro(m.name, m.icon, m.body, m.index > _G.MAX_ACCOUNT_MACROS) end
+					else CreateMacro(m.name, m.icon, m.body, m.index > MAX_ACCOUNT_MACROS) end
 				end
 			end
 			MT:MacroFrameUpdate()

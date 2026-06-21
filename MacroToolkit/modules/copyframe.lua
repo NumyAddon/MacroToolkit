@@ -3,6 +3,8 @@ local _G = _G
 local MT = MacroToolkit
 local L = MT.L
 local AceGUI = MT.LS("AceGUI-3.0")
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 
 function MT:CreateCopyFrame()
     local mtcframe = CreateFrame("Frame", "MacroToolkitCopyFrame", UIParent, "BackdropTemplate,ButtonFrameTemplate")
@@ -15,7 +17,7 @@ function MT:CreateCopyFrame()
     end
 
     if MT.db.profile.scale then mtcframe:SetScale(MT.db.profile.scale) end
-    mtcframe:SetSize(638, 310 + (38 * (_G.MAX_CHARACTER_MACROS/6)))
+    mtcframe:SetSize(638, 310 + (38 * (MAX_CHARACTER_MACROS/6)))
     mtcframe:SetMovable(true)
     mtcframe:EnableMouse(true)
     mtcframe:EnableKeyboard(true)
@@ -161,7 +163,7 @@ function MT:CreateCopyFrame()
                     end
                     if charDb.extended then
                         for idx, ex in pairs(charDb.extended) do
-                            if tonumber(idx) > _G.MAX_ACCOUNT_MACROS then
+                            if tonumber(idx) > MAX_ACCOUNT_MACROS then
                                 chars[charName] = displayName
                                 break
                             end
@@ -207,7 +209,7 @@ function MT:CreateCopyFrame()
 
     local function updateslots(s)
         local _, macros = GetNumMacros()
-        macros = _G.MAX_CHARACTER_MACROS - macros
+        macros = MAX_CHARACTER_MACROS - macros
         s:SetFormattedText("%s: |cffffffff%d", L["Macro slots available"], macros)
         if macros == 0 then MacroToolkitCopy:Disable()
         elseif mtcframe.selectedMacro then MacroToolkitCopy:Enable() end
@@ -232,7 +234,7 @@ function MT:CreateCopyFrame()
             local icon = string.gsub(string.upper(button.Icon:GetTexture()), "INTERFACE\\ICONS\\", "")
             local body = mtmcscrollchild:GetText()
             MacroToolkitText:SetText(body)
-            MacroToolkitFrame.macroBase = _G.MAX_ACCOUNT_MACROS
+            MacroToolkitFrame.macroBase = MAX_ACCOUNT_MACROS
             if button.extended then
                 MacroToolkitFrame.selectedMacro = CreateMacro(name, icon, "MT", true)
                 MT:ExtendMacro(true)

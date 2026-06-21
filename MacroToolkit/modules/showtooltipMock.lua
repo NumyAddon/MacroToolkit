@@ -1,5 +1,7 @@
 --- @class MacroToolkit
 local MT = MacroToolkit
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 
 -- copied the update timing concept from SecureStateDriverManager
 local UPDATE_THROTTLE = 0.2;
@@ -12,7 +14,7 @@ MT.extendedMacroCache = MT.extendedMacroCache or {}
 local function buildCache()
     local cache = MT.extendedMacroCache
     wipe(cache)
-    for slot = 1, _G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS do
+    for slot = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
         local body = select(3, GetMacroInfo(slot))
         if body then
             local toolkitIndex = string.match(body, "MTSBP?(%d+)")
@@ -61,7 +63,7 @@ local function OnUpdate(self, elapsed)
 
         local cache = MT.extendedMacroCache
         for slot, toolkitIndex in pairs(cache) do
-            local tab = slot > _G.MAX_ACCOUNT_MACROS and TAB_CHAR or TAB_ACCOUNT
+            local tab = slot > MAX_ACCOUNT_MACROS and TAB_CHAR or TAB_ACCOUNT
             local body = MT:GetExtendedBody(toolkitIndex, tab)
             if body then
                 handleBody(body, slot)

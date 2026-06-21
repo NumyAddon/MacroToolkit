@@ -4,6 +4,8 @@ local MT = MacroToolkit
 local CreateFrame, PlaySound, GameTooltip, GameTooltip_Hide, UnitName = CreateFrame, PlaySound, GameTooltip, GameTooltip_Hide, UnitName
 local UIParent = UIParent
 local format, string, ipairs = format, string, ipairs
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 local L = MT.L
 local AceGUI = MT.LS("AceGUI-3.0")
 local LSM = MT.LS("LibSharedMedia-3.0")
@@ -1087,7 +1089,7 @@ end
 ]]--
 
 function MT:CreateSecureFrames()
-    for b = 1, _G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS do
+    for b = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
         self:CreateSecureActionButton(b)
     end
 

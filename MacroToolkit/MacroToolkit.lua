@@ -14,6 +14,8 @@ local UseContainerItem, SetCVar, SetRaidTarget, PlaySound, HideUIPanel = UseCont
 local PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlot = PanelTemplates_GetSelectedTab, StaticPopup_Show, SpellBook_GetSpellBookSlot
 local CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor = CreateFrame, GetBindingText, InCombatLockdown, CursorHasMacro, GetCursorInfo, ClearCursor
 local exFormat = "%s%s%s [btn:1]%s LeftButton 1;[btn:2]%s RightButton 1;[btn:3]%s MiddleButton 1;[btn:4]%s Button4 1;[btn:5]%s Button5 1"
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 
 local ChatEdit_InsertLink = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
 local SendChatMessage = C_ChatInfo and C_ChatInfo.SendChatMessage or SendChatMessage
@@ -60,7 +62,7 @@ local function showtoolkit()
 end
 
 local function getExMacroIndex(ext)
-    for mi = 1, _G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS do
+    for mi = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
         local name, icon, body = GetMacroInfo(mi)
         if name then
             local index = select(3, string.find(body, "MTSB(%d+)"))
@@ -207,7 +209,7 @@ function MT:eventHandler(this, event, arg1, ...)
         if MT.db.global.allcharmacros then
             local numMacros = select(2, GetNumMacros())
             MT.db.char.macros = {}
-            for m = _G.MAX_ACCOUNT_MACROS + 1, _G.MAX_ACCOUNT_MACROS + numMacros do
+            for m = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + numMacros do
                 local name, texture, body = GetMacroInfo(m)
                 if not string.find(body, "MTSB") then
                     MT.db.char.macros[m] = {name = name, icon = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", ""), body = body}
@@ -230,7 +232,7 @@ function MT:eventHandler(this, event, arg1, ...)
                 MT:UpdateIcon(_G[format("MTSB%d", i)])
                 --check for orphaned macro
                 local found = false
-                for om = _G.MAX_ACCOUNT_MACROS + 1, _G.MAX_CHARACTER_MACROS + _G.MAX_ACCOUNT_MACROS do
+                for om = MAX_ACCOUNT_MACROS + 1, MAX_CHARACTER_MACROS + MAX_ACCOUNT_MACROS do
                     local n, t, b = GetMacroInfo(om)
                     --local index = select(3, string.find(b, "MTSB(%d+)"))
                     if n then if string.find(b, format("MTSB%d", i)) then found = true end end
@@ -294,8 +296,8 @@ end
 
 function MT:ClearAllMacros()
     local tab = PanelTemplates_GetSelectedTab(MTF)
-    local mstart = (tab == 1) and 1 or (_G.MAX_ACCOUNT_MACROS + 1)
-    local mend = (tab == 1) and _G.MAX_ACCOUNT_MACROS or (_G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS)
+    local mstart = (tab == 1) and 1 or (MAX_ACCOUNT_MACROS + 1)
+    local mend = (tab == 1) and MAX_ACCOUNT_MACROS or (MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS)
     if tab < 3 then
         for m = mend, mstart, -1 do
             DeleteMacro(m)
@@ -460,8 +462,8 @@ function MT:ShowShortened(chars)
 end
 
 function MT:SetMacros(account, extra, copy)
-    MTF.macroBase = account and 0 or _G.MAX_ACCOUNT_MACROS
-    MTF.macroMax = account and _G.MAX_ACCOUNT_MACROS or _G.MAX_CHARACTER_MACROS
+    MTF.macroBase = account and 0 or MAX_ACCOUNT_MACROS
+    MTF.macroMax = account and MAX_ACCOUNT_MACROS or MAX_CHARACTER_MACROS
     if extra then
         if MT:CountExtra() > 0 then
             MTF.selectedMacro = 1001
@@ -501,7 +503,7 @@ function MT:FormatMacro(macrotext)
 end
 
 function MT:UpdateExtended(index, body, mindex)
-    local var = (index > _G.MAX_ACCOUNT_MACROS) and "char" or "global"
+    local var = (index > MAX_ACCOUNT_MACROS) and "char" or "global"
     local mindex = tostring(mindex)
     if not MT.db[var].extended then MT.db[var].extended = {} end
     local name, icon = GetMacroInfo(index)
@@ -509,7 +511,7 @@ function MT:UpdateExtended(index, body, mindex)
 end
 
 function MT:DeleteExtended(index)
-    local var = (MTF.selectedMacro > _G.MAX_ACCOUNT_MACROS) and "char" or "global"
+    local var = (MTF.selectedMacro > MAX_ACCOUNT_MACROS) and "char" or "global"
     index = tostring(index)
     MT.db[var].extended[index] = nil
 end
@@ -522,15 +524,15 @@ end
 
 function MT:GetNextIndex()
     local tab = PanelTemplates_GetSelectedTab(MTF)
-    local index = (tab == 2) and (_G.MAX_ACCOUNT_MACROS + 1) or 1
-    local mstart, mend = index, (tab == 2) and (_G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS) or _G.MAX_ACCOUNT_MACROS
+    local index = (tab == 2) and (MAX_ACCOUNT_MACROS + 1) or 1
+    local mstart, mend = index, (tab == 2) and (MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS) or MAX_ACCOUNT_MACROS
     if tab == 3 then
         index = 1001
         mstart = 1001
         mend = 1000 + MT.MAX_EXTRA_MACROS
     end
     for m = mstart, mend do
-        local var = (m > _G.MAX_ACCOUNT_MACROS) and "char" or "global"
+        local var = (m > MAX_ACCOUNT_MACROS) and "char" or "global"
         local ex = (tab == 3) and MT.db.global.extra or MT.db[var].extended
         if not ex[tostring(m)] then index = m; break end
     end
@@ -590,7 +592,7 @@ function MT:ExtendMacro(save, macrobody, idx, exists)
         MacroToolkitText.extended = true
         _G[format("MacroToolkitButton%d", (MTF.selectedMacro - MTF.macroBase))].extended = true
     end
-    if exists then CreateMacro(MT.db.char.extended[idx].name, MT.db.char.extended[idx].icon, newbody, tonumber(idx) > _G.MAX_ACCOUNT_MACROS)
+    if exists then CreateMacro(MT.db.char.extended[idx].name, MT.db.char.extended[idx].icon, newbody, tonumber(idx) > MAX_ACCOUNT_MACROS)
     else EditMacro(idx or MTF.selectedMacro, nil, nil, newbody) end
     if not save and not idx and not exists then
         MacroToolkitExtend:SetExtend(false)
@@ -608,7 +610,7 @@ function MT:CorrectExtendedMacros()
 
     cleanMacros()
     --fix macros
-    for m = 1, _G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS do
+    for m = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
         local body = select(3, GetMacroInfo(m))
         if body then
             if string.find(body, format("%s MacroToolkitSecureButton%%d+", MT.click)) then
@@ -735,21 +737,21 @@ function MT:MacroFrameUpdate()
 
     numMacros = (MTF.macroBase == 0) and numAccountMacros or numCharacterMacros
     if MT.MTCF then if MT.MTCF:IsShown() then tab = 4 end end
-    local maxMacroButtons = max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
+    local maxMacroButtons = max(MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
     if tab == 3 then
         numMacros = MT:CountExtra()
         for i, exm in pairs(MT.db.global.extra) do table.insert(exmacros, {name = exm.name, texture = exm.texture, body = exm.body, index = i}) end
         table.sort(exmacros, function(a, b) return (a.name or "") < (b.name or "") end)
     elseif tab == 2 then
-        if numMacros == _G.MAX_CHARACTER_MACROS then MacroToolkitCopyButton:Disable()
+        if numMacros == MAX_CHARACTER_MACROS then MacroToolkitCopyButton:Disable()
         else MacroToolkitCopyButton:Enable() end
     elseif tab == 4 then
-        maxMacroButtons = _G.MAX_CHARACTER_MACROS
+        maxMacroButtons = MAX_CHARACTER_MACROS
         numMacros = 0
         if MT.charcopy then
             if MacroToolkitDB.char[MT.charcopy].extended then
                 for i, exm in pairs(MacroToolkitDB.char[MT.charcopy].extended) do
-                    if tonumber(i) > _G.MAX_ACCOUNT_MACROS then
+                    if tonumber(i) > MAX_ACCOUNT_MACROS then
                         local mname = (exm.name == "") and "xxx" or exm.name
                         local micon = (exm.icon == "") and "INV_MISC_QUESTIONMARK" or exm.icon
                         table.insert(exmacros, {name = mname, texture = micon, body = exm.body, extended = true})
@@ -947,7 +949,7 @@ function MT:ContainerOnLoad(container)
     container:SetSelectedIndex(1)
     container.initialized = true
 
-    local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
+    local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and MAX_CHARACTER_MACROS or max(MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
     local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
     local OnDragStart = function(button) if not InCombatLockdown() then PickupMacro(MTF.macroBase + button:GetID()) end end
     local OnClick = function(button, btn) self:MacroButtonOnClick(button, btn) end
@@ -963,7 +965,7 @@ function MT:ContainerOnLoad(container)
 end
 
 function MT:RepositionContainerButtons(container)
-    local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and _G.MAX_CHARACTER_MACROS or max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
+    local maxMacroButtons = (container:GetName() == "MacroToolkitCButtonContainer") and MAX_CHARACTER_MACROS or max(MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS)
     local bname = (container:GetName() == "MacroToolkitCButtonContainer") and "MacroToolkitCButton" or "MacroToolkitButton"
     local buttonWidth = 49
     local oldButtonsPerRow = container.buttonsPerRow
@@ -1005,7 +1007,7 @@ function MT:MacroButtonOnClick(this, button)
     else name = GetMacroInfo(MTF.selectedMacro) end
     if not name then
         if CursorHasMacro() and tab < 3 then
-            local maxm = (tab == 1) and _G.MAX_ACCOUNT_MACROS or _G.MAX_CHARACTER_MACROS
+            local maxm = (tab == 1) and MAX_ACCOUNT_MACROS or MAX_CHARACTER_MACROS
             local mcount = select(tab, GetNumMacros())
             if maxm == mcount then
                 StaticPopupDialogs.MACROTOOLKIT_ALERT.text = L["You have no more room for macros!"]
@@ -1123,8 +1125,8 @@ function MT:BackupMacros(backupname)
     local macros = {n=backupname, d=date(L["datetime format"]), m={}}
     local tab = PanelTemplates_GetSelectedTab(MTF)
     local var = (tab == 1) and "global" or "char"
-    local start = (tab == 1) and 1 or (_G.MAX_ACCOUNT_MACROS + 1)
-    local finish = (tab == 1) and _G.MAX_ACCOUNT_MACROS or (_G.MAX_ACCOUNT_MACROS + _G.MAX_CHARACTER_MACROS)
+    local start = (tab == 1) and 1 or (MAX_ACCOUNT_MACROS + 1)
+    local finish = (tab == 1) and MAX_ACCOUNT_MACROS or (MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS)
     if tab == 3 then
         var = "global"
         start = 1001

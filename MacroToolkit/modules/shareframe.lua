@@ -4,6 +4,8 @@ local L = MT.L
 local string, format, strsplit = string, format, strsplit
 local StaticPopup_Show = StaticPopup_Show
 local CreateFrame = CreateFrame
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 
 function MT:CreateSharePopup()
 	local frame = CreateFrame("Frame", "MacroToolkitSharePopup", UIParent, BackdropTemplateMixin and "BackdropTemplate")
@@ -196,9 +198,9 @@ local function addmacro(name, texture, body)
 	local gm, cm = GetNumMacros()
 	local em = MT:CountExtra()
 	local cs, es
-	if gm == _G.MAX_ACCOUNT_MACROS then
-		if cm == _G.MAX_CHARACTER_MACROS then
-			if em == _G.MAX_ACCOUNT_MACROS then
+	if gm == MAX_ACCOUNT_MACROS then
+		if cm == MAX_CHARACTER_MACROS then
+			if em == MAX_ACCOUNT_MACROS then
 				StaticPopupDialogs.MACROTOOLKIT_ALERT.text = L["You have no more room for macros!"]
 				StaticPopupDialogs.MACROTOOLKIT_ALERT.showAlert = 1
 				StaticPopup_Show("MACROTOOLKIT_ALERT")

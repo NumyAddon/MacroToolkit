@@ -1,6 +1,8 @@
 --- @class MacroToolkit
 local MT = MacroToolkit
 MT.skinned = {}
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
+local MAX_CHARACTER_MACROS = MAX_CHARACTER_MACROS or Constants.MacroConsts.MAX_CHARACTER_MACROS
 
 -- credits for reviving the elvui skin: MechaZao @ discord
 function MT:ApplyElvSkin()
@@ -54,7 +56,7 @@ function MT:ApplyElvSkin()
 	}
 
 	-- Icon Grid Buttons
-	for i = 1, max(_G.MAX_ACCOUNT_MACROS, _G.MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS) do
+	for i = 1, max(MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS, MT.MAX_EXTRA_MACROS) do
 		local buttonName = "MacroToolkitButton" .. i
 		local button = _G[buttonName]
 		if button and not self.skinned[button] then

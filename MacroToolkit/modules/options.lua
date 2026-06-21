@@ -7,6 +7,7 @@ local AceDBOptions = MT.LS("AceDBOptions-3.0")
 local LSM = MT.LS("LibSharedMedia-3.0")
 local L = MT.L
 local CreateFrame, ipairs, pairs, string, tonumber = CreateFrame, ipairs, pairs, string, tonumber
+local MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS or Constants.MacroConsts.MAX_ACCOUNT_MACROS
 
 --First visible frame
 local function createMainPanel()
@@ -49,7 +50,7 @@ local function addCharMacros()
     MT.db.global.allcharmacros = true
     local numMacros = select(2, GetNumMacros())
     MT.db.char.macros = {}
-    for m = _G.MAX_ACCOUNT_MACROS + 1, _G.MAX_ACCOUNT_MACROS + numMacros do
+    for m = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + numMacros do
         local name, texture, body = GetMacroInfo(m)
         if not string.find(body, "MTSB") then
             MT.db.char.macros[m] = {name = name, icon = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", ""), body = body}
