@@ -404,7 +404,7 @@ function MT:CreateMTFrame()
 
     local mterrorbg = CreateFrame("Frame", "MacroToolkitErrorBg", mtframe, BackdropTemplateMixin and "BackdropTemplate")
     do
-        mterrorbg:SetPoint("TOP", mttextbg, "TOP", 0, 0)
+        mterrorbg:SetPoint("TOP", mtselbg, "BOTTOM", 0, -5)
         --mterrorbg:SetPoint("TOP", 328, -289)
         mterrorbg:SetPoint("BOTTOMRIGHT", -8, 40)
         mterrorbg:SetWidth(302)
