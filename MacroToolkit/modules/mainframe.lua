@@ -481,7 +481,7 @@ function MT:CreateMTFrame()
         end)
     end
 
-    local tabTemplate = C_XMLUtil.GetTemplateInfo("CharacterFrameTabTemplate") and "CharacterFrameTabTemplate" or "CharacterFrameTabButtonTemplate"
+    local tabTemplate = C_XMLUtil.GetTemplateInfo("PanelTabButtonTemplate") and "PanelTabButtonTemplate" or "CharacterFrameTabButtonTemplate"
 
     local mcopy
     local mttab1 = CreateFrame("Button", "MacroToolkitFrameTab1", mtframe, "BackdropTemplate," .. tabTemplate)
