@@ -3,6 +3,8 @@
 ## Interface: 120000
 #@end-debug@
 ## Author: Deepac
+## X-GameType: [Game]
+## X-GameFamily: [Family]
 ## IconTexture: Interface\AddOns\MacroToolkit\mtsm
 ## Title: MacroToolkit Icon Data
 ## Version: @project-version@
