@@ -195,11 +195,6 @@ function MT:BindingFrameOnKeyDown(this, key)
 	if GetBindingFromClick(key) == "SCREENSHOT" then
 		RunBinding("SCREENSHOT")
 		return
-	elseif GetBindingFromClick(key) == "TOGGLEGAMEMENU" then
-		LoadBindings(GetCurrentBindingSet())
-		MTB.outputtext:SetText("")
-		MTB:Hide()
-		return
 	end
 	if key == "UNKNOWN" or key == "LeftButton" or key == "RightButton" or
 		key == "LSHIFT" or key == "LCTRL" or key == "LALT" or
