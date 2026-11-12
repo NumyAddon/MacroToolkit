@@ -47,6 +47,7 @@ MT.defaults = {
         height = 424,
         dynamicicon = true, abilityicons = true, achicons = true,
         invicons = true, itemicons = true, miscicons = true, spellicons = true,
+        iconsearchname = true, iconsearchid = true,
         fonts = {edfont = "Friz Quadrata TT", edsize = 10, errfont = "Friz Quadrata TT", errsize = 10,
             mfont = "Friz Quadrata TT", mifont = "Friz Quadrata TT", misize = 10},
     },

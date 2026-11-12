@@ -225,6 +225,8 @@ L["RightButton"] = "Rechte Maustaste"
 L["Save failed"] = "Speichern fehgeschlagen"
 L["Script saved"] = "Script gespeichert"
 L["Scripts"] = true
+L["Search by icon ID"] = "Nach Symbol-ID suchen"
+L["Search by name"] = "Nach Name suchen"
 --Translation missing
 L["Search by spell ID"] = "Search by spell ID"
 L["Sell grey items"] = "Verkaufe graue Items"

@@ -180,6 +180,8 @@ L["RightButton"] = "Bot\195\179n derecho del rat\195\179n"
 L["Save failed"] = "Guardado fallido"
 L["Script saved"] = "Script guardado"
 L["Scripts"] = true
+L["Search by icon ID"] = "Buscar por ID de icono"
+L["Search by name"] = "Buscar por nombre"
 --Translation missing
 L["Search by spell ID"] = "Search by spell ID"
 L["Sell grey items"] = "Vender objetos grises"

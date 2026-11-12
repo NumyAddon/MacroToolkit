@@ -184,6 +184,8 @@ L["RightButton"] = "bouton droit"
 L["Save failed"] = "Sauvegarde \195\169chou\195\169e"
 L["Script saved"] = "Script sauvegard\195\169"
 L["Scripts"] = true
+L["Search by icon ID"] = "Rechercher par ID d'ic\195\180ne"
+L["Search by name"] = "Rechercher par nom"
 --Translation missing
 L["Search by spell ID"] = "Search by spell ID"
 L["Sell grey items"] = "Vendre les objets gris"

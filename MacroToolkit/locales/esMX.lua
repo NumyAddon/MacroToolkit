@@ -341,6 +341,8 @@ L["Save failed"] = "Save failed"
 L["Script saved"] = "Script saved"
 --Translation missing
 L["Scripts"] = "Scripts"
+L["Search by icon ID"] = "Buscar por ID de icono"
+L["Search by name"] = "Buscar por nombre"
 --Translation missing
 L["Search by spell ID"] = "Search by spell ID"
 --Translation missing

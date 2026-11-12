@@ -320,6 +320,8 @@ L["Save failed"] = "Save failed"
 L["Script saved"] = "Script saved"
 --Translation missing
 L["Scripts"] = "Scripts"
+L["Search by icon ID"] = "아이콘 ID로 검색"
+L["Search by name"] = "이름으로 검색"
 --Translation missing
 L["Search by spell ID"] = "Search by spell ID"
 --Translation missing

@@ -326,6 +326,12 @@ local coloursPanel = {
     },
 }
 
+local function seticonsearch(key, otherkey, value)
+    MT.db.profile[key] = value
+    if not value then MT.db.profile[otherkey] = true end
+    if MacroToolkitPopupIcons and MacroToolkitPopupIcons:IsShown() then MacroToolkitPopupIcons.search:RestartSearch() end
+end
+
 local iconsPanel = {
     order = 3,
     type = "group",
@@ -419,6 +425,27 @@ local iconsPanel = {
                     MacroToolkitPopupIcons:SetSectionVisibility("MiscellaneousIcons", value)
                     MT:UpdateIconCount()
                 end,
+        },
+        search = {
+            order = 9,
+            type = "description",
+            name = format("\n%s", _G.SEARCH),
+        },
+        iconsearchname = {
+            order = 10,
+            type = "toggle",
+            width = "full",
+            name = L["Search by name"],
+            get = function() return MT.db.profile.iconsearchname end,
+            set = function(info, value) seticonsearch("iconsearchname", "iconsearchid", value) end,
+        },
+        iconsearchid = {
+            order = 11,
+            type = "toggle",
+            width = "full",
+            name = L["Search by icon ID"],
+            get = function() return MT.db.profile.iconsearchid end,
+            set = function(info, value) seticonsearch("iconsearchid", "iconsearchname", value) end,
         },
     },
 }

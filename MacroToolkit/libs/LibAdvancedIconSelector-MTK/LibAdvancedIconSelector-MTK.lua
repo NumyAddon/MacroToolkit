@@ -1201,8 +1201,10 @@ function SearchObject:private_OnSearchTick()
 		end
 
 		local id, kind, texture = self:GetIconInfo(self.searchIndex)
+		local fileID = nil
 		if MacroToolkit.SpellCheck ~= true then
 			if type(texture) == "number" and MacroToolkit.usingiconlib then
+				fileID = texture
 				if MacroToolkit.TextureNames[texture] then texture = MacroToolkit.TextureNames[texture] end
 			end
 		end
@@ -1210,7 +1212,20 @@ function SearchObject:private_OnSearchTick()
 
 		if texture then
 			local keywordString = lib:LookupKeywords(texture)
-			if self:private_Matches(texture, keywordString, self.parsedParameter) then
+			local searchText = texture
+			if fileID then
+				local profile = MacroToolkit.db.profile
+				local byName = profile.iconsearchname and texture ~= fileID
+				local byID = profile.iconsearchid
+				if byName and byID then
+					keywordString = keywordString and (keywordString .. " " .. fileID) or tostring(fileID)
+				elseif byID then
+					searchText, keywordString = fileID, nil
+				elseif not byName then
+					searchText, keywordString = "", nil
+				end
+			end
+			if self:private_Matches(searchText, keywordString, self.parsedParameter) then
 				if self.OnSearchResultAdded then self:OnSearchResultAdded(texture, self.searchIndex, id, kind) end
 			end
 		end
