@@ -11,6 +11,22 @@ MT.MAX_EXTRA_MACROS = 1000 -- I'd like to see you try to hit this limit :P
 local L = MT.L
 local format = format
 
+-- Icon fileID of the "?" icon. A macro that uses it shows whatever #showtooltip resolves to.
+MT.DYNAMIC_MACRO_ICON = 134400
+
+local GetSelectedMacroIcon = C_Macro and C_Macro.GetSelectedMacroIcon
+
+-- The icon the player picked for a macro. GetMacroInfo returns the icon shown right now,
+-- which for a "?" macro is the resolved spell or item icon and must not be saved back.
+function MT:GetPickedMacroIcon(index)
+    if not index then return end
+    if GetSelectedMacroIcon then
+        local ok, icon = pcall(GetSelectedMacroIcon, index)
+        if ok and icon then return icon end
+    end
+    return (select(2, GetMacroInfo(index)))
+end
+
 MT.frame:RegisterEvent("ADDON_LOADED")
 MT.frame:RegisterEvent("PLAYER_LOGIN")
 MT.frame:SetScript("OnEvent", function(...) MT:eventHandler(...) end)

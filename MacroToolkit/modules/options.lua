@@ -51,7 +51,8 @@ local function addCharMacros()
     local numMacros = select(2, GetNumMacros())
     MT.db.char.macros = {}
     for m = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + numMacros do
-        local name, texture, body = GetMacroInfo(m)
+        local name, _, body = GetMacroInfo(m)
+        local texture = MT:GetPickedMacroIcon(m)
         if not string.find(body, "MTSB") then
             MT.db.char.macros[m] = {name = name, icon = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", ""), body = body}
         end
