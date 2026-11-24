@@ -181,7 +181,10 @@ function MT:ShareMacro(sharetype, channel, player)
 	if MacroToolkitFrame.selectedMacro > 1000 then
 		local em = MT.db.global.extra[tostring(MacroToolkitFrame.selectedMacro)]
 		name, texture, body = em.name, em.texture, em.body
-	else name, texture, body = GetMacroInfo(MacroToolkitFrame.selectedMacro) end
+	else
+		local macroName, _, macroBody = GetMacroInfo(MacroToolkitFrame.selectedMacro)
+		name, texture, body = macroName, MT:GetPickedMacroIcon(MacroToolkitFrame.selectedMacro), macroBody
+	end
 	texture = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", "")
 	local details = format("%s%s%s%s%s", name, string.char(9), texture, string.char(9), body)
 	if sharetype == "user" and player then

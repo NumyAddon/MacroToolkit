@@ -210,7 +210,8 @@ function MT:eventHandler(this, event, arg1, ...)
             local numMacros = select(2, GetNumMacros())
             MT.db.char.macros = {}
             for m = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + numMacros do
-                local name, texture, body = GetMacroInfo(m)
+                local name, _, body = GetMacroInfo(m)
+                local texture = MT:GetPickedMacroIcon(m)
                 if not string.find(body, "MTSB") then
                     MT.db.char.macros[m] = {name = name, icon = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", ""), body = body}
                 end
@@ -506,7 +507,8 @@ function MT:UpdateExtended(index, body, mindex)
     local var = (index > MAX_ACCOUNT_MACROS) and "char" or "global"
     local mindex = tostring(mindex)
     if not MT.db[var].extended then MT.db[var].extended = {} end
-    local name, icon = GetMacroInfo(index)
+    local name = GetMacroInfo(index)
+    local icon = MT:GetPickedMacroIcon(index)
     MT.db[var].extended[mindex] = {name = name, icon = string.gsub(string.upper(icon), "INTERFACE\\ICONS\\", ""), body = body}
 end
 
@@ -549,9 +551,9 @@ end
 
 local function checktooltip(showtooltip, body)
     if showtooltip then
-        if showtooltip == _G.SLASH_SHOWTOOLTIP1 then
+        if showtooltip == MT.SHOWTOOLTIP_META then
             local _, _, firstspell = MT:ShortenMacro(body)
-            if firstspell then showtooltip = string.format("%s %s", _G.SLASH_SHOWTOOLTIP1, firstspell) end
+            if firstspell then showtooltip = string.format("%s %s", MT.SHOWTOOLTIP_META, firstspell) end
         end
     end
     return showtooltip
@@ -849,11 +851,13 @@ function MT:MacroFrameUpdate()
                         MacroToolkitSelMacroButton:SetID(i)
                         MacroToolkitSelMacroButton.Icon:SetTexture(texture)
                         if MT.MTPF then
-                            if type(texture) == "number" then
-                                MT.MTPF.selectedIconTexture = texture
+                            local picked = texture
+                            if tab < 3 then picked = MT:GetPickedMacroIcon(MTF.macroBase + i) end
+                            if type(picked) == "number" then
+                                MT.MTPF.selectedIconTexture = picked
                             else
-                                if texture then
-                                    MT.MTPF.selectedIconTexture = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", "")
+                                if picked then
+                                    MT.MTPF.selectedIconTexture = string.gsub(string.upper(picked), "INTERFACE\\ICONS\\", "")
                                 else
                                     MT.MTPF.selectedIconTexture = nil
                                 end
@@ -940,6 +944,31 @@ function MT:MacroFrameUpdate()
     else MacroToolkitClear:Disable() end
 end
 
+-- Redraw only the icons on the account and character tabs. A "?" macro shows what its
+-- #showtooltip resolves to right now, which changes with stance, gear, target and modifiers
+-- without any macro event, so the open window polls. The edit box is left alone so unsaved
+-- text survives.
+function MT:RefreshMacroIcons()
+    if not MTF or not MTF:IsShown() then return end
+    if MT.MTCF and MT.MTCF:IsShown() then return end
+    local tab = PanelTemplates_GetSelectedTab(MTF)
+    if tab ~= 1 and tab ~= 2 then return end
+    local numAccountMacros, numCharacterMacros = GetNumMacros()
+    local numMacros = (MTF.macroBase == 0) and numAccountMacros or numCharacterMacros
+    local pickingIcon = MT.MTPF and MT.MTPF:IsShown()
+    for i = 1, math.min(numMacros, MTF.macroMax or 0) do
+        local index = MTF.macroBase + i
+        local name, texture = GetMacroInfo(index)
+        local button = _G[format("MacroToolkitButton%d", i)]
+        if name and button then
+            button.Icon:SetTexture(texture)
+            if index == MTF.selectedMacro and not pickingIcon then
+                MacroToolkitSelMacroButton.Icon:SetTexture(texture)
+            end
+        end
+    end
+end
+
 function MT:ContainerOnLoad(container)
     Mixin(container, SelectorMixin)
     container.buttons = {}
@@ -1019,7 +1048,8 @@ function MT:MacroButtonOnClick(this, button)
                 return
             end
             local _, mid = GetCursorInfo()
-            local name, texture, body = GetMacroInfo(mid)
+            local name, _, body = GetMacroInfo(mid)
+            local texture = MT:GetPickedMacroIcon(mid)
             texture = string.gsub(string.upper(texture), "INTERFACE\\ICONS\\", "")
             local s, e, index = string.find(body, "MTSB(%d+)")
             if s then
@@ -1076,9 +1106,10 @@ end
 
 function MT:IsDynamic(index)
     if not index then return false end
-    local body = select(2, GetMacroInfo(index))
-    if not body or body == "" then return false end
-    return strlower(body) == "interface\\icons\\inv_misc_questionmark"
+    local icon = MT:GetPickedMacroIcon(index)
+    if type(icon) == "number" then return icon == MT.DYNAMIC_MACRO_ICON end
+    if not icon or icon == "" then return false end
+    return strlower(icon) == "interface\\icons\\inv_misc_questionmark"
 end
 
 function MT:SaveMacro()
@@ -1137,7 +1168,10 @@ function MT:BackupMacros(backupname)
         if start > 1000 then
             local em = MT.db.global.extra[tostring(m)]
             name, texture, body = em.name, em.texture, em.body
-        else name, texture, body = GetMacroInfo(m) end
+        else
+            local macroName, _, macroBody = GetMacroInfo(m)
+            name, texture, body = macroName, MT:GetPickedMacroIcon(m), macroBody
+        end
         if name then
             if string.find(body, "MTSB") then body = _G[format("MTSB%d", m)]:GetAttribute("macrotext") end
             if type(texture) == "number"  then

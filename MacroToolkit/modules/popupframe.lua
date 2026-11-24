@@ -286,7 +286,8 @@ function MT:CreateMTPopup()
 					mtpfedit:SetText(extraMacroInfo.name)
 					aisframe:SetSelectionByName(extraMacroInfo.texture)
 				else
-					local name, icon = GetMacroInfo(MacroToolkitFrame.selectedMacro)
+					local name = GetMacroInfo(MacroToolkitFrame.selectedMacro)
+					local icon = MT:GetPickedMacroIcon(MacroToolkitFrame.selectedMacro)
 					mtpfedit:SetText(name)
 					aisframe:SetSelectionByName(icon)
 				end
@@ -524,7 +525,7 @@ function MT:PopupUpdate(this)
 		index = (macroPopupOffset * _G.NUM_ICONS_PER_ROW) + i
 		texture = MT:GetSpellorMacroIconInfo(index)
 		if index <= numMacroIcons and texture then
-			if type(texture == "number") then
+			if type(texture) == "number" then
 				macroPopupIcon:SetTexture(texture)
 			else
 				macroPopupIcon:SetTexture(format("INTERFACE\\ICONS\\%s", texture))

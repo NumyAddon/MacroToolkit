@@ -11,6 +11,22 @@ MT.MAX_EXTRA_MACROS = 1000 -- I'd like to see you try to hit this limit :P
 local L = MT.L
 local format = format
 
+-- Icon fileID of the "?" icon. A macro that uses it shows whatever #showtooltip resolves to.
+MT.DYNAMIC_MACRO_ICON = 134400
+
+local GetSelectedMacroIcon = C_Macro and C_Macro.GetSelectedMacroIcon
+
+-- The icon the player picked for a macro. GetMacroInfo returns the icon shown right now,
+-- which for a "?" macro is the resolved spell or item icon and must not be saved back.
+function MT:GetPickedMacroIcon(index)
+    if not index then return end
+    if GetSelectedMacroIcon then
+        local ok, icon = pcall(GetSelectedMacroIcon, index)
+        if ok and icon then return icon end
+    end
+    return (select(2, GetMacroInfo(index)))
+end
+
 MT.frame:RegisterEvent("ADDON_LOADED")
 MT.frame:RegisterEvent("PLAYER_LOGIN")
 MT.frame:SetScript("OnEvent", function(...) MT:eventHandler(...) end)
@@ -70,31 +86,35 @@ MT.CONDITION_TYPE_MOD_KEYS = 5
 MT.CONDITION_TYPE_MOUSEBUTTONS = 6
 MT.CONDITION_TYPE_NUMERIC_WITH_SLASH = 7
 MT.CONDITION_TYPE_ALPHANUMERIC_WITH_SPACES = 8
+MT.CONDITION_TYPE_NAME = 9 -- any spell, item or pet name, spaces and punctuation included
+MT.CONDITION_TYPE_HOUSE = 10
+-- Checked against https://warcraft.wiki.gg/wiki/Macro_conditionals (edited 2025-10-27).
 MT.conditions = {
     actionbar = MT.CONDITION_TYPE_NUMERIC,
     advflyable = MT.CONDITION_TYPE_NONE,
     bar = MT.CONDITION_TYPE_NUMERIC,
     bonusbar = MT.CONDITION_TYPE_NUMERIC,
-    btn = MT.CONDITION_TYPE_MOUSEBUTTONS,
-    button = MT.CONDITION_TYPE_MOUSEBUTTONS,
+    -- a mouse button number or name, or any virtual click name
+    btn = MT.CONDITION_TYPE_ALPHANUMERIC,
+    button = MT.CONDITION_TYPE_ALPHANUMERIC,
     canexitvehicle = MT.CONDITION_TYPE_NONE,
-    channeling = MT.CONDITION_TYPE_ALPHANUMERIC,
-    channelling = MT.CONDITION_TYPE_ALPHANUMERIC,
+    channeling = MT.CONDITION_TYPE_NAME,
+    channelling = MT.CONDITION_TYPE_NAME,
     combat = MT.CONDITION_TYPE_NONE,
-    cursor = MT.CONDITION_TYPE_TEXTUAL,
+    cursor = MT.CONDITION_TYPE_NONE,
     dead = MT.CONDITION_TYPE_NONE,
     equipped = MT.CONDITION_TYPE_TEXTUAL,
     exists = MT.CONDITION_TYPE_NONE,
-    extrabar = MT.CONDITION_TYPE_NUMERIC,
+    extrabar = MT.CONDITION_TYPE_NONE,
     flyable = MT.CONDITION_TYPE_NONE,
     flying = MT.CONDITION_TYPE_NONE,
     form = MT.CONDITION_TYPE_NUMERIC,
     group = MT.CONDITION_TYPE_PARTY_RAID,
     harm = MT.CONDITION_TYPE_NONE,
     help = MT.CONDITION_TYPE_NONE,
-    house = MT.CONDITION_TYPE_TEXTUAL,
+    house = MT.CONDITION_TYPE_HOUSE,
     indoors = MT.CONDITION_TYPE_NONE,
-    known = MT.CONDITION_TYPE_ALPHANUMERIC_WITH_SPACES,
+    known = MT.CONDITION_TYPE_NAME,
     mod = MT.CONDITION_TYPE_MOD_KEYS,
     modifier = MT.CONDITION_TYPE_MOD_KEYS,
     mounted = MT.CONDITION_TYPE_NONE,
@@ -104,9 +124,12 @@ MT.conditions = {
     party = MT.CONDITION_TYPE_NONE,
     pet = MT.CONDITION_TYPE_TEXTUAL,
     petbattle = MT.CONDITION_TYPE_NONE,
-    possessbar = MT.CONDITION_TYPE_NUMERIC,
+    possessbar = MT.CONDITION_TYPE_NONE,
+    pvpcombat = MT.CONDITION_TYPE_NONE,
     pvptalent = MT.CONDITION_TYPE_NUMERIC_WITH_SLASH,
     raid = MT.CONDITION_TYPE_NONE,
+    resting = MT.CONDITION_TYPE_NONE,
+    shapeshift = MT.CONDITION_TYPE_NONE,
     spec = MT.CONDITION_TYPE_NUMERIC,
     stance = MT.CONDITION_TYPE_NUMERIC,
     stealth = MT.CONDITION_TYPE_NONE,
@@ -118,6 +141,7 @@ MT.conditions = {
 }
 
 MT.optionalConditions = {
+    bonusbar = true,
     channeling = true,
     channelling = true,
     group = true,
@@ -155,14 +179,16 @@ MT.optargs={
     [5]={
         "AUTOLOOTTOGGLE", "STICKCAMERA", "SPLITSTACK", "PICKUPACTION", "COMPAREITEMS", -- specify whichever key is bound to these actions
         "OPENALLBAGS", "QUESTWATCHTOGGLE", "SELFCAST", -- specify whichever key is bound to these actions
+        "lshift", "rshift", "lctrl", "rctrl", "lalt", "ralt",
         unpack(modCombos), -- needs to be last
     },
     [4]={"party","raid"},
+    [10]={"inside","plot","editor","neighborhood"},
 }
 
---add some globals to make things easier
-_G.SLASH_SHOW1="#show"
-_G.SLASH_SHOWTOOLTIP1="#showtooltip"
+-- Macro meta commands. Kept on MT, not written into Blizzard's SLASH_ globals.
+MT.SHOW_META = "#show"
+MT.SHOWTOOLTIP_META = "#showtooltip"
 
 MT.COMMAND_PARAM_REQUIRED = 1;
 MT.COMMAND_PARAM_OPTIONAL = 2;

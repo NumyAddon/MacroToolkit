@@ -6,11 +6,41 @@ local GetItemInfo = (GetItemInfo or C_Item.GetItemInfo)
 local format = string.format
 local _G = _G
 local L = MT.L
-MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
+MT.clist = {cast={}, use={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
 local SHOW_META, SHOWTOOLTIP_META = "#show", "#showtooltip"
 
 local function trim(s) return string.match(s, "^%s*(.*%S)") or "" end
 local function escape(s) return (s:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]","%%%1"):gsub("%z","%%z")) end
+
+-- Lower-case item class and subclass names from the client ("weapon", "shields", ...), for
+-- worn:/equipped: arguments. These match case-insensitively (checked in game on Forever).
+local itemTypeNames
+local function isItemTypeName(text)
+    if not itemTypeNames then
+        itemTypeNames = {}
+        local getClassInfo, getSubClassInfo = GetItemClassInfo, GetItemSubClassInfo
+        if C_Item then
+            getClassInfo = C_Item.GetItemClassInfo or getClassInfo
+            getSubClassInfo = C_Item.GetItemSubClassInfo or getSubClassInfo
+        end
+        if getClassInfo and getSubClassInfo then
+            for classID = 0, 30 do
+                local ok, className = pcall(getClassInfo, classID)
+                if ok and type(className) == "string" and className ~= "" then
+                    itemTypeNames[string.lower(className)] = true
+                end
+                for subClassID = 0, 40 do
+                    local okSub, subClassName = pcall(getSubClassInfo, classID, subClassID)
+                    if okSub and type(subClassName) == "string" and subClassName ~= "" then
+                        itemTypeNames[string.lower(subClassName)] = true
+                    end
+                end
+            end
+        end
+    end
+    if next(itemTypeNames) == nil then return nil end
+    return itemTypeNames[string.lower(trim(text))] == true
+end
 
 local LibTalentTree = LibStub("LibTalentTree-1.0");
 local LibTalentTreeExists = LibTalentTree:IsCompatible();
@@ -51,6 +81,10 @@ local function getSpellNameAndID(spellIDOrName)
     end
 end
 
+-- Extra spellings Macro Toolkit treats as the same command (for example /use for /cast),
+-- keyed by SLASH_ prefix. Kept here instead of being written into Blizzard's SLASH_ globals.
+MT.slashAliases = {}
+
 function MT:FindShortest(cglobal)
     local shortest = string.rep("x", 99)
     local current
@@ -59,31 +93,36 @@ function MT:FindShortest(cglobal)
         if current then if string.len(current) < string.len(shortest) then shortest = current end
         else break end
     end
+    for _, alias in ipairs(MT.slashAliases[cglobal] or {}) do
+        if string.len(alias) < string.len(shortest) then shortest = alias end
+    end
     return shortest
+end
+
+-- All strings of one SLASH_ prefix: SLASH_USE1, SLASH_USE2, ...
+local function slashStrings(cglobal)
+    local list = {}
+    for c = 1, 99 do
+        local current = _G[format("%s%s", cglobal, c)]
+        if not current then break end
+        list[#list + 1] = current
+    end
+    return list
 end
 
 function MT:BuildCommandList()
     local cglobal, command, shortest, digit, param, custom, dpos
-    local castmax, modmax, randommax, usemax, modemax, usermax = 0, 0, 0, 0, 0, 0
     for k, v in pairs(_G) do
         if type(v) == "string" then
             if string.sub(k, 1, 6) == "SLASH_" then
                 dpos = string.find(k, "%d+$") or 2
-                digit = tonumber(string.match(k, "%d+$"))
                 cglobal = string.sub(k, 1, dpos - 1)
                 if cglobal == "SLASH_CASTSEQUENCE" then table.insert(MT.clist.castsequence, string.sub(v, 2)) end
-                if cglobal == "SLASH_CAST" then
-                    if castmax < digit then castmax = digit end
-                    table.insert(MT.clist.cast, string.sub(v, 2))
-                end
-                if cglobal == "SLASH_CHAT_MODERATOR" then if modmax < digit then modmax = digit end end
-                if cglobal == "SLASH_CASTRANDOM" then if randommax < digit then randommax = digit end end
+                if cglobal == "SLASH_CAST" then table.insert(MT.clist.cast, string.sub(v, 2)) end
                 if cglobal == "SLASH_USE" then
-                    if usemax < digit then usemax = digit end
                     table.insert(MT.clist.cast, string.sub(v, 2))
+                    table.insert(MT.clist.use, string.sub(v, 2))
                 end
-                if cglobal == "SLASH_CHAT_MODERATE" then if modemax < digit then modemax = digit end end
-                if cglobal == "SLASH_USERANDOM" then if usermax < digit then usermax = digit end end
                 if cglobal == "SLASH_SCRIPT" then table.insert(MT.clist.script, string.sub(v, 2)) end
                 if cglobal == "SLASH_CONSOLE" then table.insert(MT.clist.console, string.sub(v, 2)) end
                 if cglobal == "SLASH_TARGET" then table.insert(MT.clist.target, string.sub(v, 2)) end
@@ -92,9 +131,11 @@ function MT:BuildCommandList()
             end
         end
     end
-    for c = 1, usemax do _G[format("SLASH_CAST%d", castmax + c)] = _G[format("SLASH_USE%d", c)] end
-    for m = 1, modemax do _G[format("SLASH_MODERATOR%d", modmax + m)] = _G[format("SLASH_MODERATE%d", m)] end
-    for r = 1, usermax do _G[format("SLASH_CASTRANDOM%d", randommax + r)] = _G[format("SLASH_USERANDOM%d", r)] end
+    MT.slashAliases = {
+        SLASH_CAST = slashStrings("SLASH_USE"),
+        SLASH_CHAT_MODERATOR = slashStrings("SLASH_CHAT_MODERATE"),
+        SLASH_CASTRANDOM = slashStrings("SLASH_USERANDOM"),
+    }
     for k, v in pairs(_G) do
         if type(v) == "string" then
             if string.sub(k, 1, 6) == "SLASH_" then
@@ -121,6 +162,8 @@ function MT:BuildCommandList()
             end
         end
     end
+    MT.commands.show = {"show", MT.commandinfo.SHOW or 0}
+    MT.commands.showtooltip = {"showtooltip", MT.commandinfo.SHOWTOOLTIP or 0}
 end
 
 --*************************************************
@@ -291,6 +334,17 @@ function MT:IsStopMacro(command) for _, c in ipairs(MT.clist.stopmacro) do if c 
 function MT:IsTarget(command) return isTarget(command) end
 function MT:IsCastSequence(command) return isCastSequence(command) end
 
+-- Equipment slots /use accepts as a bare number, e.g. /use 13 for the first trinket.
+local FIRST_EQUIPPED_SLOT = INVSLOT_FIRST_EQUIPPED or 1
+local LAST_EQUIPPED_SLOT = INVSLOT_LAST_EQUIPPED or 19
+
+local function isUse(command) for _, c in ipairs(MT.clist.use) do if c == command then return true end end end
+
+local function isEquipmentSlot(text)
+    local slot = tonumber(text, 10)
+    return slot ~= nil and slot >= FIRST_EQUIPPED_SLOT and slot <= LAST_EQUIPPED_SLOT
+end
+
 local function validateParameters(parameters, commandtext)
     local c = format("|c%s", MT.db.profile.stringcolour)
     local err
@@ -299,6 +353,8 @@ local function validateParameters(parameters, commandtext)
     if string.sub(parameters, 1, 1) == "!" then parameters = string.sub(parameters, 2) end
     if isScript(commandtext) or  isConsole(commandtext) or isClick(commandtext) then c = format("|c%s", MT.db.profile.scriptcolour)
     elseif isTarget(commandtext) then c = format("|c%s", MT.db.profile.targetcolour)
+    -- before the spell lookup: a slot number is not a spell ID here
+    elseif isUse(commandtext) and isEquipmentSlot(parameters) then c = format("|c%s", MT.db.profile.itemcolour)
     elseif getSpellNameAndID(parameters) then c = format("|c%s", MT.db.profile.spellcolour)
     elseif GetItemInfo(parameters) then c = format("|c%s", MT.db.profile.itemcolour)
     elseif isNumeric({parameters}) then c = format("|c%s", MT.db.profile.stringcolour)
@@ -406,9 +462,19 @@ local function validateCondition(condition, optionArguments, parameters)
                         msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
+                elseif v == MT.CONDITION_TYPE_NAME then
+                    msg = nil
+                    for _, a in ipairs(optionArguments) do
+                        if trim(a) == "" then
+                            msg = format("%s: %s%s", L["Invalid argument"], conditionColor, tr_condition)
+                            isCondition = false
+                            break
+                        end
+                    end
                 elseif v == MT.CONDITION_TYPE_PARTY_RAID
                         or v == MT.CONDITION_TYPE_MOD_KEYS
-                        or v == MT.CONDITION_TYPE_MOUSEBUTTONS then
+                        or v == MT.CONDITION_TYPE_MOUSEBUTTONS
+                        or v == MT.CONDITION_TYPE_HOUSE then
                     valid, arg1 = isValid(optionArguments, v)
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Invalid argument"], conditionColor, tr_condition, arg1)
@@ -453,6 +519,23 @@ local function validateCondition(condition, optionArguments, parameters)
             end
             if name then
                 colorArguments = format("|c%s", MT.db.profile.spellcolour)
+            end
+        elseif (tr_condition == "worn" or tr_condition == "equipped") and #optionArguments > 0 then
+            local allKnown, unknownArgument = true, nil
+            for _, argument in ipairs(optionArguments) do
+                local known = isItemTypeName(argument)
+                if known == nil then
+                    allKnown = nil -- the client gave no type names, so do not judge
+                    break
+                elseif not known then
+                    allKnown, unknownArgument = false, argument
+                    break
+                end
+            end
+            if allKnown then
+                colorArguments = format("|c%s", MT.db.profile.itemcolour)
+            elseif allKnown == false and MT.db.profile.unknown then
+                msg = format("%s: [%s%s|r:%s]", L["Unknown parameter"], conditionColor, tr_condition, trim(unknownArgument))
             end
         end
     else
@@ -506,17 +589,74 @@ local function matchedBrackets(macrotext)
     return mtype
 end
 
-local function removeConditional(line, pattern, conditionalPattern)
-    local s, e = string.find(line, pattern)
-    while s do
-        local s1, e1 = string.find(line, conditionalPattern, s)
-        if not s1 or not e1 then break end -- shouldn't happen, but don't want to throw an error if it does
-        if string.match(string.sub(line,s1,s1), '[^,]') then s1 = s1 - 1 end
+-- Long conditional names and their shorter equivalents.
+local CONDITION_ALIASES = {
+    actionbar = "bar",
+    button = "btn",
+    channelling = "channeling",
+    equipped = "worn",
+    modifier = "mod",
+    stance = "form",
+}
 
-        line = format("%s%s", string.sub(line, 1, s1), string.sub(line, e1 + 1))
-        s, e = string.find(line, pattern)
+-- These are only true when the unit exists, so a separate "exists" adds nothing.
+local IMPLIES_EXISTS = { help = true, harm = true, dead = true }
+-- These are always true when the unit does not exist, so "noexists" makes them redundant.
+local IMPLIED_BY_NOEXISTS = { nohelp = true, noharm = true, nodead = true }
+
+-- Shorten one conditional, e.g. " target = focus " -> "@focus", "modifier : shift" -> "mod:shift".
+-- Spaces inside argument values (spell, item type or pet names) are kept.
+local function shortenConditional(phrase)
+    phrase = trim(phrase)
+    if phrase == "" then return "" end
+    local unit = string.match(phrase, "^target%s*=(.*)$") or string.match(phrase, "^@(.*)$")
+    if unit then return "@" .. trim(unit) end
+
+    local name, args = string.match(phrase, "^([^:]*):(.*)$")
+    name = trim(name or phrase)
+    local prefix = ""
+    if string.sub(name, 1, 2) == "no" and not MT.conditions[name] then
+        prefix, name = "no", string.sub(name, 3)
     end
-    return line
+    name = CONDITION_ALIASES[name] or name
+    if not args then return prefix .. name end
+
+    local parts = {strsplit("/", args)}
+    for i, part in ipairs(parts) do
+        part = trim(part)
+        if name == "known" and part ~= "" and not tonumber(part) then
+            local spellName, spellID = getSpellNameAndID(part)
+            if spellName and spellID and string.len(tostring(spellID)) < string.len(part) then
+                part = tostring(spellID)
+            end
+        end
+        parts[i] = part
+    end
+    return format("%s%s:%s", prefix, name, table.concat(parts, "/"))
+end
+
+-- Shorten the inside of one [...] block: shorten each conditional, drop duplicates and
+-- conditionals another one in the same block already implies.
+local function shortenConditionBlock(inner)
+    local present, shortened = {}, {}
+    for _, phrase in ipairs({strsplit(",", inner)}) do
+        local short = shortenConditional(phrase)
+        if short ~= "" and not present[short] then
+            present[short] = true
+            shortened[#shortened + 1] = short
+        end
+    end
+    local impliesExists = false
+    for name in pairs(IMPLIES_EXISTS) do
+        if present[name] then impliesExists = true end
+    end
+    local kept = {}
+    for _, short in ipairs(shortened) do
+        local redundant = (short == "exists" and impliesExists)
+            or (present.noexists and IMPLIED_BY_NOEXISTS[short])
+        if not redundant then kept[#kept + 1] = short end
+    end
+    return "[" .. table.concat(kept, ",") .. "]"
 end
 
 function MT:ShortenMacro(macrotext)
@@ -524,7 +664,6 @@ function MT:ShortenMacro(macrotext)
     local olen = 0
     local mout = {}
     local show, showt, firstc, shows, s2
-    local pattern
     olen = string.len(macrotext)
     macrotext = format("%s\n", macrotext)
     local lines = {strsplit("\n", macrotext)}
@@ -542,78 +681,16 @@ function MT:ShortenMacro(macrotext)
             line = string.gsub(line, "%s+", " ")
             line = string.gsub(line, "%s-([%]=,;])", "%1")
             line = string.gsub(line, "([%[%]=;])%s+", "%1")
-            line = string.gsub(line, "%[(%w),%s+(%w)%]", "%1%2")
             line = string.gsub(line, "%s-/%s+", "/")
             line = string.gsub(line, "%s-;$", "")
-            line = string.gsub(line, "target=", "@")
-            line = string.gsub(line, "modifier%s-", "mod")
-            line = string.gsub(line, "mod%s-:%s+", "mod:")
-            line = string.gsub(line, "group%s-:%s+", "group:")
-            line = string.gsub(line, "(known:[%w ])%s+", "%1")
-
-            local knownConditionals = {}
-            s, e = string.find(line, "%[.-%]")
-            while s do -- for each bracketed section, strip spaces and extract known conditionals
-                local s1 = string.sub(line, s, e)
-                local kStart, kEnd = string.find(s1, "known:[%w ]+")
-                if kStart then
-                    local known = kStart and string.sub(s1, kStart, kEnd)
-                    if known then
-                        knownConditionals[string.gsub(known, "%s+", "")] = known
-                    end
-                end
-                s1 = string.gsub(s1, "%s+", "")
-                line = format("%s%s%s", string.sub(line, 1, s - 1), s1, string.sub(line, e + 1))
-                s, e = string.find(line, "%[.-%]", e + 1)
-            end
-
-            for k, v in pairs(knownConditionals) do
-                local spellNameOrID = string.gsub(v, "known:", "")
-                -- if not a number
-                if not tonumber(spellNameOrID) then
-                    local spellName, spellID = getSpellNameAndID(spellNameOrID)
-                    if spellID and string.len(spellID) < string.len(spellName) then v = format("known:%d", spellID) end
-                end
-                line = string.gsub(line, k, v)
-            end
-
-            local existsConditionPattern = ",-%s-exists,*"
-
-            line = removeConditional(line, "%[.-[^o]help.-[^o]exists.-%]", existsConditionPattern) -- help & exists
-            line = removeConditional(line, "%[help.-[^o]exists.-%]", existsConditionPattern) -- help & exists
-            line = removeConditional(line, "%[.-,-[^o]exists.-[^o]help.-%]", existsConditionPattern) -- exists & help
-            line = removeConditional(line, "%[exists.-[^o]help.-%]", existsConditionPattern) -- exists & help
-            line = removeConditional(line, "%[.-[^o]harm.-[^o]exists.-%]", existsConditionPattern) -- harm & exists
-            line = removeConditional(line, "%[harm.-[^o]exists.-%]", existsConditionPattern) -- harm & exists
-            line = removeConditional(line, "%[.-,-[^o]exists.-[^o]harm.-%]", existsConditionPattern) -- exists & harm
-            line = removeConditional(line, "%[exists.-[^o]harm.-%]", existsConditionPattern) -- exists & harm
-
-            local noHarmConditionPattern = ",-%s-noharm,*"
-            local noHelpConditionPattern = ",-%s-nohelp,*"
-
-            line = removeConditional(line, "%[.-nohelp.-noexists.-%]", noHelpConditionPattern) -- nohelp & noexists
-            line = removeConditional(line, "%[.-,-noexists.-nohelp.-%]", noHelpConditionPattern) -- noexists & nohelp
-            line = removeConditional(line, "%[.-noharm.-noexists.-%]", noHarmConditionPattern) -- noharm & noexists
-            line = removeConditional(line, "%[.-,-noexists.-noharm.-%]", noHarmConditionPattern) -- noexists & noharm
-
-            -- "noexists" & "help"/"harm" makes no logical sense, since it can never match, maybe show an error?
-            -- "help"/"harm" imply "exists", so combining it with "noexists" makes no sense
-
-            -- cleanup trailing comma in [ ] blocks
-            pattern = "(%[.-),%s-(%])"
-            line = string.gsub(line, pattern, "%1%2")
-
-            --avoid confusion between actionbar condition and swapactionbar / command
             local s1
-            s, e, s1 = string.find(line, "(%[.*)actionbar%s-")
-            if s then line = format("%s%s%s%s", string.sub(line, 1, s - 1), s1, "bar", string.sub(line, e + 1)) end
-            line = string.gsub(line, "bar%s-:%s+", "bar:")
-            line = string.gsub(line, "button%s-", "btn")
-            line = string.gsub(line, "btn%s-:%s+", "btn:")
-            line = string.gsub(line, "equipped%s-", "worn")
-            line = string.gsub(line, "worn%s-:%s+", "worn:")
-            line = string.gsub(line, "stance%s-", "form")
-            line = string.gsub(line, "form%s-:%s+", "form:")
+            -- Rewrite conditionals only inside [...] blocks of secure commands, so spell, item,
+            -- chat and script text is never touched.
+            local verb = string.match(line, "^[#/](%S+)")
+            verb = verb and string.lower(verb)
+            if not (verb and (isScript(verb) or isConsole(verb))) then
+                line = string.gsub(line, "%[([^%[%]]*)%]", shortenConditionBlock)
+            end
             s, e, s1, s2 = string.find(line, "%](%a.-);(.-)$")
             if s then if s1 == s2 then line = format("%s[]%s", string.sub(line, 1, s), s1) end end
             s, e = string.find(line, SHOWTOOLTIP_META)

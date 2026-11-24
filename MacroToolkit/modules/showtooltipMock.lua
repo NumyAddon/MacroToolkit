@@ -11,9 +11,13 @@ local TAB_CHAR = 2;
 local TAB_ACCOUNT = 1;
 
 MT.extendedMacroCache = MT.extendedMacroCache or {}
+local frame
+-- Last spell and target handed to SetMacroSpell per macro slot, so unchanged ticks do nothing.
+local applied = {}
 local function buildCache()
     local cache = MT.extendedMacroCache
     wipe(cache)
+    wipe(applied)
     for slot = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
         local body = select(3, GetMacroInfo(slot))
         if body then
@@ -23,19 +27,23 @@ local function buildCache()
             end
         end
     end
+    -- Only extended macros need this, so the ticker stays hidden (no OnUpdate) without any.
+    if frame then frame:SetShown(next(cache) ~= nil) end
 end
 hooksecurefunc('CreateMacro', buildCache)
 hooksecurefunc('EditMacro', buildCache)
 hooksecurefunc('DeleteMacro', buildCache)
 
 local function startsWithSlashCastCommand(body)
-    local i, slashCommand = 1, _G["SLASH_CAST1"]
-    while slashCommand do
-        if string.match(body, "^" .. slashCommand .. " ") then
-            return true
+    for _, prefix in ipairs({"SLASH_CAST", "SLASH_USE"}) do
+        local i, slashCommand = 1, _G[prefix .. "1"]
+        while slashCommand do
+            if string.sub(body, 1, string.len(slashCommand) + 1) == slashCommand .. " " then
+                return true
+            end
+            i = i + 1
+            slashCommand = _G[prefix .. i]
         end
-        i = i + 1
-        slashCommand = _G["SLASH_CAST" .. i]
     end
     return false
 end
@@ -53,6 +61,9 @@ local function handleBody(body, slot)
     local trimmed = string.match(firstLine, "^%s*(.-)%s*$")
     if trimmed == "" or not C_Spell.GetSpellName(trimmed) then return end
 
+    local key = format("%s@%s", trimmed, target or "")
+    if applied[slot] == key then return end
+    applied[slot] = key
     SetMacroSpell(slot, trimmed, target)
 end
 
@@ -79,11 +90,11 @@ local function OnEvent(self, event)
     timer = 0;
 end
 
-local frame = CreateFrame("Frame");
+frame = CreateFrame("Frame");
+frame:Hide();
 frame:SetScript("OnUpdate", OnUpdate);
 frame:SetScript("OnEvent", OnEvent);
 
-frame:RegisterEvent("PLAYER_ENTERING_WORLD");
 
 -- Events that trigger early rescans
 frame:RegisterEvent("MODIFIER_STATE_CHANGED");

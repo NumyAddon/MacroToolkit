@@ -742,6 +742,17 @@ function MT:CreateMTFrame()
         end)
     end
 
+    -- Child of the main window, so it only ticks while the window is shown.
+    local iconRefresher = CreateFrame("Frame", nil, mtframe)
+    local ICON_REFRESH_INTERVAL = 0.25
+    local sinceIconRefresh = 0
+    iconRefresher:SetScript("OnUpdate", function(_, elapsed)
+        sinceIconRefresh = sinceIconRefresh + elapsed
+        if sinceIconRefresh < ICON_REFRESH_INTERVAL then return end
+        sinceIconRefresh = 0
+        MT:RefreshMacroIcons()
+    end)
+
     local crest = CreateFrame("Frame", "MacroToolkitCrest", mtframe, "BackdropTemplate")
     do
         crest:SetSize(136, 136)
