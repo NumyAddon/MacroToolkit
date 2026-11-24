@@ -6,7 +6,7 @@ local GetItemInfo = (GetItemInfo or C_Item.GetItemInfo)
 local format = string.format
 local _G = _G
 local L = MT.L
-MT.clist = {cast={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
+MT.clist = {cast={}, use={}, script={}, click={}, console={}, target={}, castsequence={}, stopmacro={}}
 local SHOW_META, SHOWTOOLTIP_META = "#show", "#showtooltip"
 
 local function trim(s) return string.match(s, "^%s*(.*%S)") or "" end
@@ -121,6 +121,7 @@ function MT:BuildCommandList()
                 if cglobal == "SLASH_CAST" then table.insert(MT.clist.cast, string.sub(v, 2)) end
                 if cglobal == "SLASH_USE" then
                     table.insert(MT.clist.cast, string.sub(v, 2))
+                    table.insert(MT.clist.use, string.sub(v, 2))
                 end
                 if cglobal == "SLASH_SCRIPT" then table.insert(MT.clist.script, string.sub(v, 2)) end
                 if cglobal == "SLASH_CONSOLE" then table.insert(MT.clist.console, string.sub(v, 2)) end
@@ -333,6 +334,17 @@ function MT:IsStopMacro(command) for _, c in ipairs(MT.clist.stopmacro) do if c 
 function MT:IsTarget(command) return isTarget(command) end
 function MT:IsCastSequence(command) return isCastSequence(command) end
 
+-- Equipment slots /use accepts as a bare number, e.g. /use 13 for the first trinket.
+local FIRST_EQUIPPED_SLOT = INVSLOT_FIRST_EQUIPPED or 1
+local LAST_EQUIPPED_SLOT = INVSLOT_LAST_EQUIPPED or 19
+
+local function isUse(command) for _, c in ipairs(MT.clist.use) do if c == command then return true end end end
+
+local function isEquipmentSlot(text)
+    local slot = tonumber(text, 10)
+    return slot ~= nil and slot >= FIRST_EQUIPPED_SLOT and slot <= LAST_EQUIPPED_SLOT
+end
+
 local function validateParameters(parameters, commandtext)
     local c = format("|c%s", MT.db.profile.stringcolour)
     local err
@@ -341,6 +353,8 @@ local function validateParameters(parameters, commandtext)
     if string.sub(parameters, 1, 1) == "!" then parameters = string.sub(parameters, 2) end
     if isScript(commandtext) or  isConsole(commandtext) or isClick(commandtext) then c = format("|c%s", MT.db.profile.scriptcolour)
     elseif isTarget(commandtext) then c = format("|c%s", MT.db.profile.targetcolour)
+    -- before the spell lookup: a slot number is not a spell ID here
+    elseif isUse(commandtext) and isEquipmentSlot(parameters) then c = format("|c%s", MT.db.profile.itemcolour)
     elseif getSpellNameAndID(parameters) then c = format("|c%s", MT.db.profile.spellcolour)
     elseif GetItemInfo(parameters) then c = format("|c%s", MT.db.profile.itemcolour)
     elseif isNumeric({parameters}) then c = format("|c%s", MT.db.profile.stringcolour)
