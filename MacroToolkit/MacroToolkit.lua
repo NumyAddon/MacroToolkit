@@ -944,6 +944,31 @@ function MT:MacroFrameUpdate()
     else MacroToolkitClear:Disable() end
 end
 
+-- Redraw only the icons on the account and character tabs. A "?" macro shows what its
+-- #showtooltip resolves to right now, which changes with stance, gear, target and modifiers
+-- without any macro event, so the open window polls. The edit box is left alone so unsaved
+-- text survives.
+function MT:RefreshMacroIcons()
+    if not MTF or not MTF:IsShown() then return end
+    if MT.MTCF and MT.MTCF:IsShown() then return end
+    local tab = PanelTemplates_GetSelectedTab(MTF)
+    if tab ~= 1 and tab ~= 2 then return end
+    local numAccountMacros, numCharacterMacros = GetNumMacros()
+    local numMacros = (MTF.macroBase == 0) and numAccountMacros or numCharacterMacros
+    local pickingIcon = MT.MTPF and MT.MTPF:IsShown()
+    for i = 1, math.min(numMacros, MTF.macroMax or 0) do
+        local index = MTF.macroBase + i
+        local name, texture = GetMacroInfo(index)
+        local button = _G[format("MacroToolkitButton%d", i)]
+        if name and button then
+            button.Icon:SetTexture(texture)
+            if index == MTF.selectedMacro and not pickingIcon then
+                MacroToolkitSelMacroButton.Icon:SetTexture(texture)
+            end
+        end
+    end
+end
+
 function MT:ContainerOnLoad(container)
     Mixin(container, SelectorMixin)
     container.buttons = {}
