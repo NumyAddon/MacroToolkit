@@ -406,9 +406,19 @@ local function validateCondition(condition, optionArguments, parameters)
                         msg = format("%s: %s%s|r - %s", L["Arguments must be alphanumeric"], conditionColor, tr_condition, arg1)
                         isCondition = false
                     else msg = nil end
+                elseif v == MT.CONDITION_TYPE_NAME then
+                    msg = nil
+                    for _, a in ipairs(optionArguments) do
+                        if trim(a) == "" then
+                            msg = format("%s: %s%s", L["Invalid argument"], conditionColor, tr_condition)
+                            isCondition = false
+                            break
+                        end
+                    end
                 elseif v == MT.CONDITION_TYPE_PARTY_RAID
                         or v == MT.CONDITION_TYPE_MOD_KEYS
-                        or v == MT.CONDITION_TYPE_MOUSEBUTTONS then
+                        or v == MT.CONDITION_TYPE_MOUSEBUTTONS
+                        or v == MT.CONDITION_TYPE_HOUSE then
                     valid, arg1 = isValid(optionArguments, v)
                     if not valid then
                         msg = format("%s: %s%s|r - %s", L["Invalid argument"], conditionColor, tr_condition, arg1)
