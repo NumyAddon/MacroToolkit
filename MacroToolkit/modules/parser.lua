@@ -563,17 +563,74 @@ local function matchedBrackets(macrotext)
     return mtype
 end
 
-local function removeConditional(line, pattern, conditionalPattern)
-    local s, e = string.find(line, pattern)
-    while s do
-        local s1, e1 = string.find(line, conditionalPattern, s)
-        if not s1 or not e1 then break end -- shouldn't happen, but don't want to throw an error if it does
-        if string.match(string.sub(line,s1,s1), '[^,]') then s1 = s1 - 1 end
+-- Long conditional names and their shorter equivalents.
+local CONDITION_ALIASES = {
+    actionbar = "bar",
+    button = "btn",
+    channelling = "channeling",
+    equipped = "worn",
+    modifier = "mod",
+    stance = "form",
+}
 
-        line = format("%s%s", string.sub(line, 1, s1), string.sub(line, e1 + 1))
-        s, e = string.find(line, pattern)
+-- These are only true when the unit exists, so a separate "exists" adds nothing.
+local IMPLIES_EXISTS = { help = true, harm = true, dead = true }
+-- These are always true when the unit does not exist, so "noexists" makes them redundant.
+local IMPLIED_BY_NOEXISTS = { nohelp = true, noharm = true, nodead = true }
+
+-- Shorten one conditional, e.g. " target = focus " -> "@focus", "modifier : shift" -> "mod:shift".
+-- Spaces inside argument values (spell, item type or pet names) are kept.
+local function shortenConditional(phrase)
+    phrase = trim(phrase)
+    if phrase == "" then return "" end
+    local unit = string.match(phrase, "^target%s*=(.*)$") or string.match(phrase, "^@(.*)$")
+    if unit then return "@" .. trim(unit) end
+
+    local name, args = string.match(phrase, "^([^:]*):(.*)$")
+    name = trim(name or phrase)
+    local prefix = ""
+    if string.sub(name, 1, 2) == "no" and not MT.conditions[name] then
+        prefix, name = "no", string.sub(name, 3)
     end
-    return line
+    name = CONDITION_ALIASES[name] or name
+    if not args then return prefix .. name end
+
+    local parts = {strsplit("/", args)}
+    for i, part in ipairs(parts) do
+        part = trim(part)
+        if name == "known" and part ~= "" and not tonumber(part) then
+            local spellName, spellID = getSpellNameAndID(part)
+            if spellName and spellID and string.len(tostring(spellID)) < string.len(part) then
+                part = tostring(spellID)
+            end
+        end
+        parts[i] = part
+    end
+    return format("%s%s:%s", prefix, name, table.concat(parts, "/"))
+end
+
+-- Shorten the inside of one [...] block: shorten each conditional, drop duplicates and
+-- conditionals another one in the same block already implies.
+local function shortenConditionBlock(inner)
+    local present, shortened = {}, {}
+    for _, phrase in ipairs({strsplit(",", inner)}) do
+        local short = shortenConditional(phrase)
+        if short ~= "" and not present[short] then
+            present[short] = true
+            shortened[#shortened + 1] = short
+        end
+    end
+    local impliesExists = false
+    for name in pairs(IMPLIES_EXISTS) do
+        if present[name] then impliesExists = true end
+    end
+    local kept = {}
+    for _, short in ipairs(shortened) do
+        local redundant = (short == "exists" and impliesExists)
+            or (present.noexists and IMPLIED_BY_NOEXISTS[short])
+        if not redundant then kept[#kept + 1] = short end
+    end
+    return "[" .. table.concat(kept, ",") .. "]"
 end
 
 function MT:ShortenMacro(macrotext)
@@ -581,7 +638,6 @@ function MT:ShortenMacro(macrotext)
     local olen = 0
     local mout = {}
     local show, showt, firstc, shows, s2
-    local pattern
     olen = string.len(macrotext)
     macrotext = format("%s\n", macrotext)
     local lines = {strsplit("\n", macrotext)}
@@ -599,78 +655,16 @@ function MT:ShortenMacro(macrotext)
             line = string.gsub(line, "%s+", " ")
             line = string.gsub(line, "%s-([%]=,;])", "%1")
             line = string.gsub(line, "([%[%]=;])%s+", "%1")
-            line = string.gsub(line, "%[(%w),%s+(%w)%]", "%1%2")
             line = string.gsub(line, "%s-/%s+", "/")
             line = string.gsub(line, "%s-;$", "")
-            line = string.gsub(line, "target=", "@")
-            line = string.gsub(line, "modifier%s-", "mod")
-            line = string.gsub(line, "mod%s-:%s+", "mod:")
-            line = string.gsub(line, "group%s-:%s+", "group:")
-            line = string.gsub(line, "(known:[%w ])%s+", "%1")
-
-            local knownConditionals = {}
-            s, e = string.find(line, "%[.-%]")
-            while s do -- for each bracketed section, strip spaces and extract known conditionals
-                local s1 = string.sub(line, s, e)
-                local kStart, kEnd = string.find(s1, "known:[%w ]+")
-                if kStart then
-                    local known = kStart and string.sub(s1, kStart, kEnd)
-                    if known then
-                        knownConditionals[string.gsub(known, "%s+", "")] = known
-                    end
-                end
-                s1 = string.gsub(s1, "%s+", "")
-                line = format("%s%s%s", string.sub(line, 1, s - 1), s1, string.sub(line, e + 1))
-                s, e = string.find(line, "%[.-%]", e + 1)
-            end
-
-            for k, v in pairs(knownConditionals) do
-                local spellNameOrID = string.gsub(v, "known:", "")
-                -- if not a number
-                if not tonumber(spellNameOrID) then
-                    local spellName, spellID = getSpellNameAndID(spellNameOrID)
-                    if spellID and string.len(spellID) < string.len(spellName) then v = format("known:%d", spellID) end
-                end
-                line = string.gsub(line, k, v)
-            end
-
-            local existsConditionPattern = ",-%s-exists,*"
-
-            line = removeConditional(line, "%[.-[^o]help.-[^o]exists.-%]", existsConditionPattern) -- help & exists
-            line = removeConditional(line, "%[help.-[^o]exists.-%]", existsConditionPattern) -- help & exists
-            line = removeConditional(line, "%[.-,-[^o]exists.-[^o]help.-%]", existsConditionPattern) -- exists & help
-            line = removeConditional(line, "%[exists.-[^o]help.-%]", existsConditionPattern) -- exists & help
-            line = removeConditional(line, "%[.-[^o]harm.-[^o]exists.-%]", existsConditionPattern) -- harm & exists
-            line = removeConditional(line, "%[harm.-[^o]exists.-%]", existsConditionPattern) -- harm & exists
-            line = removeConditional(line, "%[.-,-[^o]exists.-[^o]harm.-%]", existsConditionPattern) -- exists & harm
-            line = removeConditional(line, "%[exists.-[^o]harm.-%]", existsConditionPattern) -- exists & harm
-
-            local noHarmConditionPattern = ",-%s-noharm,*"
-            local noHelpConditionPattern = ",-%s-nohelp,*"
-
-            line = removeConditional(line, "%[.-nohelp.-noexists.-%]", noHelpConditionPattern) -- nohelp & noexists
-            line = removeConditional(line, "%[.-,-noexists.-nohelp.-%]", noHelpConditionPattern) -- noexists & nohelp
-            line = removeConditional(line, "%[.-noharm.-noexists.-%]", noHarmConditionPattern) -- noharm & noexists
-            line = removeConditional(line, "%[.-,-noexists.-noharm.-%]", noHarmConditionPattern) -- noexists & noharm
-
-            -- "noexists" & "help"/"harm" makes no logical sense, since it can never match, maybe show an error?
-            -- "help"/"harm" imply "exists", so combining it with "noexists" makes no sense
-
-            -- cleanup trailing comma in [ ] blocks
-            pattern = "(%[.-),%s-(%])"
-            line = string.gsub(line, pattern, "%1%2")
-
-            --avoid confusion between actionbar condition and swapactionbar / command
             local s1
-            s, e, s1 = string.find(line, "(%[.*)actionbar%s-")
-            if s then line = format("%s%s%s%s", string.sub(line, 1, s - 1), s1, "bar", string.sub(line, e + 1)) end
-            line = string.gsub(line, "bar%s-:%s+", "bar:")
-            line = string.gsub(line, "button%s-", "btn")
-            line = string.gsub(line, "btn%s-:%s+", "btn:")
-            line = string.gsub(line, "equipped%s-", "worn")
-            line = string.gsub(line, "worn%s-:%s+", "worn:")
-            line = string.gsub(line, "stance%s-", "form")
-            line = string.gsub(line, "form%s-:%s+", "form:")
+            -- Rewrite conditionals only inside [...] blocks of secure commands, so spell, item,
+            -- chat and script text is never touched.
+            local verb = string.match(line, "^[#/](%S+)")
+            verb = verb and string.lower(verb)
+            if not (verb and (isScript(verb) or isConsole(verb))) then
+                line = string.gsub(line, "%[([^%[%]]*)%]", shortenConditionBlock)
+            end
             s, e, s1, s2 = string.find(line, "%](%a.-);(.-)$")
             if s then if s1 == s2 then line = format("%s[]%s", string.sub(line, 1, s), s1) end end
             s, e = string.find(line, SHOWTOOLTIP_META)
