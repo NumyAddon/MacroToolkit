@@ -29,13 +29,15 @@ hooksecurefunc('EditMacro', buildCache)
 hooksecurefunc('DeleteMacro', buildCache)
 
 local function startsWithSlashCastCommand(body)
-    local i, slashCommand = 1, _G["SLASH_CAST1"]
-    while slashCommand do
-        if string.match(body, "^" .. slashCommand .. " ") then
-            return true
+    for _, prefix in ipairs({"SLASH_CAST", "SLASH_USE"}) do
+        local i, slashCommand = 1, _G[prefix .. "1"]
+        while slashCommand do
+            if string.sub(body, 1, string.len(slashCommand) + 1) == slashCommand .. " " then
+                return true
+            end
+            i = i + 1
+            slashCommand = _G[prefix .. i]
         end
-        i = i + 1
-        slashCommand = _G["SLASH_CAST" .. i]
     end
     return false
 end

@@ -81,6 +81,10 @@ local function getSpellNameAndID(spellIDOrName)
     end
 end
 
+-- Extra spellings Macro Toolkit treats as the same command (for example /use for /cast),
+-- keyed by SLASH_ prefix. Kept here instead of being written into Blizzard's SLASH_ globals.
+MT.slashAliases = {}
+
 function MT:FindShortest(cglobal)
     local shortest = string.rep("x", 99)
     local current
@@ -89,31 +93,35 @@ function MT:FindShortest(cglobal)
         if current then if string.len(current) < string.len(shortest) then shortest = current end
         else break end
     end
+    for _, alias in ipairs(MT.slashAliases[cglobal] or {}) do
+        if string.len(alias) < string.len(shortest) then shortest = alias end
+    end
     return shortest
+end
+
+-- All strings of one SLASH_ prefix: SLASH_USE1, SLASH_USE2, ...
+local function slashStrings(cglobal)
+    local list = {}
+    for c = 1, 99 do
+        local current = _G[format("%s%s", cglobal, c)]
+        if not current then break end
+        list[#list + 1] = current
+    end
+    return list
 end
 
 function MT:BuildCommandList()
     local cglobal, command, shortest, digit, param, custom, dpos
-    local castmax, modmax, randommax, usemax, modemax, usermax = 0, 0, 0, 0, 0, 0
     for k, v in pairs(_G) do
         if type(v) == "string" then
             if string.sub(k, 1, 6) == "SLASH_" then
                 dpos = string.find(k, "%d+$") or 2
-                digit = tonumber(string.match(k, "%d+$"))
                 cglobal = string.sub(k, 1, dpos - 1)
                 if cglobal == "SLASH_CASTSEQUENCE" then table.insert(MT.clist.castsequence, string.sub(v, 2)) end
-                if cglobal == "SLASH_CAST" then
-                    if castmax < digit then castmax = digit end
-                    table.insert(MT.clist.cast, string.sub(v, 2))
-                end
-                if cglobal == "SLASH_CHAT_MODERATOR" then if modmax < digit then modmax = digit end end
-                if cglobal == "SLASH_CASTRANDOM" then if randommax < digit then randommax = digit end end
+                if cglobal == "SLASH_CAST" then table.insert(MT.clist.cast, string.sub(v, 2)) end
                 if cglobal == "SLASH_USE" then
-                    if usemax < digit then usemax = digit end
                     table.insert(MT.clist.cast, string.sub(v, 2))
                 end
-                if cglobal == "SLASH_CHAT_MODERATE" then if modemax < digit then modemax = digit end end
-                if cglobal == "SLASH_USERANDOM" then if usermax < digit then usermax = digit end end
                 if cglobal == "SLASH_SCRIPT" then table.insert(MT.clist.script, string.sub(v, 2)) end
                 if cglobal == "SLASH_CONSOLE" then table.insert(MT.clist.console, string.sub(v, 2)) end
                 if cglobal == "SLASH_TARGET" then table.insert(MT.clist.target, string.sub(v, 2)) end
@@ -122,9 +130,11 @@ function MT:BuildCommandList()
             end
         end
     end
-    for c = 1, usemax do _G[format("SLASH_CAST%d", castmax + c)] = _G[format("SLASH_USE%d", c)] end
-    for m = 1, modemax do _G[format("SLASH_MODERATOR%d", modmax + m)] = _G[format("SLASH_MODERATE%d", m)] end
-    for r = 1, usermax do _G[format("SLASH_CASTRANDOM%d", randommax + r)] = _G[format("SLASH_USERANDOM%d", r)] end
+    MT.slashAliases = {
+        SLASH_CAST = slashStrings("SLASH_USE"),
+        SLASH_CHAT_MODERATOR = slashStrings("SLASH_CHAT_MODERATE"),
+        SLASH_CASTRANDOM = slashStrings("SLASH_USERANDOM"),
+    }
     for k, v in pairs(_G) do
         if type(v) == "string" then
             if string.sub(k, 1, 6) == "SLASH_" then
@@ -151,6 +161,8 @@ function MT:BuildCommandList()
             end
         end
     end
+    MT.commands.show = {"show", MT.commandinfo.SHOW or 0}
+    MT.commands.showtooltip = {"showtooltip", MT.commandinfo.SHOWTOOLTIP or 0}
 end
 
 --*************************************************

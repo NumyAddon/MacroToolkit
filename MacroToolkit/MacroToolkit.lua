@@ -551,9 +551,9 @@ end
 
 local function checktooltip(showtooltip, body)
     if showtooltip then
-        if showtooltip == _G.SLASH_SHOWTOOLTIP1 then
+        if showtooltip == MT.SHOWTOOLTIP_META then
             local _, _, firstspell = MT:ShortenMacro(body)
-            if firstspell then showtooltip = string.format("%s %s", _G.SLASH_SHOWTOOLTIP1, firstspell) end
+            if firstspell then showtooltip = string.format("%s %s", MT.SHOWTOOLTIP_META, firstspell) end
         end
     end
     return showtooltip

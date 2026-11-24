@@ -186,9 +186,9 @@ MT.optargs={
     [10]={"inside","plot","editor","neighborhood"},
 }
 
---add some globals to make things easier
-_G.SLASH_SHOW1="#show"
-_G.SLASH_SHOWTOOLTIP1="#showtooltip"
+-- Macro meta commands. Kept on MT, not written into Blizzard's SLASH_ globals.
+MT.SHOW_META = "#show"
+MT.SHOWTOOLTIP_META = "#showtooltip"
 
 MT.COMMAND_PARAM_REQUIRED = 1;
 MT.COMMAND_PARAM_OPTIONAL = 2;
