@@ -12,6 +12,36 @@ local SHOW_META, SHOWTOOLTIP_META = "#show", "#showtooltip"
 local function trim(s) return string.match(s, "^%s*(.*%S)") or "" end
 local function escape(s) return (s:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]","%%%1"):gsub("%z","%%z")) end
 
+-- Lower-case item class and subclass names from the client ("weapon", "shields", ...), for
+-- worn:/equipped: arguments. These match case-insensitively (checked in game on Forever).
+local itemTypeNames
+local function isItemTypeName(text)
+    if not itemTypeNames then
+        itemTypeNames = {}
+        local getClassInfo, getSubClassInfo = GetItemClassInfo, GetItemSubClassInfo
+        if C_Item then
+            getClassInfo = C_Item.GetItemClassInfo or getClassInfo
+            getSubClassInfo = C_Item.GetItemSubClassInfo or getSubClassInfo
+        end
+        if getClassInfo and getSubClassInfo then
+            for classID = 0, 30 do
+                local ok, className = pcall(getClassInfo, classID)
+                if ok and type(className) == "string" and className ~= "" then
+                    itemTypeNames[string.lower(className)] = true
+                end
+                for subClassID = 0, 40 do
+                    local okSub, subClassName = pcall(getSubClassInfo, classID, subClassID)
+                    if okSub and type(subClassName) == "string" and subClassName ~= "" then
+                        itemTypeNames[string.lower(subClassName)] = true
+                    end
+                end
+            end
+        end
+    end
+    if next(itemTypeNames) == nil then return nil end
+    return itemTypeNames[string.lower(trim(text))] == true
+end
+
 local LibTalentTree = LibStub("LibTalentTree-1.0");
 local LibTalentTreeExists = LibTalentTree:IsCompatible();
 local spellNameCache;
@@ -463,6 +493,23 @@ local function validateCondition(condition, optionArguments, parameters)
             end
             if name then
                 colorArguments = format("|c%s", MT.db.profile.spellcolour)
+            end
+        elseif (tr_condition == "worn" or tr_condition == "equipped") and #optionArguments > 0 then
+            local allKnown, unknownArgument = true, nil
+            for _, argument in ipairs(optionArguments) do
+                local known = isItemTypeName(argument)
+                if known == nil then
+                    allKnown = nil -- the client gave no type names, so do not judge
+                    break
+                elseif not known then
+                    allKnown, unknownArgument = false, argument
+                    break
+                end
+            end
+            if allKnown then
+                colorArguments = format("|c%s", MT.db.profile.itemcolour)
+            elseif allKnown == false and MT.db.profile.unknown then
+                msg = format("%s: [%s%s|r:%s]", L["Unknown parameter"], conditionColor, tr_condition, trim(unknownArgument))
             end
         end
     else
